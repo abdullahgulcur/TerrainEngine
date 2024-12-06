@@ -7,7 +7,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_subdirectory(src/thirdparty/glfw)
 add_subdirectory(src/thirdparty/glew)
 
-file(GLOB_RECURSE sourceFiles "src/app/*.cpp" "src/engine/*.cpp")
+file(GLOB sourceFiles "src/app/*.cpp" 
+	"src/engine/core/*.cpp"
+	"src/engine/filesystem/*.cpp"
+	"src/engine/graphics/*.cpp"
+	"src/engine/io/*.cpp"
+	"src/engine/math/*.cpp"
+	"src/engine/memory/*.cpp"
+	"src/engine/platform/gl/*.cpp"
+	"src/engine/platform/glfw/*.cpp"
+	"src/engine/scene/*.cpp"
+	"src/engine/terrain/*.cpp")
 
 add_executable(${PROJECT_NAME} ${sourceFiles})
 
