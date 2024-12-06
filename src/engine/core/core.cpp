@@ -3,21 +3,33 @@
 
 namespace Engine {
 
-    Core::Core() {
+    Core* Core::instance;
 
+    Core* Core::getInstance() {
+        if (!instance)
+            instance = new Core;
+        return instance;
     }
 
-    Core::~Core() {
+    Core::Core() {}
 
+    Core::~Core() {}
+
+    void Core::init() {
+
+        glfwContext = new GLFWContext;
+
+        glfwContext->init();
     }
 
-    void Core::initialize() {
+    void Core::update() {
 
+        glfwContext->pollEvents();
+        glfwContext->swapBuffers();
     }
 
-    void Core::run() {
+    GLFWContext* Core::getGlfwContext() {
 
+        return instance->glfwContext;
     }
-
-
 }

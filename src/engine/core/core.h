@@ -1,13 +1,26 @@
 #pragma once
 
+#include "glfw_context.h"
+
 namespace Engine {
 
     class Core {
     private:
-    public:
+
+        static Core* instance;
+
+        GLFWContext* glfwContext;
+
         Core();
         ~Core();
-        void initialize();
-        void run();
+
+    public:
+        
+        static Core* getInstance();
+
+        void init();
+        void update();
+
+        static GLFWContext* getGlfwContext();
     };
 }

@@ -3,12 +3,13 @@
 
 int main() {
 
-    Engine::Core* core = new Engine::Core;
-    core->initialize();
+    Engine::Core* core = Engine::Core::getInstance();
 
-    while (true) {
+    core->init();
 
-        core->run();
+    while (!core->getGlfwContext()->shouldClose()) {
+
+        core->update();
     }
 
     return 0;
