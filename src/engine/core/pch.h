@@ -6,3 +6,6 @@
 #include <string>
 #include <stack>
 #include <queue>
+#include <fstream>
+#include <sstream>
+#include <basetsd.h>

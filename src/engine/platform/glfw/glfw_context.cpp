@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "glfw_context.h"
-//#include "Core/core.h"
+#include "core.h"
 
 namespace Engine {
 
@@ -84,6 +84,11 @@ namespace Engine {
 		return glm::u16vec2(xPos, yPos);
 	}
 
+	glm::u16vec2 GLFWContext::getScreenSize() {
+
+		return glm::u16vec2(this->mode->width, this->mode->height);
+	}
+
 	float GLFWContext::getTime() {
 
 		return (float)glfwGetTime();
@@ -97,17 +102,17 @@ namespace Engine {
 
 	void GLFWContext::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 
-		//Input::handleKeyboardInput(key, action);
+		Core::getInput()->handleKeyboardInput(key, action);
 	}
 
 	void GLFWContext::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
 
-		//Input::handleMouseInput(button, action);
+		Core::getInput()->handleMouseInput(button, action);
 	}
 
 	void GLFWContext::mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
 
-		//Input::handleMouseScrollInput(yoffset);
+		Core::getInput()->handleMouseScrollInput(yoffset);
 	}
 
 }

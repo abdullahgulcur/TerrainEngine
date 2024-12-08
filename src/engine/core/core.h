@@ -1,6 +1,9 @@
 #pragma once
 
 #include "glfw_context.h"
+#include "input.h"
+#include "camera.h"
+#include "shader.h"
 
 namespace Engine {
 
@@ -10,6 +13,9 @@ namespace Engine {
         static Core* instance;
 
         GLFWContext* glfwContext;
+        Input* input;
+        Camera* camera;
+        Shader* shader;
 
         Core();
         ~Core();
@@ -22,5 +28,7 @@ namespace Engine {
         void update();
 
         static GLFWContext* getGlfwContext();
+        static Input* getInput();
+        static Shader* getShader();
     };
 }

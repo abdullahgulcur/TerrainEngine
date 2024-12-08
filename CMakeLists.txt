@@ -19,7 +19,7 @@ file(GLOB sourceFiles "src/app/*.cpp"
 	"src/engine/scene/*.cpp"
 	"src/engine/terrain/*.cpp")
 
-add_executable(${PROJECT_NAME} ${sourceFiles})
+add_executable(${PROJECT_NAME} ${sourceFiles} src/engine/math/transform.cpp)
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/engine/core/pch.h)
 

@@ -25,6 +25,7 @@ namespace Engine {
 		void setTitle(const char* title);
 		void setCursorPos(glm::u16vec2 cursorPos);
 		glm::u16vec2 getCursorPos();
+		glm::u16vec2 getScreenSize();
 		float getTime();
 		void setCursorVisible(bool visible);
 		static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
