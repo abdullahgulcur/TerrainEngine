@@ -29,6 +29,7 @@ namespace Engine {
 
         static GLFWContext* getGlfwContext();
         static Input* getInput();
+        static Camera* getCamera();
         static Shader* getShader();
     };
 }

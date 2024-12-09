@@ -49,4 +49,9 @@ namespace Engine {
 		return ProgramID;
     }
 
+	void GLShader::useProgram(unsigned int programId) {
+		glUseProgram(programId);
+	}
+
+
 }

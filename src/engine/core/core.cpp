@@ -40,12 +40,19 @@ namespace Engine {
     }
 
     GLFWContext* Core::getGlfwContext() {
-
         return instance->glfwContext;
     }
 
     Input* Core::getInput() {
-
         return instance->input;
     }
+
+    Camera* Core::getCamera() {
+        return instance->camera;
+    }
+
+    Shader* Core::getShader() {
+        return instance->shader;
+    }
+
 }

@@ -21,6 +21,17 @@ namespace Engine {
         Texture2D();
         Texture2D(std::string path);
         Texture2D(std::string path, UINT8 mipLevel);
+
+        Texture2D(unsigned short width, unsigned short height, UINT8 channels)
+            : Texture2D(width, height, channels, 1) {}
+
+        Texture2D(unsigned short width, unsigned short height, UINT8 channels, UINT8 mipLevel)
+            : width(width), height(height), channels(channels), mipLevel(mipLevel) {
+
+            setSize();
+            data = new unsigned char[size];
+        }
+
         ~Texture2D();
         unsigned int getIndex(unsigned short x, unsigned short y);
         unsigned int getIndex(unsigned short x, unsigned short y, UINT8 mipLevel);

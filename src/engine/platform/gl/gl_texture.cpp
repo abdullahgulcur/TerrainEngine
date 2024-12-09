@@ -51,6 +51,27 @@ namespace Engine {
 		return textureId;
 	}
 
+	unsigned int GLTexture::createFrameBufferTexture(glm::u16vec2 size) {
+
+		unsigned int textureId;
+		glGenTextures(1, &textureId);
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size.x, size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		return textureId;
+	}
+
+	void GLTexture::updateTexture2D(unsigned int textureId, UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data, glm::ivec2 pos) {
+
+		GLenum formats[4] = { GL_RED, GL_RG, GL_RGB, GL_RGBA };
+		GLenum format = formats[channels];
+
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, pos.x, pos.y, width, height, format, GL_UNSIGNED_BYTE, data);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
 	void GLTexture::useTexture(unsigned int index, unsigned int textureId) {
 
 		glActiveTexture(GL_TEXTURE0 + index);
