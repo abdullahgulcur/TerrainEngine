@@ -1,6 +1,6 @@
 #pragma once
 #include "glm.hpp"
-#include "rendering.h"
+#include "frame.h"
 #include "terrain_config.h"
 #include "heightmap_data.h"
 
@@ -44,23 +44,13 @@ namespace Engine {
 		std::stack<Block> jobs;
 		std::stack<Block> jobsLevel0;
 
-		unsigned int physicalPageGeneratorShaderProgramId;
-
+		HeightmapData heightmapData;
 		unsigned int heightmapTextureId;
-		unsigned int pageTableTextureId;
-		//unsigned int physicalPagesTextureId;
-
-		//unsigned int maskTextureId;
-		unsigned int grassTextureId;
-		//unsigned int rockTextureId;
-
-		/*unsigned int renderFrameBufferId;
-		unsigned int renderTextureId;*/
-		RenderFrame physicalPageGeneratorFrame;
+		
+		FramePhsyicalPages physicalPageGeneratorFrame;
+		FramePageTable pageTableGeneratorFrame;
 
 		glm::u16vec2 physicalTextureSize;
-
-		HeightmapData heightmapData;
 
 		ClipmapTracker();
 		~ClipmapTracker();

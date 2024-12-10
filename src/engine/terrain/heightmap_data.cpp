@@ -3,7 +3,7 @@
 #include "texture2d.h"
 #include "terrain_config.h"
 
-#define STB_IMAGE_IMPLEMENTATION
+//#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 namespace Engine {

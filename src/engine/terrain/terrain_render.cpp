@@ -36,9 +36,9 @@ namespace Engine {
 		GLUniform::setInt1(shaderProgramId, "blockSize", clipmapTracker.heightmapData.blockSize);
 		GLUniform::setInt2(shaderProgramId, "terrainSize", clipmapTracker.heightmapData.terrainSize);
 
-		GLTexture::useTexture(0, clipmapTracker.pageTableTextureId);
+		GLTexture::useTexture(0, clipmapTracker.pageTableGeneratorFrame.getTextureId());
 		GLTexture::useTexture(1, clipmapTracker.heightmapTextureId);
-		GLTexture::useTexture(2, clipmapTracker.physicalPageGeneratorFrame.textureId);
+		GLTexture::useTexture(2, clipmapTracker.physicalPageGeneratorFrame.getTextureId());
 
 		std::vector<TerrainVertexAttribs> instanceArray;
 

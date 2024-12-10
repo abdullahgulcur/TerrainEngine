@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "clipmap_tracker.h"
-//#include "terrain_virtual_texture.h"
+#include "texture2d.h"
 #include "core.h"
 #include "input.h"
 #include "gl_context.h"
@@ -17,14 +17,6 @@ namespace Engine {
 
 	void ClipmapTracker::init(std::string path, unsigned short blockSize, UINT8 clipmapLevels) {
 
-		glm::ivec2 pageSize(512, 512);
-
-		physicalPageGeneratorShaderProgramId = Core::getShader()->shaders[ShaderType::TERRAIN_RVT];
-
-		TextureData2D grassTexture("C:/Users/Abdullah/Downloads/FuryEngine-master/FuryEngine-master/Resources/Textures/rockymossy.png");
-
-		grassTextureId = OpenglContext::generateTexture2D(grassTexture);
-
 		const unsigned short totalBlocks = clipmapLevels * BLOCK_COUNT_PER_LEVEL + BLOCK_COUNT_INNER;
 		for (int i = 0;; i++) {
 			unsigned short width = 1 << (i / 2);
@@ -40,18 +32,20 @@ namespace Engine {
 
 		clipmaps = std::vector<TerrainClipmap>(clipmapLevels);
 		heightmapData = HeightmapData(path, blockSize, clipmapLevels);
-		TextureData2D pageTableTextureData(heightmapData.rows, heightmapData.columns, 4);
-		TextureData2D physicalTextureData(physicalTextureSize.x * blockSize, physicalTextureSize.y * blockSize, 1);
-		TextureData2D physicalPagesTextureData(physicalTextureSize.x * pageSize.x, physicalTextureSize.y * pageSize.y, 3);
-		this->pageTableTextureId = OpenglContext::generateTexture2D(pageTableTextureData);
-		this->heightmapTextureId = OpenglContext::generateTexture2D(physicalTextureData);
-		//this->physicalPagesTextureId = OpenglContext::generateTexture2D_(physicalPagesTextureData);
-		pageTableTextureData.clean();
+
+		Texture2D physicalTextureData(physicalTextureSize.x * blockSize, physicalTextureSize.y * blockSize, 1);
+		this->heightmapTextureId = GLTexture::generateTexture2D(physicalTextureData.channels, physicalTextureData.width, physicalTextureData.height, physicalTextureData.data);
 		physicalTextureData.clean();
 
-		physicalPageGeneratorFrame.size = glm::u16vec2(physicalTextureSize.x * pageSize.x, physicalTextureSize.y * pageSize.y);
-		physicalPageGeneratorFrame.planeVAO = OpenglContext::createQuadVAO();
-		OpenglContext::createFrameBuffer(physicalPageGeneratorFrame);
+
+		Texture2D grassTexture("../../../resource/texture/marble.jpg");
+		unsigned int grassTextureId = GLTexture::generateTexture2D(grassTexture.channels, grassTexture.width, grassTexture.height, grassTexture.data);
+		grassTexture.clean();
+		glm::ivec2 pageSize(512, 512);
+		unsigned int physicalPageGeneratorShaderProgramId = Core::getShader()->shaders[ShaderType::TERRAIN_RVT];
+		unsigned int pageTableGeneratorShaderProgramId = Core::getShader()->shaders[ShaderType::TERRAIN_PAGE_TABLE];
+		physicalPageGeneratorFrame = FramePhsyicalPages(glm::u16vec2(physicalTextureSize.x * pageSize.x, physicalTextureSize.y * pageSize.y), grassTextureId, physicalPageGeneratorShaderProgramId);
+		pageTableGeneratorFrame = FramePageTable(glm::u16vec2(heightmapData.rows, heightmapData.columns), pageTableGeneratorShaderProgramId);
 
 		Camera* camera = Core::getCamera();
 		glm::vec2 camPos = glm::vec2(camera->position.x, camera->position.z);
@@ -361,15 +355,6 @@ namespace Engine {
 			ClipmapTracker::updatePageTableTexturePartial(pagePosition, block.level, blockPos);
 		}
 
-		
-		//TextureData2D test(physicalPageGeneratorFrame.size.x, physicalPageGeneratorFrame.size.y, 3);
-		//OpenglContext::getTextureContent(test, physicalPageGeneratorFrame.textureId);
-		//test.writeDataToFile("output_phy.png", 0);
-		//int x = 5;
-
-		/*TextureData2D subDataPhysicalPagesTexture(renderFrame.size.x, renderFrame.size.x, 3);
-		OpenglContext::getTextureContent(subDataPhysicalPagesTexture, renderFrame.textureId);
-		subDataPhysicalPagesTexture.writeDataToFile("output1.png", 0);*/
 	}
 
 	void ClipmapTracker::updatePageTableTexturePartial(glm::u8vec2 pagePosition, UINT8 level, glm::u16vec2 blockPos) {
@@ -385,40 +370,20 @@ namespace Engine {
 		UINT8 g = blockPos.y % 256;
 		UINT8 b = (pagePosition.y << 4) + pagePosition.x;
 		UINT8 a = ((blockPos.y / 256) << 5) + ((blockPos.x / 256) << 3) + level;
-		TexUnit_RGBA tu(r, g, b, a);
+		glm::u8vec4 tu(r, g, b, a);
 
-		TextureData2D subData(blockSizeInPageTable.x, blockSizeInPageTable.y, 4);
-
-		TextureData2D subDataPhysicalTexture(heightmapData.blockSize, heightmapData.blockSize, 1);
+		Texture2D subDataPhysicalTexture(heightmapData.blockSize, heightmapData.blockSize, 1);
 		subDataPhysicalTexture.data = &heightmapData.data[heightmapData.getArrayIndex(level, blockPos)];
 
-		glm::ivec2 startPos(0, 0);
-		subData.updateTexSubData_RGBA(tu, startPos, blockSizeInPageTable);
+		GLTexture::updateTexture2D(heightmapTextureId, subDataPhysicalTexture.channels, subDataPhysicalTexture.width, subDataPhysicalTexture.height, subDataPhysicalTexture.data, blockPosInPage);
 
-		OpenglContext::updateTexture2D(pageTableTextureId, subData, blockPosInPageTable);
-		OpenglContext::updateTexture2D(heightmapTextureId, subDataPhysicalTexture, blockPosInPage);
+		pageTableGeneratorFrame.setViewport(blockPosInPageTable, blockSizeInPageTable);
+		pageTableGeneratorFrame.setUniforms(tu);
+		pageTableGeneratorFrame.draw();
 
-		
-		///----------------
-
-		OpenglContext::bindFrameBuffer(physicalPageGeneratorFrame.FBO);
-		OpenglContext::setViewPort(blockPosInPhysicalPagesTexture, pageSize);
-		OpenglContext::useProgram(physicalPageGeneratorShaderProgramId);
-		OpenglContext::useTexture(0, grassTextureId);
-
-		OpenglContext::setInt1(physicalPageGeneratorShaderProgramId, "level", level);
-		OpenglContext::setFloat2(physicalPageGeneratorShaderProgramId, "pos", glm::vec2(blockPos));
-
-		OpenglContext::drawQuad(physicalPageGeneratorFrame.planeVAO);
-
-		//TextureData2D subDataPhysicalPagesTexture(renderFrame.size.x, renderFrame.size.y, 3);
-		//OpenglContext::getTextureContent(subDataPhysicalPagesTexture, renderFrame.textureId);
-		//OpenglContext::updateTexture2D(physicalPagesTextureId, subDataPhysicalPagesTexture, blockPosInPhysicalPagesTexture);
-
-		//TextureData2D test(renderFrame.size.x, renderFrame.size.y, 3);
-		//OpenglContext::getTextureContent(test, renderFrame.textureId);
-		//test.writeDataToFile("output1.png", 0);
-		//int x = 5;
+		physicalPageGeneratorFrame.setViewport(blockPosInPhysicalPagesTexture, pageSize);
+		physicalPageGeneratorFrame.setUniforms(level, glm::vec2(blockPos));
+		physicalPageGeneratorFrame.draw();
 
 	}
 
@@ -428,4 +393,5 @@ namespace Engine {
 			sum += heightmapData.blockSize << i;
 		return sum + 1;
 	}
+
 }
