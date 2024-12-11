@@ -4,6 +4,7 @@
 #include "input.h"
 #include "camera.h"
 #include "shader.h"
+#include "terrain.h"
 
 namespace Engine {
 
@@ -21,6 +22,9 @@ namespace Engine {
         ~Core();
 
     public:
+
+        Terrain* terrain;
+
         
         static Core* getInstance();
 

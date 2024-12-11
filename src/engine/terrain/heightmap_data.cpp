@@ -22,8 +22,13 @@ namespace Engine {
 			return;
 		}
 
+
 		Texture2D heightmapMipmap(width, height, channels, clipmapLevels);
 		heightmapMipmap.loadData(imageData);
+
+		//std::vector<int> vec(heightmapMipmap.data, heightmapMipmap.data + heightmapMipmap.getSize());
+
+
 		stbi_image_free(imageData);
 
 		int totalBlocksPerColumn = width / blockSize;

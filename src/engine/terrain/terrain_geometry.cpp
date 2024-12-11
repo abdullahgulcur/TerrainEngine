@@ -62,6 +62,9 @@ namespace Engine {
 			outerDegenerateIndices.push_back(index1);
 		}
 		
+		block.indiceCount = blockIndices.size();
+		outerDegenerate.indiceCount = outerDegenerateIndices.size();
+
 		GLBuffer::createInstancedTerrainStaticMesh2D(block.VAO, block.instanceBuffer, &blockVerts[0], blockVerts.size() * sizeof(glm::vec2), &blockIndices[0], blockIndices.size() * sizeof(unsigned int), totalInstance);
 		GLBuffer::createInstancedTerrainStaticMesh2D(outerDegenerate.VAO, outerDegenerate.instanceBuffer, &outerDegenerateVerts[0], outerDegenerateVerts.size() * sizeof(glm::vec2), &outerDegenerateIndices[0], outerDegenerateIndices.size() * sizeof(unsigned int), totalInstance);
 	}

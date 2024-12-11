@@ -4,13 +4,14 @@
 
 namespace Engine {
 
-	GLFWContext::GLFWContext() {
+	GLFWContext* GLFWContext::create() {
 
+		return new GLFWContext();
 	}
 
-	GLFWContext::~GLFWContext() {
+	GLFWContext::GLFWContext() {}
 
-	}
+	GLFWContext::~GLFWContext() {}
 
 	void GLFWContext::init() {
 

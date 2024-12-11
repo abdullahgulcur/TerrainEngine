@@ -13,10 +13,12 @@ namespace Engine {
 		GLFWmonitor* monitor;
 		const GLFWvidmode* mode;
 
-	public:
-
 		GLFWContext();
 		~GLFWContext();
+
+	public:
+
+		static GLFWContext* create();
 		void init();
 		bool shouldClose();
 		void pollEvents();

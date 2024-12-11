@@ -4,9 +4,9 @@
 
 namespace Engine {
 
-	struct Texture2D {
-		unsigned int textureId;
-	};
+	//struct Texture2D {
+	//	unsigned int textureId;
+	//};
 
 	/*struct TextureData2D {
 		unsigned short width;
@@ -93,10 +93,10 @@ namespace Engine {
 		}
 	};
 
-	struct Material_PBR_Textured {
-		unsigned int shaderProgramId;
-		Texture2D textures[5];
-	};
+	//struct Material_PBR_Textured {
+	//	unsigned int shaderProgramId;
+	//	Texture2D textures[5];
+	//};
 	
 	struct Skybox {
 		unsigned int VAO;

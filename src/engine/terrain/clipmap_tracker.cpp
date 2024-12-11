@@ -34,7 +34,7 @@ namespace Engine {
 		heightmapData = HeightmapData(path, blockSize, clipmapLevels);
 
 		Texture2D physicalTextureData(physicalTextureSize.x * blockSize, physicalTextureSize.y * blockSize, 1);
-		this->heightmapTextureId = GLTexture::generateTexture2D(physicalTextureData.channels, physicalTextureData.width, physicalTextureData.height, physicalTextureData.data);
+		this->heightmapTextureId = GLTexture::generateHeightmapTexture2D(physicalTextureData.channels, physicalTextureData.width, physicalTextureData.height, physicalTextureData.data);
 		physicalTextureData.clean();
 
 

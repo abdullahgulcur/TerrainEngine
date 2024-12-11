@@ -29,6 +29,8 @@ namespace Engine {
 		glm::mat4 PV = camera->projectionMatrix * camera->viewMatrix;
 		glm::vec3 camPos = camera->position;
 
+		GLCommand::refreshScene(Core::getGlfwContext()->getScreenSize(), 0);
+
 		GLShader::useProgram(shaderProgramId);
 		GLUniform::setMatrix4f(shaderProgramId, "projectionView", PV);
 		GLUniform::setFloat3(shaderProgramId, "cameraPosition", camPos);

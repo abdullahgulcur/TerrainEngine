@@ -8,8 +8,8 @@ namespace Engine {
 		GLenum internalFormats[4] = { GL_R8, GL_RG8, GL_RGB8, GL_RGBA8 };
 		GLenum formats[4] = { GL_RED, GL_RG, GL_RGB, GL_RGBA };
 
-		GLenum internalFormat = internalFormats[channels];
-		GLenum format = formats[channels];
+		GLenum internalFormat = internalFormats[channels-1];
+		GLenum format = formats[channels - 1];
 		
 		unsigned int textureId;
 		glGenTextures(1, &textureId);
@@ -30,13 +30,34 @@ namespace Engine {
 		return textureId;
     }
 
+	unsigned int GLTexture::generateHeightmapTexture2D(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data) {
+
+		GLenum internalFormats[4] = { GL_R8, GL_RG8, GL_RGB8, GL_RGBA8 };
+		GLenum formats[4] = { GL_RED, GL_RG, GL_RGB, GL_RGBA };
+
+		GLenum internalFormat = internalFormats[channels - 1];
+		GLenum format = formats[channels - 1];
+
+		unsigned int textureId;
+		glGenTextures(1, &textureId);
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		return textureId;
+	}
+
 	unsigned int GLTexture::generatePhysicalPagesTexture(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data) {
 
 		GLenum internalFormats[4] = { GL_R8, GL_RG8, GL_RGB8, GL_RGBA8 };
 		GLenum formats[4] = { GL_RED, GL_RG, GL_RGB, GL_RGBA };
 
-		GLenum internalFormat = internalFormats[channels];
-		GLenum format = formats[channels];
+		GLenum internalFormat = internalFormats[channels - 1];
+		GLenum format = formats[channels - 1];
 
 		unsigned int textureId;
 		glGenTextures(1, &textureId);
@@ -76,7 +97,7 @@ namespace Engine {
 	void GLTexture::updateTexture2D(unsigned int textureId, UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data, glm::ivec2 pos) {
 
 		GLenum formats[4] = { GL_RED, GL_RG, GL_RGB, GL_RGBA };
-		GLenum format = formats[channels];
+		GLenum format = formats[channels-1];
 
 		glBindTexture(GL_TEXTURE_2D, textureId);
 		glTexSubImage2D(GL_TEXTURE_2D, 0, pos.x, pos.y, width, height, format, GL_UNSIGNED_BYTE, data);

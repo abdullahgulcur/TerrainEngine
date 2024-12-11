@@ -10,6 +10,7 @@ namespace Engine {
     public:
 
         static unsigned int generateTexture2D(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data);
+        static unsigned int generateHeightmapTexture2D(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data);
         static unsigned int generatePhysicalPagesTexture(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data);
         static unsigned int createPhysicalPagesFrameBufferTexture(glm::u16vec2 size);
         static unsigned int createPageTableFrameBufferTexture(glm::u16vec2 size);
