@@ -142,10 +142,10 @@ namespace Engine {
 		UINT8 keyUp[16];
 		UINT8 keyPressed[16];
 
-		UINT8 mouseDown;
-		UINT8 mouseUp;
-		UINT8 mousePressed;
-		float scrollDelta;
+		UINT8 mouseDown = 0;
+		UINT8 mouseUp = 0;
+		UINT8 mousePressed = 0;
+		float scrollDelta = 0.f;
 
 		glm::i16vec2 mouseDelta;
 		glm::i16vec2 cursorPos;

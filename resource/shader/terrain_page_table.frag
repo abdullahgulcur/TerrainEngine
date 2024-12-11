@@ -5,7 +5,7 @@ out vec4 FragColor;
 uniform uint color;
 
 float getValue(int shiftAmount){
-    return ((color >> shiftAmount) | 255) / 256.f;
+    return ((color >> shiftAmount) & 255) / 255.f;
 }
 
 void main() {

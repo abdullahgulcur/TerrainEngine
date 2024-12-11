@@ -41,7 +41,7 @@ uniform int level;
 void main() {
 
     float scale = 1 << level;
-    vec2 uv = texCoord * scale * 4;
+    vec2 uv = texCoord * scale * 1;
     vec3 albedo = textureLod(grass, uv, level).rgb;
     FragColor = vec4(albedo , 1.0);
 }

@@ -17,5 +17,6 @@ namespace Engine {
         static void updateTexture2D(unsigned int textureId, UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data, glm::ivec2 pos);
         static void useTexture(unsigned int index, unsigned int textureId);
         static void setTextureUniformLocation(std::string location, unsigned int shaderProgramId, unsigned int index);
+        static void getTextureContent(UINT8 channels, unsigned char* data, unsigned int textureId);
     };
 }

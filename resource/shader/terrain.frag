@@ -89,7 +89,6 @@ void main(){
 
     vec3 albedo = texture(physicalPages, uv).rgb;
 
-
     FragColor = vec4(albedo, 1);
 
     //FragColor = vec4(c*ccc, 1.0);

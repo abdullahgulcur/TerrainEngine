@@ -25,11 +25,10 @@ namespace Engine {
 
 		Texture2D heightmapMipmap(width, height, channels, clipmapLevels);
 		heightmapMipmap.loadData(imageData);
-
-		//std::vector<int> vec(heightmapMipmap.data, heightmapMipmap.data + heightmapMipmap.getSize());
-
-
 		stbi_image_free(imageData);
+
+		//heightmapMipmap.writeDataToFile("fucker.png", 1);
+
 
 		int totalBlocksPerColumn = width / blockSize;
 		int totalBlocksPerRow = height / blockSize;
@@ -51,7 +50,7 @@ namespace Engine {
 
 					int arrayIndex = getArrayIndex(level, glm::ivec2(x, y));
 
-					Texture2D base(blockSize, blockSize, 1);
+					Texture2D base(blockSize, blockSize, 1); // TODO: channels is 1 here
 					base.data = &data[arrayIndex];
 
 					glm::ivec2 startIndexInHeightmapMipmap(blockSize * x, blockSize * y);

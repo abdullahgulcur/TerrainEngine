@@ -17,6 +17,11 @@ namespace Engine {
         return textureId;
     }
 
+    glm::u16vec2 Frame::getSize() {
+        return size;
+    }
+
+
     FramePhsyicalPages::FramePhsyicalPages() {}
 
     FramePhsyicalPages::FramePhsyicalPages(glm::u16vec2 size, unsigned int grassTextureId, unsigned int shaderProgramId){
@@ -50,7 +55,7 @@ namespace Engine {
     FramePageTable::FramePageTable(glm::u16vec2 size, unsigned int shaderProgramId) {
         this->size = size;
         this->shaderProgramId = shaderProgramId;
-        textureId = GLTexture::createPhysicalPagesFrameBufferTexture(size);
+        textureId = GLTexture::createPageTableFrameBufferTexture(size);
         FBO = GLBuffer::createFBO(textureId);
         planeVAO = GLBuffer::createQuadVAO();
     }

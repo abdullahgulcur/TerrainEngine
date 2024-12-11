@@ -89,8 +89,8 @@ namespace Engine {
 		glGenTextures(1, &textureId);
 		glBindTexture(GL_TEXTURE_2D, textureId);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		return textureId;
 	}
 
@@ -114,5 +114,15 @@ namespace Engine {
 		glUseProgram(shaderProgramId);
 		glUniform1i(glGetUniformLocation(shaderProgramId, location.c_str()), index);
 	}
+
+	void GLTexture::getTextureContent(UINT8 channels, unsigned char* data, unsigned int textureId) {
+
+		GLenum formats[4] = { GL_RED, GL_RG, GL_RGB, GL_RGBA };
+		GLenum format = formats[channels - 1];
+
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glGetTexImage(GL_TEXTURE_2D, 0, format, GL_UNSIGNED_BYTE, data);
+	}
+
 }
 

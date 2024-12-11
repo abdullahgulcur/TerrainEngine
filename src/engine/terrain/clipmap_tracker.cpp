@@ -37,7 +37,6 @@ namespace Engine {
 		this->heightmapTextureId = GLTexture::generateHeightmapTexture2D(physicalTextureData.channels, physicalTextureData.width, physicalTextureData.height, physicalTextureData.data);
 		physicalTextureData.clean();
 
-
 		Texture2D grassTexture("../../../resource/texture/marble.jpg");
 		unsigned int grassTextureId = GLTexture::generateTexture2D(grassTexture.channels, grassTexture.width, grassTexture.height, grassTexture.data);
 		grassTexture.clean();
@@ -354,7 +353,16 @@ namespace Engine {
 
 			ClipmapTracker::updatePageTableTexturePartial(pagePosition, block.level, blockPos);
 		}
+		
+		//Texture2D physicalTextureData(physicalTextureSize.x * heightmapData.blockSize, physicalTextureSize.y * heightmapData.blockSize, 1);
+		//GLTexture::getTextureContent(1, physicalTextureData.data, heightmapTextureId);
+		//physicalTextureData.writeDataToFile("fucker.png", 0);
 
+		//glm::u16vec2 size = pageTableGeneratorFrame.getSize();
+		//Texture2D pageTableTextureData(size.x, size.y, 4);
+		//GLTexture::getTextureContent(4, pageTableTextureData.data, pageTableGeneratorFrame.getTextureId());
+		//pageTableTextureData.writeDataToFile("fuckeri.png", 0);
+		//int x = 5;
 	}
 
 	void ClipmapTracker::updatePageTableTexturePartial(glm::u8vec2 pagePosition, UINT8 level, glm::u16vec2 blockPos) {
@@ -375,6 +383,14 @@ namespace Engine {
 		Texture2D subDataPhysicalTexture(heightmapData.blockSize, heightmapData.blockSize, 1);
 		subDataPhysicalTexture.data = &heightmapData.data[heightmapData.getArrayIndex(level, blockPos)];
 
+
+
+		//if (level > 2) {
+		//	int x = 5;
+		//}
+
+		//glPolygonMode(GL_BACK, GL_FILL);
+
 		GLTexture::updateTexture2D(heightmapTextureId, subDataPhysicalTexture.channels, subDataPhysicalTexture.width, subDataPhysicalTexture.height, subDataPhysicalTexture.data, blockPosInPage);
 
 		pageTableGeneratorFrame.setViewport(blockPosInPageTable, blockSizeInPageTable);
@@ -385,13 +401,19 @@ namespace Engine {
 		physicalPageGeneratorFrame.setUniforms(level, glm::vec2(blockPos));
 		physicalPageGeneratorFrame.draw();
 
+
+		//glm::u16vec2 size = pageTableGeneratorFrame.getSize();
+		//Texture2D pageTableTextureData(size.x, size.y, 4);
+		//GLTexture::getTextureContent(4, pageTableTextureData.data, pageTableGeneratorFrame.getTextureId());
+		//pageTableTextureData.writeDataToFile("fuckeri.png", 0);
+		//int x = 5;
 	}
 
 	float ClipmapTracker::getBorderDistance() {
 		float sum = 0.f;
-		for (int i = 0; i < clipmaps.size(); i++)
+		for (int i = 0; i < clipmaps.size() + 1; i++)
 			sum += heightmapData.blockSize << i;
-		return sum + 1;
+		return sum;
 	}
 
 }

@@ -31,6 +31,11 @@ namespace Engine {
 
 		GLCommand::refreshScene(Core::getGlfwContext()->getScreenSize(), 0);
 
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+
 		GLShader::useProgram(shaderProgramId);
 		GLUniform::setMatrix4f(shaderProgramId, "projectionView", PV);
 		GLUniform::setFloat3(shaderProgramId, "cameraPosition", camPos);

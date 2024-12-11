@@ -23,6 +23,7 @@ namespace Engine {
         void setViewport(glm::u16vec2 pos, glm::u16vec2 size);
         virtual void draw() = 0;
         unsigned int getTextureId();
+        glm::u16vec2 getSize();
     };
 
     class FramePhsyicalPages : public Frame {
