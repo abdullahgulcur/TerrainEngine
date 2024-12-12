@@ -54,7 +54,8 @@ void main(void)
     vec2 pagePos = vec2(pagePosX, pagePosY);
     vec2 uv = (pagePos + texturePosNormalized) / physicalTextureSize;
     //uv_ = uv;
-    float height = texture(physicalHeightmap, uv).r * 100;
-    vec3 pos = vec3(WorldPos2D.x, height, WorldPos2D.y);
+    vec2 rg = texture(physicalHeightmap, uv).rg;
+    float height = rg.r * 256 + rg.g;
+    vec3 pos = vec3(WorldPos2D.x, height / 3, WorldPos2D.y);
     gl_Position =  projectionView * vec4(pos, 1.0);
 }

@@ -63,6 +63,56 @@ namespace Engine {
 		}
 	}
 
+	HeightmapData::HeightmapData(HeightmapGenerator heightmapGenerator, unsigned short blockSize, UINT8 clipmapLevels) {
+
+		unsigned int terrainSize = heightmapGenerator.terrainSize.x * heightmapGenerator.terrainSize.y;
+		unsigned char* imageData = new unsigned char[terrainSize * 2];
+		for (int i = 0; i < terrainSize; i++) {
+			imageData[i*2] = heightmapGenerator.data[i] / (1 << 8);
+			imageData[i*2+1] = heightmapGenerator.data[i] % (1 << 8);
+		}
+
+		Texture2D heightmapMipmap(heightmapGenerator.terrainSize.x, heightmapGenerator.terrainSize.y, 2, clipmapLevels);
+		heightmapMipmap.loadData(imageData);
+		delete[] imageData;
+
+		//heightmapMipmap.writeDataToFile("perlinTerrain_0.png", 0);
+		//heightmapMipmap.writeDataToFile("perlinTerrain_1.png", 1);
+		//heightmapMipmap.writeDataToFile("perlinTerrain_2.png", 2);
+
+
+		int totalBlocksPerColumn = heightmapGenerator.terrainSize.x / blockSize;
+		int totalBlocksPerRow = heightmapGenerator.terrainSize.y / blockSize;
+
+		this->columns = totalBlocksPerColumn;
+		this->rows = totalBlocksPerRow;
+		this->channels = 2;
+		this->blockSize = blockSize;
+		this->terrainSize = glm::u16vec2(totalBlocksPerColumn, totalBlocksPerRow) * blockSize;
+
+		this->mipStartIndices = std::vector<unsigned int>(clipmapLevels);
+
+		this->data = new unsigned char[getDataSize()];
+		setMipmapStartIndex();
+
+		for (int level = 0; level < clipmapLevels; level++) {
+			for (int y = 0; y < totalBlocksPerRow; y++) {
+				for (int x = 0; x < totalBlocksPerColumn; x++) {
+
+					int arrayIndex = getArrayIndex(level, glm::ivec2(x, y));
+
+					Texture2D base(blockSize, blockSize, 2); // TODO: channels is 2 here
+					base.data = &data[arrayIndex];
+
+					glm::ivec2 startIndexInHeightmapMipmap(blockSize * x, blockSize * y);
+					base.copyData(heightmapMipmap, 0, level, glm::ivec2(0, 0), startIndexInHeightmapMipmap, glm::ivec2(blockSize));
+				}
+			}
+			totalBlocksPerColumn >>= 1;
+			totalBlocksPerRow >>= 1;
+		}
+	}
+
 	void HeightmapData::setMipmapStartIndex() {
 		int r = rows;
 		int c = columns;

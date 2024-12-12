@@ -23,6 +23,7 @@ add_executable(${PROJECT_NAME} ${sourceFiles} src/engine/math/transform.cpp)
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/engine/core/pch.h)
 
+target_include_directories(${PROJECT_NAME} PRIVATE src/thirdparty)
 target_include_directories(${PROJECT_NAME} PRIVATE src/thirdparty/glew/include)
 target_include_directories(${PROJECT_NAME} PRIVATE src/thirdparty/glfw/include)
 target_include_directories(${PROJECT_NAME} PRIVATE src/thirdparty/glm)

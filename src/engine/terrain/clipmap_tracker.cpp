@@ -31,9 +31,12 @@ namespace Engine {
 		ClipmapTracker::initEmptyStack();
 
 		clipmaps = std::vector<TerrainClipmap>(clipmapLevels);
-		heightmapData = HeightmapData(path, blockSize, clipmapLevels);
 
-		Texture2D physicalTextureData(physicalTextureSize.x * blockSize, physicalTextureSize.y * blockSize, 1);
+		HeightmapGenerator hg(glm::u16vec2(4096), 8, 4, 152746, 500);
+		heightmapData = HeightmapData(hg, blockSize, clipmapLevels);
+		//heightmapData = HeightmapData(path, blockSize, clipmapLevels);
+
+		Texture2D physicalTextureData(physicalTextureSize.x * blockSize, physicalTextureSize.y * blockSize, heightmapData.channels);
 		this->heightmapTextureId = GLTexture::generateHeightmapTexture2D(physicalTextureData.channels, physicalTextureData.width, physicalTextureData.height, physicalTextureData.data);
 		physicalTextureData.clean();
 
@@ -380,7 +383,7 @@ namespace Engine {
 		UINT8 a = ((blockPos.y / 256) << 5) + ((blockPos.x / 256) << 3) + level;
 		glm::u8vec4 tu(r, g, b, a);
 
-		Texture2D subDataPhysicalTexture(heightmapData.blockSize, heightmapData.blockSize, 1);
+		Texture2D subDataPhysicalTexture(heightmapData.blockSize, heightmapData.blockSize, heightmapData.channels);
 		subDataPhysicalTexture.data = &heightmapData.data[heightmapData.getArrayIndex(level, blockPos)];
 
 

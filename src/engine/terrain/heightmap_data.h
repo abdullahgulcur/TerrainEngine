@@ -1,6 +1,7 @@
 #pragma once
 
 #include "glm.hpp"
+#include "heightmap_generator.h"
 
 namespace Engine {
 
@@ -18,6 +19,7 @@ namespace Engine {
 
 		HeightmapData();
 		HeightmapData(std::string path, unsigned short blockSize, UINT8 clipmapLevels);
+		HeightmapData(HeightmapGenerator heightmapGenerator, unsigned short blockSize, UINT8 clipmapLevels);
 		void setMipmapStartIndex();
 		unsigned int getDataSize();
 		unsigned int getBlockCount();
