@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "heightmap_data.h"
-#include "texture2d.h"
+#include "heightmap.h"
 #include "terrain_config.h"
 
 //#define STB_IMAGE_IMPLEMENTATION
@@ -12,87 +12,73 @@ namespace Engine {
 
 	HeightmapData::HeightmapData(std::string path, unsigned short blockSize, UINT8 clipmapLevels) {
 
-		int width;
-		int height;
-		int channels;
-		unsigned char* imageData = stbi_load(path.c_str(), &width, &height, &channels, 0);
-		if (width / blockSize > 1024 || height / blockSize > 1024) {
+		//int width;
+		//int height;
+		//int channels;
+		//unsigned char* imageData = stbi_load(path.c_str(), &width, &height, &channels, 0);
+		//if (width / blockSize > 1024 || height / blockSize > 1024) {
 
-			// handle problem
-			return;
-		}
-
-
-		Texture2D heightmapMipmap(width, height, channels, clipmapLevels);
-		heightmapMipmap.loadData(imageData);
-		stbi_image_free(imageData);
-
-		//heightmapMipmap.writeDataToFile("fucker.png", 1);
+		//	// handle problem
+		//	return;
+		//}
 
 
-		int totalBlocksPerColumn = width / blockSize;
-		int totalBlocksPerRow = height / blockSize;
+		//Texture2D heightmapMipmap(width, height, channels, clipmapLevels);
+		//heightmapMipmap.loadData(imageData);
+		//stbi_image_free(imageData);
 
-		this->columns = totalBlocksPerColumn;
-		this->rows = totalBlocksPerRow;
-		this->channels = channels;
-		this->blockSize = blockSize;
-		this->terrainSize = glm::u16vec2(totalBlocksPerColumn, totalBlocksPerRow) * blockSize;
+		////heightmapMipmap.writeDataToFile("fucker.png", 1);
 
-		this->mipStartIndices = std::vector<unsigned int>(clipmapLevels);
 
-		this->data = new unsigned char[getDataSize()];
-		setMipmapStartIndex();
+		//int totalBlocksPerColumn = width / blockSize;
+		//int totalBlocksPerRow = height / blockSize;
 
-		for (int level = 0; level < clipmapLevels; level++) {
-			for (int y = 0; y < totalBlocksPerRow; y++) {
-				for (int x = 0; x < totalBlocksPerColumn; x++) {
+		//this->columns = totalBlocksPerColumn;
+		//this->rows = totalBlocksPerRow;
+		//this->channels = channels;
+		//this->blockSize = blockSize;
+		//this->terrainSize = glm::u16vec2(totalBlocksPerColumn, totalBlocksPerRow) * blockSize;
 
-					int arrayIndex = getArrayIndex(level, glm::ivec2(x, y));
+		//this->mipStartIndices = std::vector<unsigned int>(clipmapLevels);
 
-					Texture2D base(blockSize, blockSize, 1); // TODO: channels is 1 here
-					base.data = &data[arrayIndex];
+		//this->data = new unsigned char[getDataSize()];
+		//setMipmapStartIndex();
 
-					glm::ivec2 startIndexInHeightmapMipmap(blockSize * x, blockSize * y);
-					base.copyData(heightmapMipmap, 0, level, glm::ivec2(0, 0), startIndexInHeightmapMipmap, glm::ivec2(blockSize));
+		//for (int level = 0; level < clipmapLevels; level++) {
+		//	for (int y = 0; y < totalBlocksPerRow; y++) {
+		//		for (int x = 0; x < totalBlocksPerColumn; x++) {
 
-				}
-			}
-			totalBlocksPerColumn >>= 1;
-			totalBlocksPerRow >>= 1;
-		}
+		//			int arrayIndex = getArrayIndex(level, glm::ivec2(x, y));
+
+		//			Texture2D base(blockSize, blockSize, 1); // TODO: channels is 1 here
+		//			base.data = &data[arrayIndex];
+
+		//			glm::ivec2 startIndexInHeightmapMipmap(blockSize * x, blockSize * y);
+		//			base.copyData(heightmapMipmap, 0, level, glm::ivec2(0, 0), startIndexInHeightmapMipmap, glm::ivec2(blockSize));
+
+		//		}
+		//	}
+		//	totalBlocksPerColumn >>= 1;
+		//	totalBlocksPerRow >>= 1;
+		//}
 	}
 
 	HeightmapData::HeightmapData(HeightmapGenerator heightmapGenerator, unsigned short blockSize, UINT8 clipmapLevels) {
 
-		unsigned int terrainSize = heightmapGenerator.terrainSize.x * heightmapGenerator.terrainSize.y;
-		unsigned char* imageData = new unsigned char[terrainSize * 2];
-		for (int i = 0; i < terrainSize; i++) {
-			imageData[i*2] = heightmapGenerator.data[i] / (1 << 8);
-			imageData[i*2+1] = heightmapGenerator.data[i] % (1 << 8);
-		}
-
-		Texture2D heightmapMipmap(heightmapGenerator.terrainSize.x, heightmapGenerator.terrainSize.y, 2, clipmapLevels);
-		heightmapMipmap.loadData(imageData);
-		delete[] imageData;
-
-		//heightmapMipmap.writeDataToFile("perlinTerrain_0.png", 0);
-		//heightmapMipmap.writeDataToFile("perlinTerrain_1.png", 1);
-		//heightmapMipmap.writeDataToFile("perlinTerrain_2.png", 2);
-
+		Heightmap heightmapMipmap(heightmapGenerator.terrainSize.x, heightmapGenerator.terrainSize.y, clipmapLevels);
+		heightmapMipmap.loadData(heightmapGenerator.data);
 
 		int totalBlocksPerColumn = heightmapGenerator.terrainSize.x / blockSize;
 		int totalBlocksPerRow = heightmapGenerator.terrainSize.y / blockSize;
 
 		this->columns = totalBlocksPerColumn;
 		this->rows = totalBlocksPerRow;
-		this->channels = 2;
 		this->blockSize = blockSize;
 		this->terrainSize = glm::u16vec2(totalBlocksPerColumn, totalBlocksPerRow) * blockSize;
 
 		this->mipStartIndices = std::vector<unsigned int>(clipmapLevels);
 
-		this->data = new unsigned char[getDataSize()];
+		this->data = new unsigned int[getDataSize()];
 		setMipmapStartIndex();
 
 		for (int level = 0; level < clipmapLevels; level++) {
@@ -101,7 +87,7 @@ namespace Engine {
 
 					int arrayIndex = getArrayIndex(level, glm::ivec2(x, y));
 
-					Texture2D base(blockSize, blockSize, 2); // TODO: channels is 2 here
+					Heightmap base(blockSize, blockSize);
 					base.data = &data[arrayIndex];
 
 					glm::ivec2 startIndexInHeightmapMipmap(blockSize * x, blockSize * y);
@@ -128,7 +114,7 @@ namespace Engine {
 	}
 
 	unsigned int HeightmapData::getDataSize() {
-		return columns * rows * channels * getBlockCount();
+		return columns * rows * getBlockCount();
 	}
 
 	unsigned int HeightmapData::getBlockCount() {
@@ -154,7 +140,7 @@ namespace Engine {
 
 	int HeightmapData::getArrayIndex(int level, glm::ivec2 index) {
 
-		int arraySize = blockSize * blockSize * channels;
+		int arraySize = blockSize * blockSize;
 		int blockIndex = getBlockStartIndexAtHeightmapTexture(level, index);
 		return arraySize * blockIndex;
 	}

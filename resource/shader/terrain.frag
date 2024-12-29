@@ -3,93 +3,63 @@
 in vec2 WorldPos2D;
 in float col;
 out vec4 FragColor;
+in vec3 WorldPos;
 
+in vec2 UV;
+in mat3 TBN;
+in vec3 Normal;
 
 uniform int blockSize;
 uniform ivec2 terrainSize;
-uniform sampler2D pageTable;
+uniform usampler2D pageTable;
 uniform sampler2D physicalPages;
-uniform vec2 physicalTextureSize;
+uniform vec2 physicalTexturePageCount;
+uniform vec3 cameraPosition;
+
+uint getValue(uint color, int startBit, int bits){
+    return (color >> startBit) & ((1 << bits) - 1);
+}
+
+vec2 getUV(){
+
+    uint color = texture(pageTable, WorldPos2D / terrainSize).r;
+    uint scale = 1 << getValue(color, 0, 4);
+    uint pageSizeMultiplier = blockSize * scale;
+    uint page_start_x_world = getValue(color, 22, 10) * pageSizeMultiplier;
+    uint page_start_y_world = getValue(color, 12, 10) * pageSizeMultiplier;
+    vec2 offset_world = WorldPos2D - vec2(page_start_x_world, page_start_y_world);
+    vec2 posInPageNormalized = 0.001 + (offset_world / pageSizeMultiplier) * 0.998;
+    uint pagePosX = getValue(color, 8, 4);
+    uint pagePosY = getValue(color, 4, 4);
+    vec2 pagePos = vec2(pagePosX, pagePosY);
+    return (pagePos + posInPageNormalized) / physicalTexturePageCount;
+}
 
 void main(){
 
-//    int blockSize = 16;
-//    int rowsPhysicalTexture = 8;
-//    int terrainSize = 4096;
-//
-//    vec4 color = texture(pageTable, WorldPos2D / terrainSize).rgba;
-//
-//    int scale = 1 << int(color.a * 255);
-//
-//    int red = int(color.r * 255);
-//    int green = int(color.g * 255);
-//    int blue = int(color.b * 255);
-//    int alpha = int(color.a * 255);
-//
-//    int alpha_scale = alpha % (1 << 3);
-//    alpha >>= 3;
-//
-//    int alpha_remainder_start_x = alpha % (1 << 2);
-//    alpha >>= 2;
-//
-//    int alpha_remainder_start_y = alpha;
-//
-//    int start_x = (red + alpha_remainder_start_x * 256) * blockSize * scale;
-//    int start_y = (green + alpha_remainder_start_y * 256) * blockSize * scale;
-//
-//    vec2 offset = WorldPos2D - vec2(start_x, start_y);
-//    vec2 texturePosNormalized = offset / (scale * blockSize);
-//    float col = max(texturePosNormalized.x, texturePosNormalized.y);
-//
-//    int b = int(color.b * 255);
-//    int pagePosY = b / 16;
-//    int pagePosX = b % 16;
-//    vec2 pagePos = vec2(pagePosX, pagePosY);
-//    vec2 uv = (pagePos + texturePosNormalized) / rowsPhysicalTexture;
-//
-//    vec3 ccc = vec3(uv,1);
-//    float gridSize = 5;
-//    float lineWidth = 1;
-//    float valX = step(mod(WorldPos2D.x, gridSize ), lineWidth);
-//    float valY = step(mod(WorldPos2D.y, gridSize ), lineWidth);
-//    float c = max(valX,valY);
-//    c = mix(c, 1, 0.5);
-
-
-    const uint SCALE_BITMASK = 7u;
-
-    vec4 color = texture(pageTable, WorldPos2D / terrainSize).rgba;
-
-    int red = int(color.r * 255);
-    int green = int(color.g * 255);
-    int blue = int(color.b * 255);
-    int alpha = int(color.a * 255);
-
-    int scale = 1 << (alpha & SCALE_BITMASK);
-
-    alpha >>= 3;
-
-    int alpha_remainder_start_x = alpha % (1 << 2);
-    alpha >>= 2;
-
-    int alpha_remainder_start_y = alpha;
-
-    int start_x = (red + alpha_remainder_start_x * 256) * blockSize * scale;
-    int start_y = (green + alpha_remainder_start_y * 256) * blockSize * scale;
-
-    vec2 offset = WorldPos2D - vec2(start_x, start_y);
-    vec2 texturePosNormalized = offset / (scale * blockSize);
-    //col = max(offset.x, offset.y);
-
-    int b = int(color.b * 255);
-    int pagePosY = b / 16;
-    int pagePosX = b % 16;
-    vec2 pagePos = vec2(pagePosX, pagePosY);
-    vec2 uv = (pagePos + texturePosNormalized) / physicalTextureSize;
+    vec2 uv = getUV();
 
     vec3 albedo = texture(physicalPages, uv).rgb;
 
-    FragColor = vec4(albedo, 1);
+    ////------------
+    //albedo = vec3(1,1,1);
+    vec3 normal = Normal;
+    //vec3 N = TBN * normal;
+    vec3 N = normal;
 
-    //FragColor = vec4(c*ccc, 1.0);
+    float lightPow = 3;
+    vec3 lightDir = vec3(1,-1,1);
+    vec3 L = normalize(-lightDir);
+    vec3 radiance = vec3(lightPow);
+            
+    float NdotL = max(dot(N, L), 0.0);        
+
+    vec3 viewDir = normalize(cameraPosition - WorldPos);
+
+    vec3 Lo = (albedo / 3.14) * radiance * NdotL;
+    vec3 color = albedo * 0.3 + Lo;
+    //------------
+
+    //color = vec3(1,1,1);
+    FragColor = vec4(color, 1);
 }

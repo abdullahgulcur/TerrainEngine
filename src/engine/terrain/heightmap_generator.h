@@ -10,11 +10,11 @@ namespace Engine {
 	public:
 
 		glm::u16vec2 terrainSize;
-		unsigned short* data;
+		unsigned int* data;
 		unsigned short maxHeight;
 
 		HeightmapGenerator(glm::u16vec2 terrainSize, double frequency, UINT8 octaves, unsigned int seed, unsigned short maxHeight);
-		~HeightmapGenerator();
+		~HeightmapGenerator() {}
 
 	};
 }

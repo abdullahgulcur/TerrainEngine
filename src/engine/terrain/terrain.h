@@ -1,8 +1,8 @@
 #pragma once
 
-#include "terrain_render.h"
-
 #include "terrain_config.h"
+#include "page_table_manager.h"
+#include "terrain_geometry.h"
 
 // TODO: data lari freelemeyi unutma
 
@@ -20,11 +20,11 @@ namespace Engine {
 
 	public:
 
-		TerrainRender terrainRender;
+		PageTableManager pageTableManager;
+		TerrainGeometry terrainGeometry;
 
-		static Terrain* create();
-		Terrain();
-		~Terrain();
+		Terrain() {}
+		~Terrain() {}
 		void init(std::string path, unsigned short blockSize, UINT8 clipmapLevels);
 		void update();
 	};

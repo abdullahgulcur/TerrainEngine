@@ -26,33 +26,4 @@ namespace Engine {
         glm::u16vec2 getSize();
     };
 
-    class FramePhsyicalPages : public Frame {
-    private:
-
-        unsigned int level;
-        glm::vec2 position;
-        unsigned int grassTextureId;
-
-    public:
-
-        FramePhsyicalPages();
-        FramePhsyicalPages(glm::u16vec2 size, unsigned int grassTextureId, unsigned int shaderProgramId);
-        ~FramePhsyicalPages();
-        void setUniforms(unsigned int level, glm::vec2 position);
-        void draw();
-    };
-
-    class FramePageTable : public Frame {
-    private:
-        
-        glm::u8vec4 color;
-
-    public:
-
-        FramePageTable();
-        FramePageTable(glm::u16vec2 size, unsigned int shaderProgramId);
-        ~FramePageTable();
-        void setUniforms(glm::u8vec4 color);
-        void draw();
-    };
 }

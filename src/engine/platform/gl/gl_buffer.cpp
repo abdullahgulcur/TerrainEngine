@@ -51,6 +51,13 @@ namespace Engine {
         glVertexAttribDivisor(index, 1);
     }
 
+    void GLBuffer::setInstancedIntegerVertexAttribute(unsigned int index, unsigned int size, unsigned int type, int stride, const void* pointer) {
+
+        glEnableVertexAttribArray(index);
+        glVertexAttribIPointer(index, size, type, stride, pointer);
+        glVertexAttribDivisor(index, 1);
+    }
+
     void GLBuffer::setArrayBufferSubData(unsigned int buffer, unsigned int offset, unsigned int size, void* ptr) {
 
         glBindBuffer(GL_ARRAY_BUFFER, buffer);
@@ -62,6 +69,12 @@ namespace Engine {
 
         glEnableVertexAttribArray(index);
         glVertexAttribPointer(index, size, type, GL_FALSE, stride, pointer);
+    }
+
+    void GLBuffer::setIntegerVertexAttribute(unsigned int index, unsigned int size, unsigned int type, int stride, const void* pointer) {
+
+        glEnableVertexAttribArray(index);
+        glVertexAttribIPointer(index, size, type, stride, pointer);
     }
 
 	unsigned int GLBuffer::createQuadVAO() {
@@ -88,16 +101,15 @@ namespace Engine {
 
         VAO = GLBuffer::createVAO();
         GLBuffer::createVBO(sizeVertices, vertices);
-        GLBuffer::setVertexAttribute(0, 2, GL_FLOAT, sizeof(glm::vec2), (void*)0);
+        GLBuffer::setIntegerVertexAttribute(0, 2, GL_UNSIGNED_BYTE, sizeof(glm::u8vec2), (void*)0);
 
         GLBuffer::createEBO(sizeIndices, indices);
 
-        int stride = 12;
+        int stride = 6;
         instanceBuffer = GLBuffer::createVBO(instanceCount * stride, NULL);
 
-        int counter = 0;
-        GLBuffer::setInstancedVertexAttribute(1, 2, GL_FLOAT, stride, (void*)counter);
-        GLBuffer::setInstancedVertexAttribute(2, 1, GL_FLOAT, stride, (void*)(counter += sizeof(glm::vec2)));
+        GLBuffer::setInstancedIntegerVertexAttribute(1, 2, GL_UNSIGNED_SHORT, stride, (void*)0);
+        GLBuffer::setInstancedIntegerVertexAttribute(2, 1, GL_UNSIGNED_BYTE, stride, (void*)sizeof(glm::u16vec2));
 
         glBindVertexArray(0);
     }
@@ -113,5 +125,16 @@ namespace Engine {
             std::cerr << "Framebuffer not complete" << std::endl;
 
         return FBO;
+    }
+
+    unsigned int GLBuffer::createRBO(glm::u16vec2 size) {
+
+        unsigned int RBO;
+        glGenRenderbuffers(1, &RBO);
+        glBindRenderbuffer(GL_RENDERBUFFER, RBO);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, size.x, size.y);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
+
+        return RBO;
     }
 }

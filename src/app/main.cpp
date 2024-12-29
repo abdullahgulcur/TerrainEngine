@@ -4,20 +4,24 @@
 
 int main() {
 
+    //Engine code
     Engine::Core* core = Engine::Core::getInstance();
-    Game::CameraController* cameraCtrl = new Game::CameraController;
-
     core->init();
+
+    //Game code
+    Game::CameraController* cameraCtrl = new Game::CameraController;
     cameraCtrl->start();
-
-    core->terrain->init("../../../resource/texture/heightmap.png", static_cast<unsigned short>(Engine::TerrainClipmapSize::BLOCK_SIZE_32), 4);
-
+    Engine::Terrain* terrain = new Engine::Terrain;
+    core->scene->terrain = terrain;
+    terrain->init("../../../resource/texture/heightmap.png", static_cast<unsigned short>(Engine::TerrainClipmapSize::BLOCK_SIZE_32), 4);
 
     while (!core->getGlfwContext()->shouldClose()) {
 
+        //Engine code
         core->update();
-        cameraCtrl->update();
 
+        //Game code
+        cameraCtrl->update();
     }
 
     return 0;

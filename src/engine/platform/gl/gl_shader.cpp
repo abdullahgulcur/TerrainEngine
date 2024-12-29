@@ -53,5 +53,8 @@ namespace Engine {
 		glUseProgram(programId);
 	}
 
+	void GLShader::deleteProgram(unsigned int programId) {
+		glDeleteProgram(programId);
+	}
 
 }

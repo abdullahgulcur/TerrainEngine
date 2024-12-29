@@ -16,6 +16,7 @@ file(GLOB sourceFiles "src/app/*.cpp"
 	"src/engine/memory/*.cpp"
 	"src/engine/platform/gl/*.cpp"
 	"src/engine/platform/glfw/*.cpp"
+	"src/engine/renderer/*.cpp"
 	"src/engine/scene/*.cpp"
 	"src/engine/terrain/*.cpp")
 
@@ -38,6 +39,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE src/engine/memory)
 target_include_directories(${PROJECT_NAME} PRIVATE src/engine/platform/gl)
 target_include_directories(${PROJECT_NAME} PRIVATE src/engine/platform/glfw)
 target_include_directories(${PROJECT_NAME} PRIVATE src/engine/scene)
+target_include_directories(${PROJECT_NAME} PRIVATE src/engine/renderer)
 target_include_directories(${PROJECT_NAME} PRIVATE src/engine/terrain)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLEW_STATIC)

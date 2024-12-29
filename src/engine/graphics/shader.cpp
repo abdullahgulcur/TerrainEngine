@@ -21,6 +21,7 @@ namespace Engine {
         Shader::loadTerrain();
         Shader::loadTerrainRVT();
         Shader::loadTerrainPageTable();
+        Shader::loadFrameDefaultShader();
     }
 
     void Shader::loadPBR() {
@@ -57,6 +58,15 @@ namespace Engine {
         std::string fragmentShaderPath = "../../../resource/shader/terrain_page_table.frag";
         unsigned int shaderProgramId = GLShader::loadShader(vertexShaderPath, fragmentShaderPath);
         shaders[ShaderType::TERRAIN_PAGE_TABLE] = shaderProgramId;
+    }
+
+    void Shader::loadFrameDefaultShader() {
+
+        std::string vertexShaderPath = "../../../resource/shader/frame_default.vert";
+        std::string fragmentShaderPath = "../../../resource/shader/frame_default.frag";
+        unsigned int shaderProgramId = GLShader::loadShader(vertexShaderPath, fragmentShaderPath);
+        GLTexture::setTextureUniformLocation("frameTexture", shaderProgramId, 0);
+        shaders[ShaderType::FRAME_DEFAULT] = shaderProgramId;
     }
 
 }

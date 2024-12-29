@@ -6,7 +6,8 @@ namespace Engine {
         TERRAIN = 0,
         TERRAIN_RVT = 1,
         PBR = 2,
-        TERRAIN_PAGE_TABLE = 3
+        TERRAIN_PAGE_TABLE = 3,
+        FRAME_DEFAULT = 4
     };
 
     class Shader {
@@ -24,5 +25,6 @@ namespace Engine {
         void loadTerrain();
         void loadTerrainRVT();
         void loadTerrainPageTable();
+        void loadFrameDefaultShader();
     };
 }

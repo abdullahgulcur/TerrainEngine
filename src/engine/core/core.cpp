@@ -1,20 +1,9 @@
 #include "pch.h"
 #include "core.h"
-#include "gl_context.h"
 
 namespace Engine {
 
     Core* Core::instance;
-
-    Core* Core::getInstance() {
-        if (!instance)
-            instance = new Core;
-        return instance;
-    }
-
-    Core::Core() {}
-
-    Core::~Core() {}
 
     void Core::init() {
 
@@ -22,22 +11,32 @@ namespace Engine {
         input = Input::create();
         camera = Camera::create();
         shader = Shader::create();
-        terrain = Terrain::create();
+        scene = Scene::create();
+        renderer = Renderer::create();
 
         glfwContext->init();
-        GLContext::init();
         input->init();
         camera->init(glfwContext->getScreenSize());
-        shader->init();
-        //terrain->init("../../../resource/texture/heightmap.png", static_cast<unsigned short>(Engine::TerrainClipmapSize::BLOCK_SIZE_32), 4);
+
+        renderer->init();
+        shader->init(); // this must be in renderer
+        renderer->loadFrames();
     }
 
     void Core::update() {
 
-        terrain->update();
+        scene->update();
         input->update();
         glfwContext->pollEvents();
         glfwContext->swapBuffers();
+
+        renderer->draw(scene);
+    }
+
+    Core* Core::getInstance() {
+        if (!instance)
+            instance = new Core;
+        return instance;
     }
 
     GLFWContext* Core::getGlfwContext() {

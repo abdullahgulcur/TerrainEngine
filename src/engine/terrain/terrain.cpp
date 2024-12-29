@@ -1,30 +1,18 @@
 #include "pch.h"
 #include "terrain.h"
+#include "core.h"
 
 namespace Engine {
 
-	Terrain* Terrain::create() {
-
-		return new Terrain();
-	}
-
-	Terrain::Terrain() {
-
-	}
-
-	Terrain::~Terrain() {
-
-	}
-
 	void Terrain::init(std::string path, unsigned short blockSize, UINT8 clipmapLevels) {
 
-		terrainRender.init(path, blockSize, clipmapLevels);
+		pageTableManager.init(path, blockSize, clipmapLevels);
+		terrainGeometry.generateTerrainGeometryVertexArrays(pageTableManager.heightmapData.blockSize, pageTableManager.heightmapData.mipStartIndices.size(), BLOCK_COUNT_PER_LEVEL * pageTableManager.heightmapData.mipStartIndices.size() + BLOCK_COUNT_INNER);
 	}
 
 	void Terrain::update() {
 
-		terrainRender.clipmapTracker.update();
-		terrainRender.update();
+		pageTableManager.update();
 	}
 
 }

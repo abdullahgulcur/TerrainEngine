@@ -12,10 +12,10 @@ namespace Engine {
 		unsigned short columns;
 		unsigned short rows;
 		glm::u16vec2 terrainSize;
-		UINT8 channels;
+		//UINT8 channels;
 		UINT8 blockSize;
 		std::vector<unsigned int> mipStartIndices;
-		unsigned char* data;
+		unsigned int* data;
 
 		HeightmapData();
 		HeightmapData(std::string path, unsigned short blockSize, UINT8 clipmapLevels);

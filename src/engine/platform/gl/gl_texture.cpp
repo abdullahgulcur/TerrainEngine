@@ -51,6 +51,36 @@ namespace Engine {
 		return textureId;
 	}
 
+	unsigned int GLTexture::generateHeightmapTexture2D(glm::u16vec2 size) {
+
+		unsigned int textureId;
+		glGenTextures(1, &textureId);
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RG8, size.x, size.y, 0, GL_RG, GL_UNSIGNED_BYTE, nullptr);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		return textureId;
+	}
+
+	unsigned int GLTexture::generateHeightmapTexture(glm::u16vec2 size) {
+
+		unsigned int textureId;
+		glGenTextures(1, &textureId);
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, size.x, size.y, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, nullptr);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		return textureId;
+	}
+
 	unsigned int GLTexture::generatePhysicalPagesTexture(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data) {
 
 		GLenum internalFormats[4] = { GL_R8, GL_RG8, GL_RGB8, GL_RGBA8 };
@@ -88,9 +118,20 @@ namespace Engine {
 		unsigned int textureId;
 		glGenTextures(1, &textureId);
 		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, size.x, size.y, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, nullptr);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		return textureId;
+	}
+
+	unsigned int GLTexture::createFrameSceneTexture(glm::u16vec2 size) {
+
+		unsigned int textureId;
+		glGenTextures(1, &textureId);
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, size.x, size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		return textureId;
 	}
 
@@ -101,6 +142,13 @@ namespace Engine {
 
 		glBindTexture(GL_TEXTURE_2D, textureId);
 		glTexSubImage2D(GL_TEXTURE_2D, 0, pos.x, pos.y, width, height, format, GL_UNSIGNED_BYTE, data);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	void GLTexture::updateHeightmapPhysicalTexture(unsigned int textureId, unsigned short width, unsigned short height, const unsigned int* data, glm::ivec2 pos) {
+
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, pos.x, pos.y, width, height, GL_RED_INTEGER, GL_UNSIGNED_INT, data);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
@@ -122,6 +170,23 @@ namespace Engine {
 
 		glBindTexture(GL_TEXTURE_2D, textureId);
 		glGetTexImage(GL_TEXTURE_2D, 0, format, GL_UNSIGNED_BYTE, data);
+	}
+
+	//void GLTexture::getTextureContent(UINT8 channels, unsigned int* data, unsigned int textureId) {
+
+	//	glBindTexture(GL_TEXTURE_2D, textureId);
+	//	glGetTexImage(GL_TEXTURE_2D, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, data);
+	//}
+
+	void GLTexture::getHeightmapContent(unsigned int* data, unsigned int textureId) {
+
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glGetTexImage(GL_TEXTURE_2D, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, data);
+	}
+
+	void GLTexture::deleteTexture(unsigned int textureId) {
+
+		glDeleteTextures(1, &textureId);
 	}
 
 }

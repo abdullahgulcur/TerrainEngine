@@ -4,7 +4,8 @@
 #include "input.h"
 #include "camera.h"
 #include "shader.h"
-#include "terrain.h"
+#include "renderer.h"
+#include "scene.h"
 
 namespace Engine {
 
@@ -13,24 +14,23 @@ namespace Engine {
 
         static Core* instance;
 
-        GLFWContext* glfwContext;
-        Input* input;
-        Camera* camera;
-        Shader* shader;
+        GLFWContext* glfwContext = NULL;
+        Input* input = NULL;
+        Camera* camera = NULL;
+        Shader* shader = NULL;
+        Renderer* renderer = NULL;
 
-        Core();
-        ~Core();
+        Core() {}
+        ~Core() {}
 
     public:
 
-        Terrain* terrain;
-
-        
-        static Core* getInstance();
+        Scene* scene = NULL;
 
         void init();
         void update();
 
+        static Core* getInstance();
         static GLFWContext* getGlfwContext();
         static Input* getInput();
         static Camera* getCamera();
