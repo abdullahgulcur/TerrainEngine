@@ -10,6 +10,7 @@ namespace Engine {
     public:
 
         static unsigned int generateTexture2D(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data);
+        static unsigned int generateMaskTexture(unsigned short width, unsigned short height);
         static unsigned int generateHeightmapTexture2D(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data);
         static unsigned int generateHeightmapTexture2D(glm::u16vec2 size);
         static unsigned int generateHeightmapTexture(glm::u16vec2 size);
@@ -25,5 +26,6 @@ namespace Engine {
         static void getTextureContent(UINT8 channels, unsigned char* data, unsigned int textureId);
         static void getHeightmapContent(unsigned int* data, unsigned int textureId);
         static void deleteTexture(unsigned int textureId);
+        static void generateMipmap(unsigned int textureId);
     };
 }

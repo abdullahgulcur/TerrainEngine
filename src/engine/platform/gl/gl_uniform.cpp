@@ -15,6 +15,10 @@ namespace Engine {
 		glUniform2fv(glGetUniformLocation(shaderProgramId, &location[0]), 1, &value[0]);
 	}
 
+	void GLUniform::setFloat1(unsigned int shaderProgramId, std::string location, float value) {
+		glUniform1f(glGetUniformLocation(shaderProgramId, &location[0]), value);
+	}
+
 	void GLUniform::setInt1(unsigned int shaderProgramId, std::string location, int value) {
 		glUniform1i(glGetUniformLocation(shaderProgramId, &location[0]), value);
 	}

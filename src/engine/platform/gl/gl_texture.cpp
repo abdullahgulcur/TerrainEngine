@@ -30,6 +30,21 @@ namespace Engine {
 		return textureId;
     }
 
+	unsigned int GLTexture::generateMaskTexture(unsigned short width, unsigned short height) {
+
+		unsigned int textureId;
+		glGenTextures(1, &textureId);
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		return textureId;
+	}
+
 	unsigned int GLTexture::generateHeightmapTexture2D(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data) {
 
 		GLenum internalFormats[4] = { GL_R8, GL_RG8, GL_RGB8, GL_RGBA8 };
@@ -187,6 +202,12 @@ namespace Engine {
 	void GLTexture::deleteTexture(unsigned int textureId) {
 
 		glDeleteTextures(1, &textureId);
+	}
+
+	void GLTexture::generateMipmap(unsigned int textureId) {
+
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 
 }

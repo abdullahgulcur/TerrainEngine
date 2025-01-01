@@ -41,13 +41,9 @@ namespace Engine {
 		this->heightmapTextureId = GLTexture::generateHeightmapTexture(glm::u16vec2(physicalTextureData.width, physicalTextureData.height));
 		physicalTextureData.clean();
 
-		Texture2D grassTexture("../../../resource/texture/marble.jpg");
-		unsigned int grassTextureId = GLTexture::generateTexture2D(grassTexture.channels, grassTexture.width, grassTexture.height, grassTexture.data);
-		grassTexture.clean();
 		glm::ivec2 pageSize(512, 512);
-		unsigned int physicalPageGeneratorShaderProgramId = Core::getShader()->shaders[ShaderType::TERRAIN_RVT];
 		unsigned int pageTableGeneratorShaderProgramId = Core::getShader()->shaders[ShaderType::TERRAIN_PAGE_TABLE];
-		physicalPageGeneratorFrame = FramePhsyicalPages(glm::u16vec2(physicalTextureSize.x * pageSize.x, physicalTextureSize.y * pageSize.y), grassTextureId, physicalPageGeneratorShaderProgramId);
+		physicalPageGeneratorFrame = FramePhsyicalPages(glm::u16vec2(physicalTextureSize.x * pageSize.x, physicalTextureSize.y * pageSize.y), heightmapTextureId);
 		pageTableGeneratorFrame = FramePageTable(glm::u16vec2(heightmapData.rows, heightmapData.columns), pageTableGeneratorShaderProgramId);
 
 		Camera* camera = Core::getCamera();
@@ -355,6 +351,8 @@ namespace Engine {
 			glm::u16vec2 pagePosition(topEmpty % physicalTextureSize.x, topEmpty / physicalTextureSize.x);
 			glm::u16vec2 blockPos = this->clipmaps[block.level].blockIndices[block.blockIndex];
 
+			std::cout << jobs.size() << std::endl;
+
 			PageTableManager::updatePageTableTexturePartial(pagePosition, block.level, blockPos);
 		}
 	}
@@ -380,7 +378,7 @@ namespace Engine {
 		pageTableGeneratorFrame.draw();
 
 		physicalPageGeneratorFrame.setViewport(blockPosInPhysicalPagesTexture, pageSize);
-		physicalPageGeneratorFrame.setUniforms(level, glm::vec2(blockPos));
+		physicalPageGeneratorFrame.setUniforms(level, glm::vec2(blockPos), pagePosition, physicalTextureSize);
 		physicalPageGeneratorFrame.draw();
 	}
 

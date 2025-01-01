@@ -32,7 +32,9 @@ namespace Engine {
         }
 
         ~Heightmap();
-        void generateNormals();
+        void generateDxDy();
+        unsigned int& getData(unsigned short x, unsigned short y);
+        unsigned int& getData(unsigned short x, unsigned short y, UINT8 mipLevel);
         unsigned int getIndex(unsigned short x, unsigned short y);
         unsigned int getIndex(unsigned short x, unsigned short y, UINT8 mipLevel);
         void loadData(unsigned int* data);

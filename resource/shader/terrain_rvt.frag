@@ -1,47 +1,36 @@
-//#version 330 core
-//
-////in vec2 texCoord;
-//out vec4 FragColor;
-//
-////uniform sampler2D mask;
-////uniform sampler2D grass;
-////uniform sampler2D rock;
-////
-////uniform vec2 pos;
-////uniform int level;
-//
-//
-//void main(){
-//
-////    float scale = 1 << level;
-//////    vec2 uv = pos * scale
-////
-////    // get mip from level
-////    vec3 col0 = textureLod(grass, texCoord * scale, level).rgb;
-////    vec3 col1 = textureLod(rock, texCoord * scale, level).rgb;
-////    float alpha = textureLod(mask, texCoord, level).r;
-////
-////    vec3 col = mix(col0, col1, alpha);
-//
-//    FragColor = vec4(1.0, 0.0, 0.0, 1.0); // Red color
-//}
-//
-
 #version 460 core
 out vec4 FragColor;
 in vec2 texCoord;
 
-//uniform sampler2D mask;
-uniform sampler2D grass;
-//uniform sampler2D rock;
+uniform sampler2D heightmap;
+uniform sampler2D tex0;
+uniform sampler2D tex1;
+uniform sampler2D tex2;
 
 uniform vec2 pos;
 uniform int level;
+uniform int blockSize;
+uniform vec2 pagePosition;
+uniform vec2 physicalTextureSize;
+
+vec2 getUVForHeightmapTexture(){
+    return (texCoord / physicalTextureSize) + (pagePosition / physicalTextureSize);
+}
 
 void main() {
 
+    float scaleMult = 1.33; // uniform
+    float offset = 1.85; // uniform
+
     float scale = 1 << level;
-    vec2 uv = texCoord * scale * 1;
-    vec3 albedo = textureLod(grass, uv, level).rgb;
+
+    vec2 uv = (texCoord + pos) * scale * scaleMult + offset;
+
+    vec3 a0 = textureLod(tex0, uv, level).rgb;
+    vec3 a1 = textureLod(tex1, uv, level).rgb;
+    float alpha = textureLod(tex2, uv, level).r;
+
+    vec3 albedo = mix(a0, a1, alpha);
+
     FragColor = vec4(albedo , 1.0);
 }

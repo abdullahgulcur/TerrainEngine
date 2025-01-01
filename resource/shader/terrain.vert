@@ -5,7 +5,6 @@ layout (location = 1) in uvec2 posInstance;
 layout (location = 2) in uint levelInstance;
 
 uniform int blockSize;
-uniform ivec2 terrainSize;
 uniform mat4 projectionView;
 uniform usampler2D pageTable;
 uniform usampler2D physicalHeightmap;
@@ -16,15 +15,7 @@ out vec3 Normal;
 out mat3 TBN;
 
 uint getValue(uint color, int startBit, int bits){
-    return (color >> startBit) & ((1 << bits) - 1);
-}
-
-uint getScale(uvec2 pos2D, ivec2 offset){
-
-    uvec2 posInPage = (pos2D + offset) / blockSize;
-    uint color = texelFetch(pageTable, ivec2(posInPage), 0).r;
-    uint scale = 1 << getValue(color, 0, 4);
-    return scale;
+    return (color >> startBit) & ((1u << bits) - 1);
 }
 
 uvec2 getTexelCoordinate(uvec2 pos2D){
@@ -41,67 +32,64 @@ uvec2 getTexelCoordinate(uvec2 pos2D){
     return currentPagePositionInTexture + offsetInPhysicalPage;
 }
 
-float getHeightFromWorldPos2D(uvec2 worldPos2D){
+uint getValueFromWorldPos2D(uvec2 worldPos2D){
     uvec2 texelCoord = getTexelCoordinate(worldPos2D);
-    uint color = texelFetch(physicalHeightmap, ivec2(texelCoord), 0).r;
-    float height = color / 1500.f;
-    return height;
+    return texelFetch(physicalHeightmap, ivec2(texelCoord), 0).r;
 }
 
-float getNeightborHeightFromWorldPos2D(uvec2 worldPos2D, uvec2 direction, uint scale){
-    
-    uvec2 offset = scale * direction;
-    return getHeightFromWorldPos2D(worldPos2D + offset);
+vec3 getNormal(float dxF, float dyF){
+
+    vec3 normal;
+    normal.x = dxF;
+    normal.y = 2;
+    normal.z = dyF;
+    return normalize(normal);
+}
+
+vec3 getTangent(float dxF){
+
+    vec3 tangent;
+    tangent.x = 2;
+    tangent.y = -dxF;
+    tangent.z = 0;
+    return normalize(tangent);
 }
 
 void main(void)
 {
+    float heightScale = 0.03; //uniform ?
+
     uint scale = 1 << levelInstance;
 
     uvec2 worldPos2D = (posVert + posInstance * blockSize) * scale;
-    float height = getHeightFromWorldPos2D(worldPos2D);
-    vec3 position = vec3(worldPos2D.x, height, worldPos2D.y);
+    uint color = getValueFromWorldPos2D(worldPos2D);
+    uint height = getValue(color, 0, 16);
+    uint dx = getValue(color, 24, 7);
+    uint dy = getValue(color, 16, 7);
+    int dxSign = int(getValue(color, 31, 1));
+    int dySign = int(getValue(color, 23, 1));
+    dxSign = (dxSign * (-2)) + 1;
+    dySign = (dySign * (-2)) + 1;
+    float dxF = int(dx) * dxSign * heightScale;
+    float dyF = int(dy) * dySign * heightScale;
+
+    float heightF = height * heightScale;
+
+    vec3 position = vec3(worldPos2D.x, heightF, worldPos2D.y);
 
     //---------
 
-    uint s0 = getScale(worldPos2D, ivec2(0, -1));
-    float h0 = getNeightborHeightFromWorldPos2D(worldPos2D, ivec2(0, -1), s0);
-
-    uint s1 = getScale(worldPos2D, ivec2(-1, 0));
-    float h1 = getNeightborHeightFromWorldPos2D(worldPos2D, ivec2(-1, 0), s1);
-
-    uint s2 = getScale(worldPos2D, ivec2(1, 0));
-    float h2 = getNeightborHeightFromWorldPos2D(worldPos2D, ivec2(1, 0), s2);
-
-    uint s3 = getScale(worldPos2D, ivec2(0, 1));
-    float h3 = getNeightborHeightFromWorldPos2D(worldPos2D, ivec2(0, 1), s3);
-
-    //---------
-
-    vec3 normal;
-	normal.z = ((h0 - height) / s0) + ((height - h3) / s3);
-	normal.x = ((h1 - height) / s1) + ((height - h2) / s2);
-	normal.y = 2;
-	normal = normalize(normal);
-
-    //--------- 
-
-    vec3 tangent;
-    tangent.x = 2;
-    tangent.y = ((h2 - height) / s2) + ((height - h1) / s1);
-    tangent.z = 0;
-	tangent = normalize(tangent);
-
-    //---------
-
+    vec3 normal = getNormal(dxF, dyF);
+    vec3 tangent = getTangent(dxF);
     vec3 bitangent = -normalize(cross(tangent, normal));
-    TBN = mat3(tangent, bitangent, normal);
+    mat3 tbn = mat3(tangent, bitangent, normal);
 
     //---------
 
     WorldPos2D = vec2(worldPos2D);
     WorldPos = position;
     Normal = normal;
+    TBN = tbn;
 
     //---------
 

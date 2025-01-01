@@ -69,8 +69,65 @@ namespace Engine {
         }
     }
 
-    void Heightmap::generateNormals() {
+    void Heightmap::generateDxDy() {
         
+        auto getSubData = [](unsigned int data, unsigned int startBit, unsigned int totalBits)
+        {
+            return (data >> startBit) & ((1 << totalBits) - 1);
+        };
+
+        auto setSubData = [](unsigned int& data, unsigned int value, unsigned int startBit, unsigned int totalBits)
+        {
+            unsigned int mask = ((1 << totalBits) - 1);
+            data &= ~(mask << startBit);
+            unsigned int value_bits = (value & mask) << startBit;
+            data |= value_bits;
+        };
+
+        for (int level = 0; level < mipLevel; level++) {
+
+            unsigned int h = getHeight(level);
+            unsigned int w = getWidth(level);
+
+            for (int y = 1; y < h - 1; y++) {
+                for (int x = 1; x < w - 1; x++) {
+
+                    unsigned int& dataM = Heightmap::getData(x, y, level);
+                    unsigned int data0 = getSubData(Heightmap::getData(x, y-1, level), 0, 16);
+                    unsigned int data1 = getSubData(Heightmap::getData(x-1, y, level), 0, 16);
+                    unsigned int data2 = getSubData(Heightmap::getData(x+1, y, level), 0, 16);
+                    unsigned int data3 = getSubData(Heightmap::getData(x, y+1, level), 0, 16);
+
+                    int dy = data0 - data3;
+                    int dx = data1 - data2;
+                    unsigned int dxU = glm::abs(dx) >> level;
+                    unsigned int dyU = glm::abs(dy) >> level;
+
+                    if (glm::abs(dyU) > 127 || glm::abs(dxU) > 127)
+                        std::cerr << "There is going to be a problem dude" << std::endl;
+
+                    setSubData(dataM, dxU, 24, 7);
+                    setSubData(dataM, dyU, 16, 7);
+
+                    if (dx < 0)
+                        setSubData(dataM, 1, 31, 1);
+                    if (dy < 0)
+                        setSubData(dataM, 1, 23, 1);
+
+                    //dataM = 0;
+                }
+            }
+        }
+    }
+
+    unsigned int& Heightmap::getData(unsigned short x, unsigned short y) {
+
+        return data[Heightmap::getIndex(x, y)];
+    }
+
+    unsigned int& Heightmap::getData(unsigned short x, unsigned short y, UINT8 mipLevel) {
+
+        return data[Heightmap::getIndex(x, y, mipLevel)];
     }
 
     unsigned int Heightmap::getIndex(unsigned short x, unsigned short y) {
@@ -87,11 +144,16 @@ namespace Engine {
     void Heightmap::loadData(unsigned int* data) {
 
         unsigned int firstMipmapSize = width * height;
-        for (int i = 0; i < firstMipmapSize; i++)
+        for (int i = 0; i < firstMipmapSize; i++) {
             this->data[i] = data[i];
+            //if (data[i] > 65535) {
+            //    int x = data[i];
+            //    x = data[i];
+            //}
+        }
 
         Heightmap::generateMipmaps();
-        Heightmap::generateNormals();
+        Heightmap::generateDxDy();
     }
 
     void Heightmap::writeDataToFile(std::string path, UINT8 mipLevel) {

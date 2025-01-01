@@ -37,7 +37,7 @@ namespace Engine {
 		for (int j = 0; j < BLOCK_COUNT_INNER; j++)
 			instanceArray.push_back(TerrainVertexAttribs(clipmapTracker.clipmapLevel0.blockIndices[j], 0));
 
-		for (int i = 0; i < clipmapTracker.heightmapData.mipStartIndices.size() - 1; i++)
+		for (int i = 0; i < clipmapTracker.heightmapData.mipStartIndices.size(); i++)
 			for (int j = 0; j < BLOCK_COUNT_PER_LEVEL; j++)
 				instanceArray.push_back(TerrainVertexAttribs(clipmapTracker.clipmaps[i].blockIndices[j], i));
 
@@ -50,7 +50,7 @@ namespace Engine {
 		instanceArray.clear();
 
 		// OUTER DEGENERATE
-		for (int i = 0; i < clipmapTracker.heightmapData.mipStartIndices.size() - 2; i++)
+		for (int i = 0; i < clipmapTracker.heightmapData.mipStartIndices.size() - 1; i++)
 			instanceArray.push_back(TerrainVertexAttribs(clipmapTracker.clipmaps[i].startGridIndex, i));
 
 		if (instanceArray.size()) {

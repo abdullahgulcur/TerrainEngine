@@ -6,27 +6,6 @@
 namespace Engine {
 
 	HeightmapGenerator::HeightmapGenerator(glm::u16vec2 terrainSize, double frequency, UINT8 octaves, unsigned int seed, unsigned short maxHeight) {
-		/*this->terrainSize = terrainSize;
-
-		data = new unsigned short[terrainSize.x * terrainSize.y];
-
-		auto getIndex = [](unsigned short x, unsigned short y, unsigned short width) {
-			return width * y + x;
-		};
-
-		const siv::PerlinNoise perlin{ seed };
-		const double fx = (frequency / terrainSize.x);
-		const double fy = (frequency / terrainSize.y);
-
-		for (unsigned short y = 0; y < terrainSize.y; y++){
-			for (unsigned short x = 0; x < terrainSize.x; x++){
-				double valueNormalized = perlin.octave2D_01((x * fx), (y * fy), octaves);
-				unsigned short height = 65536 * valueNormalized;
-				data[getIndex(x, y, terrainSize.x)] = height;
-			}
-		}*/
-
-		//terrainSize = glm::u16vec2(256);
 
 		this->terrainSize = terrainSize;
 		data = new unsigned int[terrainSize.x * terrainSize.y];
@@ -59,3 +38,7 @@ namespace Engine {
 	}
 
 }
+
+// perlin noise texture generator shader dan image generation icin bir daha yazilacak
+// image generator diye class olusturulacak
+// image olusturma tek fonksiyon ile saglanip uniform olarak kullanilacak

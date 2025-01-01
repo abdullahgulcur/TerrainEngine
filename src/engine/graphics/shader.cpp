@@ -48,7 +48,10 @@ namespace Engine {
         std::string vertexShaderPath = "../../../resource/shader/terrain_rvt.vert";
         std::string fragmentShaderPath = "../../../resource/shader/terrain_rvt.frag";
         unsigned int shaderProgramId = GLShader::loadShader(vertexShaderPath, fragmentShaderPath);
-        GLTexture::setTextureUniformLocation("grass", shaderProgramId, 0);
+        GLTexture::setTextureUniformLocation("heightmap", shaderProgramId, 0);
+        GLTexture::setTextureUniformLocation("tex0", shaderProgramId, 1);
+        GLTexture::setTextureUniformLocation("tex1", shaderProgramId, 2);
+        GLTexture::setTextureUniformLocation("tex2", shaderProgramId, 3);
         shaders[ShaderType::TERRAIN_RVT] = shaderProgramId;
     }
 

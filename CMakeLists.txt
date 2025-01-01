@@ -11,6 +11,7 @@ file(GLOB sourceFiles "src/app/*.cpp"
 	"src/engine/core/*.cpp"
 	"src/engine/filesystem/*.cpp"
 	"src/engine/graphics/*.cpp"
+	"src/engine/image/*.cpp"
 	"src/engine/io/*.cpp"
 	"src/engine/math/*.cpp"
 	"src/engine/memory/*.cpp"
@@ -33,6 +34,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE src/thirdparty/stb_image)
 target_include_directories(${PROJECT_NAME} PRIVATE src/engine/core)
 target_include_directories(${PROJECT_NAME} PRIVATE src/engine/filesystem)
 target_include_directories(${PROJECT_NAME} PRIVATE src/engine/graphics)
+target_include_directories(${PROJECT_NAME} PRIVATE src/engine/image)
 target_include_directories(${PROJECT_NAME} PRIVATE src/engine/io)
 target_include_directories(${PROJECT_NAME} PRIVATE src/engine/math)
 target_include_directories(${PROJECT_NAME} PRIVATE src/engine/memory)
