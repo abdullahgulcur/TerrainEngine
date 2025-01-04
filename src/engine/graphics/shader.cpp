@@ -52,6 +52,7 @@ namespace Engine {
         GLTexture::setTextureUniformLocation("tex0", shaderProgramId, 1);
         GLTexture::setTextureUniformLocation("tex1", shaderProgramId, 2);
         GLTexture::setTextureUniformLocation("tex2", shaderProgramId, 3);
+        GLTexture::setTextureUniformLocation("tex3", shaderProgramId, 4);
         shaders[ShaderType::TERRAIN_RVT] = shaderProgramId;
     }
 
@@ -69,6 +70,7 @@ namespace Engine {
         std::string fragmentShaderPath = "../../../resource/shader/frame_default.frag";
         unsigned int shaderProgramId = GLShader::loadShader(vertexShaderPath, fragmentShaderPath);
         GLTexture::setTextureUniformLocation("frameTexture", shaderProgramId, 0);
+        GLTexture::setTextureUniformLocation("frameDepthTexture", shaderProgramId, 1);
         shaders[ShaderType::FRAME_DEFAULT] = shaderProgramId;
     }
 

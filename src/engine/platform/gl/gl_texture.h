@@ -11,6 +11,7 @@ namespace Engine {
 
         static unsigned int generateTexture2D(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data);
         static unsigned int generateMaskTexture(unsigned short width, unsigned short height);
+        static unsigned int generateDepthTexture(unsigned short width, unsigned short height);
         static unsigned int generateHeightmapTexture2D(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data);
         static unsigned int generateHeightmapTexture2D(glm::u16vec2 size);
         static unsigned int generateHeightmapTexture(glm::u16vec2 size);

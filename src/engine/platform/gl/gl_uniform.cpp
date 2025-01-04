@@ -30,4 +30,8 @@ namespace Engine {
 	void GLUniform::setUInt1(unsigned int shaderProgramId, std::string location, unsigned int value) {
 		glUniform1ui(glGetUniformLocation(shaderProgramId, &location[0]), value);
 	}
+
+	void GLUniform::setUInt2(unsigned int shaderProgramId, std::string location, glm::uvec2 value) {
+		glUniform2uiv(glGetUniformLocation(shaderProgramId, &location[0]), 1, &value[0]);
+	}
 }

@@ -16,7 +16,7 @@ namespace Engine {
 
 	}
 
-	void PageTableManager::init(std::string path, unsigned short blockSize, UINT8 clipmapLevels) {
+	void PageTableManager::init(glm::u16vec2 terrainSize, unsigned short blockSize, UINT8 clipmapLevels, UINT8 innerClipmapLevel) {
 
 		const unsigned short totalBlocks = clipmapLevels * BLOCK_COUNT_PER_LEVEL + BLOCK_COUNT_INNER;
 		for (int i = 0;; i++) {
@@ -33,7 +33,7 @@ namespace Engine {
 
 		clipmaps = std::vector<TerrainClipmap>(clipmapLevels);
 
-		HeightmapGenerator hg(glm::u16vec2(4096), 8, 4, 152746, 500);
+		HeightmapGenerator hg(terrainSize, 8, 4, 152746, 500); //  * glm::u16vec2(1 << innerClipmapLevel)
 		heightmapData = HeightmapData(hg, blockSize, clipmapLevels);
 		//heightmapData = HeightmapData(path, blockSize, clipmapLevels);
 
@@ -43,7 +43,7 @@ namespace Engine {
 
 		glm::ivec2 pageSize(512, 512);
 		unsigned int pageTableGeneratorShaderProgramId = Core::getShader()->shaders[ShaderType::TERRAIN_PAGE_TABLE];
-		physicalPageGeneratorFrame = FramePhsyicalPages(glm::u16vec2(physicalTextureSize.x * pageSize.x, physicalTextureSize.y * pageSize.y), heightmapTextureId);
+		physicalPageGeneratorFrame = FramePhsyicalPages(glm::u16vec2(physicalTextureSize.x * pageSize.x, physicalTextureSize.y * pageSize.y), heightmapTextureId, blockSize);
 		pageTableGeneratorFrame = FramePageTable(glm::u16vec2(heightmapData.rows, heightmapData.columns), pageTableGeneratorShaderProgramId);
 
 		Camera* camera = Core::getCamera();
@@ -351,8 +351,6 @@ namespace Engine {
 			glm::u16vec2 pagePosition(topEmpty % physicalTextureSize.x, topEmpty / physicalTextureSize.x);
 			glm::u16vec2 blockPos = this->clipmaps[block.level].blockIndices[block.blockIndex];
 
-			std::cout << jobs.size() << std::endl;
-
 			PageTableManager::updatePageTableTexturePartial(pagePosition, block.level, blockPos);
 		}
 	}
@@ -378,7 +376,7 @@ namespace Engine {
 		pageTableGeneratorFrame.draw();
 
 		physicalPageGeneratorFrame.setViewport(blockPosInPhysicalPagesTexture, pageSize);
-		physicalPageGeneratorFrame.setUniforms(level, glm::vec2(blockPos), pagePosition, physicalTextureSize);
+		physicalPageGeneratorFrame.setUniforms(level, blockPos, pagePosition, physicalTextureSize);
 		physicalPageGeneratorFrame.draw();
 	}
 

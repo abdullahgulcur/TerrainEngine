@@ -45,6 +45,20 @@ namespace Engine {
 		return textureId;
 	}
 
+	unsigned int GLTexture::generateDepthTexture(unsigned short width, unsigned short height) {
+
+		unsigned int textureId;
+		glGenTextures(1, &textureId);
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+		return textureId;
+	}
+
 	unsigned int GLTexture::generateHeightmapTexture2D(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data) {
 
 		GLenum internalFormats[4] = { GL_R8, GL_RG8, GL_RGB8, GL_RGBA8 };

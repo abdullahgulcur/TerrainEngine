@@ -62,10 +62,22 @@ float pnoise(in vec2 P, in vec2 rep) {
 in vec2 texCoord;
 out uint FragColor;
 
+float getNormalized(float value){
+   return (value + 1) * 0.5;
+}
+
+float getHeight(){
+
+    float scale = 5;
+    float noiseVal0 = getNormalized(pnoise(texCoord * scale, vec2(scale)));
+    float noiseVal1 = getNormalized(pnoise(texCoord * scale * 3, vec2(scale * 3))) / 3;
+    float noiseVal2 = getNormalized(pnoise(texCoord * scale * 9, vec2(scale * 9))) / 9;
+    float noiseVal3 = getNormalized(pnoise(texCoord * scale * 20, vec2(scale * 20))) / 20;
+    return noiseVal0 + noiseVal1 + noiseVal2 + noiseVal3;
+}
+
 void main(){
 
-    float scale = 15;
-    float noiseVal = pnoise(texCoord * scale, vec2(scale));
-    noiseVal = (noiseVal + 1) * 0.5;
-    FragColor = uint(noiseVal * 4095);
+    float height = getHeight() * 0.6;
+    FragColor = uint(height * 8191);
 }

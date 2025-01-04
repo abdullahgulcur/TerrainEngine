@@ -4,10 +4,11 @@
 
 namespace Engine {
 
-    FrameDefault::FrameDefault(glm::u16vec2 size, unsigned int shaderProgramId, unsigned int textureId) {
+    FrameDefault::FrameDefault(glm::u16vec2 size, unsigned int shaderProgramId, unsigned int textureId, unsigned int depthTextureId) {
         this->size = size;
         this->shaderProgramId = shaderProgramId;
         this->textureId = textureId;
+        this->depthTextureId = depthTextureId;
         planeVAO = GLBuffer::createQuadVAO();
     }
 
@@ -17,6 +18,7 @@ namespace Engine {
         GLCommand::refreshFrame(size, 0);
         GLShader::useProgram(shaderProgramId);
         GLTexture::useTexture(0, textureId);
+        GLTexture::useTexture(1, depthTextureId);
         GLCommand::drawQuad(planeVAO);
     }
 

@@ -49,12 +49,12 @@ namespace Engine {
 		FramePhsyicalPages physicalPageGeneratorFrame;
 		FramePageTable pageTableGeneratorFrame;
 
-		glm::u16vec2 physicalTextureSize;
+		glm::u8vec2 physicalTextureSize;
 
 		PageTableManager();
 		~PageTableManager();
 
-		void init(std::string path, unsigned short blockSize, UINT8 clipmapLevels);
+		void init(glm::u16vec2 terrainSize, unsigned short blockSize, UINT8 clipmapLevels, UINT8 innerClipmapLevel);
 		void update();
 		void calculateBlockPositionIndices(const glm::vec2 camPos);
 		void calculateBlockPositionIndicesAtFirst(const glm::vec2 camPos);

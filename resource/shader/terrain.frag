@@ -16,9 +16,11 @@ uniform sampler2D physicalPages;
 uniform vec2 physicalTexturePageCount;
 uniform vec3 cameraPosition;
 
+//--------------- COMMON ---------------
 uint getValue(uint color, int startBit, int bits){
     return (color >> startBit) & ((1 << bits) - 1);
 }
+//------------------------------
 
 vec2 getUV(){
 
@@ -34,6 +36,22 @@ vec2 getUV(){
     vec2 pagePos = vec2(pagePosX, pagePosY);
     return (pagePos + posInPageNormalized) / physicalTexturePageCount;
 }
+
+float LinearizeDepth(float depth) 
+{
+    float near = 0.1;
+    float far = 10000;
+    float z = depth * 2.0 - 1.0; // back to NDC 
+    return (2.0 * near * far) / (far + near - z * (far - near));	
+}
+
+vec3 getColorAfterFogFilter(vec3 color){
+
+    float depth = LinearizeDepth(gl_FragCoord.z);// / 10000;
+    float fogBlend = clamp((depth - 300.f) / 300.f + 0.5, 0, 1.f);
+    return mix(color, vec3(0.9,0.95,1), fogBlend); 
+}
+
 
 void main(){
 

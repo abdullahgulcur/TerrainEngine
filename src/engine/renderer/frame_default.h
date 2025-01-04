@@ -15,9 +15,10 @@ namespace Engine {
 
         // uniforms
         unsigned int textureId;
+        unsigned int depthTextureId;
 
         FrameDefault() {}
-        FrameDefault(glm::u16vec2 size, unsigned int shaderProgramId, unsigned int textureId);
+        FrameDefault(glm::u16vec2 size, unsigned int shaderProgramId, unsigned int textureId, unsigned int depthTextureId);
         ~FrameDefault() {}
         void draw();
 

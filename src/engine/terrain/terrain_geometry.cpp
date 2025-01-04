@@ -16,12 +16,12 @@ namespace Engine {
 		std::vector<unsigned short> blockIndices;
 		std::vector<unsigned short> outerDegenerateIndices;
 
-		std::vector<glm::u8vec2> blockVerts;
-		std::vector<glm::u8vec2> outerDegenerateVerts;
+		std::vector<glm::u16vec2> blockVerts;
+		std::vector<glm::u16vec2> outerDegenerateVerts;
 
 		for (int i = 0; i <= blockResolution; i++)
 			for (int j = 0; j <= blockResolution; j++)
-				blockVerts.push_back(glm::u8vec2(j, i));
+				blockVerts.push_back(glm::u16vec2(j, i));
 
 		for (int i = 0; i < blockResolution; i++) {
 			for (int j = 0; j < blockResolution; j++) {
@@ -39,13 +39,13 @@ namespace Engine {
 
 		// outer degenerate
 		for (int i = 0; i < blockResolution * 6; i++)
-			outerDegenerateVerts.push_back(glm::u8vec2(i, 0));
+			outerDegenerateVerts.push_back(glm::u16vec2(i, 0));
 		for (int i = 0; i < blockResolution * 6; i++)
-			outerDegenerateVerts.push_back(glm::u8vec2(blockResolution * 6, i));
+			outerDegenerateVerts.push_back(glm::u16vec2(blockResolution * 6, i));
 		for (int i = 0; i < blockResolution * 6; i++)
-			outerDegenerateVerts.push_back(glm::u8vec2(blockResolution * 6 - i, blockResolution * 6));
+			outerDegenerateVerts.push_back(glm::u16vec2(blockResolution * 6 - i, blockResolution * 6));
 		for (int i = 0; i < blockResolution * 6; i++)
-			outerDegenerateVerts.push_back(glm::u8vec2(0, blockResolution * 6 - i));
+			outerDegenerateVerts.push_back(glm::u16vec2(0, blockResolution * 6 - i));
 
 		int triCount = blockResolution * 12;
 		for (int i = 0; i < triCount; i++) {
@@ -65,8 +65,8 @@ namespace Engine {
 		block.indiceCount = blockIndices.size();
 		outerDegenerate.indiceCount = outerDegenerateIndices.size();
 
-		GLBuffer::createInstancedTerrainStaticMesh2D(block.VAO, block.instanceBuffer, &blockVerts[0], blockVerts.size() * sizeof(glm::u8vec2), &blockIndices[0], blockIndices.size() * sizeof(unsigned short), totalInstance);
-		GLBuffer::createInstancedTerrainStaticMesh2D(outerDegenerate.VAO, outerDegenerate.instanceBuffer, &outerDegenerateVerts[0], outerDegenerateVerts.size() * sizeof(glm::u8vec2), &outerDegenerateIndices[0], outerDegenerateIndices.size() * sizeof(unsigned short), totalInstance);
+		GLBuffer::createInstancedTerrainStaticMesh2D(block.VAO, block.instanceBuffer, &blockVerts[0], blockVerts.size() * sizeof(glm::u16vec2), &blockIndices[0], blockIndices.size() * sizeof(unsigned short), totalInstance);
+		GLBuffer::createInstancedTerrainStaticMesh2D(outerDegenerate.VAO, outerDegenerate.instanceBuffer, &outerDegenerateVerts[0], outerDegenerateVerts.size() * sizeof(glm::u16vec2), &outerDegenerateIndices[0], outerDegenerateIndices.size() * sizeof(unsigned short), totalInstance);
 		// 
 		//std::vector<unsigned short> blockIndices;
 		//std::vector<unsigned short> outerDegenerateIndices;

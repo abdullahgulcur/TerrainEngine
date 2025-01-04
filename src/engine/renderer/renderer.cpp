@@ -20,7 +20,7 @@ namespace Engine {
 	void Renderer::loadFrames() {
 
 		frameScene = FrameScene(Core::getGlfwContext()->getScreenSize());
-		frameDefault = FrameDefault(Core::getGlfwContext()->getScreenSize(), Core::getShader()->shaders[ShaderType::FRAME_DEFAULT], frameScene.textureId);
+		frameDefault = FrameDefault(Core::getGlfwContext()->getScreenSize(), Core::getShader()->shaders[ShaderType::FRAME_DEFAULT], frameScene.textureId, frameScene.depthTextureId);
 	}
 
 	void Renderer::draw(Scene* scene) {

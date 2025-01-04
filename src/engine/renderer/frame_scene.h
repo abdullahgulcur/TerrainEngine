@@ -12,6 +12,7 @@ namespace Engine {
         unsigned int FBO;
         unsigned int RBO;
         unsigned int textureId;
+        unsigned int depthTextureId;
         glm::u16vec2 size;
 
         FrameScene();

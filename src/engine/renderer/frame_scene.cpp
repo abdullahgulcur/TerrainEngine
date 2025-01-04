@@ -10,8 +10,9 @@ namespace Engine {
     FrameScene::FrameScene(glm::u16vec2 size) {
         this->size = size;
         textureId = GLTexture::createFrameSceneTexture(size);
-        FBO = GLBuffer::createFBO(textureId);
-        RBO = GLBuffer::createRBO(size);
+        depthTextureId = GLTexture::generateDepthTexture(size.x, size.y);
+        FBO = GLBuffer::createFBO(textureId, depthTextureId);
+        //RBO = GLBuffer::createRBO(size);
     }
 
     FrameScene::~FrameScene() {}

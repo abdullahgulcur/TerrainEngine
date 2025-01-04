@@ -101,7 +101,7 @@ namespace Engine {
 
         VAO = GLBuffer::createVAO();
         GLBuffer::createVBO(sizeVertices, vertices);
-        GLBuffer::setIntegerVertexAttribute(0, 2, GL_UNSIGNED_BYTE, sizeof(glm::u8vec2), (void*)0);
+        GLBuffer::setIntegerVertexAttribute(0, 2, GL_UNSIGNED_SHORT, sizeof(glm::u16vec2), (void*)0);
 
         GLBuffer::createEBO(sizeIndices, indices);
 
@@ -120,6 +120,28 @@ namespace Engine {
         glGenFramebuffers(1, &FBO);
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
+        
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+            std::cerr << "Framebuffer not complete" << std::endl;
+
+        return FBO;
+    }
+
+    unsigned int GLBuffer::createFBO(unsigned int textureId, unsigned int depthTextureId) {
+
+        unsigned int FBO;
+        glGenFramebuffers(1, &FBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+        //glBindTexture(GL_TEXTURE_2D, textureId);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
+
+        //glBindTexture(GL_TEXTURE_2D, depthTextureId);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTextureId, 0);
+
+        //glDrawBuffer(GL_NONE);
+        //glReadBuffer(GL_NONE);
+        //glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
             std::cerr << "Framebuffer not complete" << std::endl;

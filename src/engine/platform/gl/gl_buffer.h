@@ -23,6 +23,7 @@ namespace Engine {
         static void setArrayBufferSubData(unsigned int buffer, unsigned int offset, unsigned int size, void* ptr);
         static void createInstancedTerrainStaticMesh2D(unsigned int& VAO, unsigned int& instanceBuffer, void* vertices, unsigned int sizeVertices, void* indices, unsigned int sizeIndices, unsigned int instanceCount);
         static unsigned int createFBO(unsigned int textureId);
+        static unsigned int createFBO(unsigned int textureId, unsigned int depthTextureId);
         static unsigned int createRBO(glm::u16vec2 size);
     };
 }
