@@ -6,6 +6,8 @@
 #include "gl_context.h"
 #include "heightmap.h"
 
+#define SIZE_T 128
+
 namespace Engine {
 
 	PageTableManager::PageTableManager() {
@@ -41,7 +43,7 @@ namespace Engine {
 		this->heightmapTextureId = GLTexture::generateHeightmapTexture(glm::u16vec2(physicalTextureData.width, physicalTextureData.height));
 		physicalTextureData.clean();
 
-		glm::ivec2 pageSize(512, 512);
+		glm::ivec2 pageSize(SIZE_T, SIZE_T);
 		unsigned int pageTableGeneratorShaderProgramId = Core::getShader()->shaders[ShaderType::TERRAIN_PAGE_TABLE];
 		physicalPageGeneratorFrame = FramePhsyicalPages(glm::u16vec2(physicalTextureSize.x * pageSize.x, physicalTextureSize.y * pageSize.y), heightmapTextureId, blockSize);
 		pageTableGeneratorFrame = FramePageTable(glm::u16vec2(heightmapData.rows, heightmapData.columns), pageTableGeneratorShaderProgramId);
@@ -357,7 +359,7 @@ namespace Engine {
 
 	void PageTableManager::updatePageTableTexturePartial(glm::u8vec2 pagePosition, UINT8 level, glm::u16vec2 blockPos) {
 
-		glm::uvec2 pageSize(512, 512);
+		glm::uvec2 pageSize(SIZE_T, SIZE_T);
 
 		glm::ivec2 blockPosInPage(pagePosition.x * heightmapData.blockSize, pagePosition.y * heightmapData.blockSize);
 		glm::u16vec2 blockPosInPhysicalPagesTexture(pagePosition.x * pageSize.x, pagePosition.y * pageSize.y);

@@ -8,6 +8,8 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
+#include "gl_context.h"
+
 namespace Engine {
 
     Texture2D::Texture2D(){}
@@ -168,4 +170,10 @@ namespace Engine {
                 data[indexBase + i] = copy.data[indexCopy + i];
         }
     }
+
+    unsigned int Texture2D::generateGLTexture() {
+
+        return GLTexture::generateTexture2D(channels, width, height, data);
+    }
+
 }

@@ -8,11 +8,16 @@ uniform int blockSize;
 uniform mat4 projectionView;
 uniform usampler2D pageTable;
 uniform usampler2D physicalHeightmap;
+uniform vec3 cameraPosition;
+uniform sampler2D physicalPagesDisplacement;
 
 out vec2 WorldPos2D;
 out vec3 WorldPos;
 out vec3 Normal;
-out mat3 TBN;
+out vec3 Tangent;
+//out mat3 TBN;
+//out vec3 TangentViewPos;
+//out vec3 TangentFragPos;
 
 //--------------- COMMON ---------------
 uint getValue(uint color, int startBit, int bits){
@@ -54,7 +59,7 @@ vec3 getTangent(float dxF){
     return normalize(tangent);
 }
 
-//------------------------------
+//------------------------------WORLD SPACE TO TERRAIN SPACE !!!!!!!!!!!!!!!
 
 uvec2 getTexelCoordinate(uvec2 pos2D){
 
@@ -92,6 +97,11 @@ void main(void)
 
     //---------
 
+    //uvec2 texelCoord = getTexelCoordinate(worldPos2D) * 16;
+    //float c = texelFetch(physicalPagesDisplacement, ivec2(texelCoord), 0).r;
+
+    //---------
+
     vec3 position = vec3(worldPos2D.x, heightF, worldPos2D.y);
     vec3 normal = getNormal(dxF, dyF);
     vec3 tangent = getTangent(dxF);
@@ -103,7 +113,10 @@ void main(void)
     WorldPos2D = vec2(worldPos2D);
     WorldPos = position;
     Normal = normal;
-    TBN = tbn;
+    Tangent = tangent;
+    //TBN = tbn;
+//    TangentViewPos = inverse(tbn) * cameraPosition;
+//    TangentFragPos = inverse(tbn) * position;
 
     //---------
 

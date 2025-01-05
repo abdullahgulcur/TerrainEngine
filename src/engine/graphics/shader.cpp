@@ -40,6 +40,8 @@ namespace Engine {
         GLTexture::setTextureUniformLocation("pageTable", shaderProgramId, 0);
         GLTexture::setTextureUniformLocation("physicalHeightmap", shaderProgramId, 1);
         GLTexture::setTextureUniformLocation("physicalPages", shaderProgramId, 2);
+        GLTexture::setTextureUniformLocation("physicalPagesNormal", shaderProgramId, 3);
+        GLTexture::setTextureUniformLocation("physicalPagesDisplacement", shaderProgramId, 4); 
         shaders[ShaderType::TERRAIN] = shaderProgramId;
     }
 
@@ -48,11 +50,15 @@ namespace Engine {
         std::string vertexShaderPath = "../../../resource/shader/terrain_rvt.vert";
         std::string fragmentShaderPath = "../../../resource/shader/terrain_rvt.frag";
         unsigned int shaderProgramId = GLShader::loadShader(vertexShaderPath, fragmentShaderPath);
-        GLTexture::setTextureUniformLocation("heightmap", shaderProgramId, 0);
-        GLTexture::setTextureUniformLocation("tex0", shaderProgramId, 1);
-        GLTexture::setTextureUniformLocation("tex1", shaderProgramId, 2);
-        GLTexture::setTextureUniformLocation("tex2", shaderProgramId, 3);
-        GLTexture::setTextureUniformLocation("tex3", shaderProgramId, 4);
+        GLTexture::setTextureUniformLocation("tex0", shaderProgramId, 0);
+        GLTexture::setTextureUniformLocation("tex1", shaderProgramId, 1);
+        GLTexture::setTextureUniformLocation("tex2", shaderProgramId, 2);
+        GLTexture::setTextureUniformLocation("tex3", shaderProgramId, 3);
+        GLTexture::setTextureUniformLocation("tex4", shaderProgramId, 4);
+        GLTexture::setTextureUniformLocation("tex5", shaderProgramId, 5);
+        GLTexture::setTextureUniformLocation("tex6", shaderProgramId, 6);
+        GLTexture::setTextureUniformLocation("tex7", shaderProgramId, 7);
+        GLTexture::setTextureUniformLocation("tex8", shaderProgramId, 8);
         shaders[ShaderType::TERRAIN_RVT] = shaderProgramId;
     }
 

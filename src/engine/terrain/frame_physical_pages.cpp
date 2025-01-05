@@ -12,30 +12,44 @@ namespace Engine {
     FramePhsyicalPages::FramePhsyicalPages(glm::u16vec2 size, unsigned int heightmapTextureId, unsigned int blockSize) {
         this->size = size;
         this->blockSize = blockSize;
-        this->heightmapTextureId = heightmapTextureId;
+        this->textureIdList[0] = heightmapTextureId;
         this->shaderProgramId = Core::getShader()->shaders[ShaderType::TERRAIN_RVT];
-        this->textureId = GLTexture::createPhysicalPagesFrameBufferTexture(size);
-        this->FBO = GLBuffer::createFBO(textureId);
+        this->texture_0_Id = GLTexture::createPhysicalPagesFrameBufferTexture(size);
+        this->texture_1_Id = GLTexture::createPhysicalPagesFrameBufferTexture(size);
+        this->texture_2_Id = GLTexture::createPhysicalPagesFrameBufferTexture(size);
+        this->FBO = GLBuffer::createTerrainRVT_FBO(texture_0_Id, texture_1_Id, texture_2_Id);
         this->planeVAO = GLBuffer::createQuadVAO();
 
-        Texture2D tex0("../../../resource/texture/grasslawn_a.png");
-        this->tex_0_TextureId = GLTexture::generateTexture2D(tex0.channels, tex0.width, tex0.height, tex0.data);
-        tex0.clean();
-
-        Texture2D tex1("../../../resource/texture/cliffgranite_a.png");
-        this->tex_1_TextureId = GLTexture::generateTexture2D(tex1.channels, tex1.width, tex1.height, tex1.data);
-        tex1.clean();
-
         ImageGenerator imageGenerator;
-        tex_2_TextureId = imageGenerator.generatePerlinNoiseTexture(glm::u16vec2(512, 512), 50.f);
+        this->textureIdList[1] = imageGenerator.generatePerlinNoiseTexture(glm::u16vec2(1024, 1024), 50.f);
 
-        Texture2D tex2("../../../resource/texture/grasswild_a.png");
-        this->tex_3_TextureId = GLTexture::generateTexture2D(tex2.channels, tex2.width, tex2.height, tex2.data);
-        tex2.clean();
+        Texture2D texMacroVariation("../../../resource/texture/macrovariation.png");
+        this->textureIdList[2] = texMacroVariation.generateGLTexture();
+        texMacroVariation.clean();
 
-        //Texture2D textureData(512, 512, 1);
-        //GLTexture::getTextureContent(1, textureData.data, tex_2_TextureId);
-        //textureData.writeDataToFile("fuckeriiii.png", 0);
+        Texture2D channel_0_a("../../../resource/texture/grasslawn_a.png");
+        this->textureIdList[3] = channel_0_a.generateGLTexture();
+        channel_0_a.clean();
+
+        Texture2D channel_0_n("../../../resource/texture/grasslawn_n.png");
+        this->textureIdList[4] = channel_0_n.generateGLTexture();
+        channel_0_n.clean();
+
+        Texture2D channel_1_a("../../../resource/texture/rock_cliff_a.jpg");
+        this->textureIdList[5] = channel_1_a.generateGLTexture();
+        channel_1_a.clean();
+     
+        Texture2D channel_1_n("../../../resource/texture/rock_cliff_n.jpg");
+        this->textureIdList[6] = channel_1_n.generateGLTexture();
+        channel_1_n.clean();
+
+        Texture2D channel_0_d("../../../resource/texture/grasslawn_d.jpg");
+        this->textureIdList[7] = channel_0_d.generateGLTexture();
+        channel_0_d.clean();
+
+        Texture2D channel_1_d("../../../resource/texture/rock_cliff_d.jpg");
+        this->textureIdList[8] = channel_1_d.generateGLTexture();
+        channel_1_d.clean();
     }
 
     FramePhsyicalPages::~FramePhsyicalPages() {}
@@ -51,16 +65,20 @@ namespace Engine {
 
         GLCommand::setScreen(viewportPos, viewportSize, FBO);
         GLShader::useProgram(shaderProgramId);
-        GLTexture::useTexture(0, heightmapTextureId);
-        GLTexture::useTexture(1, tex_0_TextureId);
-        GLTexture::useTexture(2, tex_1_TextureId);
-        GLTexture::useTexture(3, tex_2_TextureId);
-        GLTexture::useTexture(4, tex_3_TextureId);
+
+        for (int i = 0; i < 9; i++) 
+            GLTexture::useTexture(i, textureIdList[i]);
+
         GLUniform::setUInt1(shaderProgramId, "level", level);
         GLUniform::setUInt2(shaderProgramId, "blockPosition", blockPosition);
         GLUniform::setUInt1(shaderProgramId, "blockSize", blockSize);
         GLUniform::setUInt2(shaderProgramId, "pagePosition", pagePosition);
         GLUniform::setUInt2(shaderProgramId, "physicalTextureSize", physicalTextureSize);
         GLCommand::drawQuad(planeVAO);
+    }
+
+    void FramePhsyicalPages::setViewport(glm::u16vec2 pos, glm::u16vec2 size) {
+        this->viewportPos = pos;
+        this->viewportSize = size;
     }
 }

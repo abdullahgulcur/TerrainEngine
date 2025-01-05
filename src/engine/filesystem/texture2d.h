@@ -46,5 +46,6 @@ namespace Engine {
         void clean();
         void copyData(Texture2D& copy, glm::ivec2 posBase, glm::ivec2 posCopy, glm::ivec2 size);
         void copyData(Texture2D& copy, UINT8 mipLevelBase, UINT8 mipLevelCopy, glm::ivec2 posBase, glm::ivec2 posCopy, glm::ivec2 size);
+        unsigned int generateGLTexture();
     };
 }

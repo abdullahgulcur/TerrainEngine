@@ -9,8 +9,8 @@ namespace Engine {
 
         unsigned int shaderProgramId;
         unsigned int planeVAO;
-        unsigned int FBO;
-        unsigned int textureId;
+        unsigned int FBO; // multiple fbo for albedo, normal, displacement, mask etc...
+        unsigned int textureId; // multiple textureId for albedo, normal, displacement, mask etc...
         glm::u16vec2 size;
 
         glm::u16vec2 viewportPos;
