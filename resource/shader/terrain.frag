@@ -35,7 +35,13 @@ vec2 getUV(){
     uint page_start_x_world = getValue(color, 22, 10) * pageSizeMultiplier;
     uint page_start_y_world = getValue(color, 12, 10) * pageSizeMultiplier;
     vec2 offset_world = WorldPos2D - vec2(page_start_x_world, page_start_y_world);
-    vec2 posInPageNormalized = 0.001 + (offset_world / pageSizeMultiplier) * 0.998;
+
+    float a = 0.004;
+    float b = 0.992;
+//    a = 0.01;
+//    b = 0.98;
+
+    vec2 posInPageNormalized = a + (offset_world / pageSizeMultiplier) * b;
     uint pagePosX = getValue(color, 8, 4);
     uint pagePosY = getValue(color, 4, 4);
     vec2 pagePos = vec2(pagePosX, pagePosY);

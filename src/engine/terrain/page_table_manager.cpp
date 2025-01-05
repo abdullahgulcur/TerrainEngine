@@ -6,7 +6,7 @@
 #include "gl_context.h"
 #include "heightmap.h"
 
-#define SIZE_T 128
+#define SIZE_T 512
 
 namespace Engine {
 
@@ -355,6 +355,11 @@ namespace Engine {
 
 			PageTableManager::updatePageTableTexturePartial(pagePosition, block.level, blockPos);
 		}
+
+		//glBindTexture(GL_TEXTURE_2D, physicalPageGeneratorFrame.texture_0_Id);
+		//glGenerateMipmap(GL_TEXTURE_2D);
+		//glBindTexture(GL_TEXTURE_2D, physicalPageGeneratorFrame.texture_1_Id);
+		//glGenerateMipmap(GL_TEXTURE_2D);
 	}
 
 	void PageTableManager::updatePageTableTexturePartial(glm::u8vec2 pagePosition, UINT8 level, glm::u16vec2 blockPos) {
