@@ -15,9 +15,6 @@ out vec2 WorldPos2D;
 out vec3 WorldPos;
 out vec3 Normal;
 out vec3 Tangent;
-//out mat3 TBN;
-//out vec3 TangentViewPos;
-//out vec3 TangentFragPos;
 
 //--------------- COMMON ---------------
 uint getValue(uint color, int startBit, int bits){
@@ -67,7 +64,7 @@ uvec2 getTexelCoordinate(uvec2 pos2D){
     uint color = texelFetch(pageTable, ivec2(posInPage), 0).r;
     uint scale = 1 << getValue(color, 0, 4);
     uint pageSizeMultiplier = blockSize * scale;
-    uvec2 pageStartWorld = uvec2(getValue(color, 22, 10), getValue(color, 12, 10)) * pageSizeMultiplier;
+    uvec2 pageStartWorld = (pos2D / pageSizeMultiplier) * pageSizeMultiplier;
     uvec2 offsetWorld = pos2D - pageStartWorld;
     uvec2 offsetInPhysicalPage = offsetWorld / scale;
     uvec2 pagePos = uvec2(getValue(color, 8, 4), getValue(color, 4, 4));
@@ -97,11 +94,6 @@ void main(void)
 
     //---------
 
-    //uvec2 texelCoord = getTexelCoordinate(worldPos2D) * 16;
-    //float c = texelFetch(physicalPagesDisplacement, ivec2(texelCoord), 0).r;
-
-    //---------
-
     vec3 position = vec3(worldPos2D.x, heightF, worldPos2D.y);
     vec3 normal = getNormal(dxF, dyF);
     vec3 tangent = getTangent(dxF);
@@ -114,9 +106,6 @@ void main(void)
     WorldPos = position;
     Normal = normal;
     Tangent = tangent;
-    //TBN = tbn;
-//    TangentViewPos = inverse(tbn) * cameraPosition;
-//    TangentFragPos = inverse(tbn) * position;
 
     //---------
 

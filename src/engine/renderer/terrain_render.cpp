@@ -30,8 +30,8 @@ namespace Engine {
 		GLTexture::useTexture(0, clipmapTracker.pageTableGeneratorFrame.getTextureId());
 		GLTexture::useTexture(1, clipmapTracker.heightmapTextureId);
 		GLTexture::useTexture(2, clipmapTracker.physicalPageGeneratorFrame.texture_0_Id);
-		GLTexture::useTexture(3, clipmapTracker.physicalPageGeneratorFrame.texture_1_Id);
-		GLTexture::useTexture(4, clipmapTracker.physicalPageGeneratorFrame.texture_2_Id);
+		/*GLTexture::useTexture(3, clipmapTracker.physicalPageGeneratorFrame.texture_1_Id);
+		GLTexture::useTexture(4, clipmapTracker.physicalPageGeneratorFrame.texture_2_Id);*/
 
 		std::vector<TerrainVertexAttribs> instanceArray;
 

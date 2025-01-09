@@ -1,8 +1,8 @@
 #version 460 core
 
 layout(location = 0) out vec4 outAlbedo;
-layout(location = 1) out vec4 outNormal;
-layout(location = 2) out vec4 outDisplacement;
+//layout(location = 1) out vec4 outNormal;
+//layout(location = 2) out vec4 outDisplacement;
 
 in vec2 texCoord;
 
@@ -13,8 +13,8 @@ uniform sampler2D tex3;
 uniform sampler2D tex4;
 uniform sampler2D tex5;
 uniform sampler2D tex6;
-uniform sampler2D tex7;
-uniform sampler2D tex8;
+//uniform sampler2D tex7;
+//uniform sampler2D tex8;
 
 uniform uvec2 blockPosition;
 uniform uint level;
@@ -184,29 +184,29 @@ void main() {
     vec3 n0 = textureLod(tex4, uv0, level).rgb;
     vec3 n1 = textureLod(tex4, 1 - uv0, level).rgb;
 
-    float d0 = textureLod(tex7, uv0, level).r;
-    float d1 = textureLod(tex7, 1 - uv0, level).r;
+//    float d0 = textureLod(tex7, uv0, level).r;
+//    float d1 = textureLod(tex7, 1 - uv0, level).r;
 
     vec3 a2 = textureLod(tex5, uv1, level).rgb;
-    vec3 a3 = textureLod(tex5, 1 - uv1 * 0.75, level).rgb;
+    vec3 a3 = textureLod(tex5, 1 - uv1 * 1, level).rgb;
 
     vec3 n2 = textureLod(tex6, uv1, level).rgb;
-    vec3 n3 = textureLod(tex6, 1 - uv1 * 0.75, level).rgb;
+    vec3 n3 = textureLod(tex6, 1 - uv1 * 1, level).rgb;
 
-    float d2 = textureLod(tex8, uv1, level).r;
-    float d3 = textureLod(tex8, 1 - uv1 * 0.75, level).r;
+//    float d2 = textureLod(tex8, uv1, level).r;
+//    float d3 = textureLod(tex8, 1 - uv1 * 1, level).r;
 
     float alpha = textureLod(tex1, uvMask_0, level).r;
     alpha = pow(alpha,2);
     a0 = mix(a0, a1, alpha);
     n0 = mix(n0, n1, alpha);
-    d0 = mix(d0, d1, alpha);
+    //d0 = mix(d0, d1, alpha);
 
     alpha = textureLod(tex1, uvMask_1, level).r;
     alpha = pow(alpha,5);
     a2 = mix(a2, a3, alpha);
     n2 = mix(n2, n3, alpha);
-    d2 = mix(d2, d3, alpha);
+    //d2 = mix(d2, d3, alpha);
     alphat = alpha;
 
     //slope = clamp((0.97 - slope) / 0.03 + 0.5, 0, 1);
@@ -222,13 +222,38 @@ void main() {
     //vec3 normal = mix(vec3(0.5,0.5,1), n2, slopeBlend);
     vec3 normal = mix(n0, n2, slopeBlend);
 
-    float displacement = mix(d0, d2, slopeBlend);
+    //float displacement = mix(d0, d2, slopeBlend);
 
     albedo *= macroScalar;
 
-    outAlbedo = vec4(albedo, 1.0);
-    outNormal = vec4(normal, 1.0);
-    outDisplacement = vec4(vec3(displacement), 1.0);
+
+
+    //---------
+
+    vec3 N = tbn * (normal * 2 - 1);
+
+    float lightPow = 5;
+    vec3 lightDir = vec3(-1,-1,-1);
+    vec3 L = normalize(-lightDir);
+    vec3 radiance = vec3(lightPow);
+            
+    float NdotL = max(dot(N, L), 0.0);        
+
+    //vec3 viewDir = normalize(cameraPosition - WorldPos);
+
+    //vec3 reflectDir = reflect(-L, N);  
+    //float spec = pow(max(dot(viewDir, reflectDir), 0.0), 3.5) * specularity * 0.25;
+
+    vec3 Lo = (albedo / 3.14 + 0) * radiance * NdotL;
+    vec3 color = albedo * 0.5 + Lo;
+
+    //---------
+
+
+
+    outAlbedo = vec4(color, 1.0);
+    //outNormal = vec4(normal, 1.0);
+    //outDisplacement = vec4(vec3(displacement), 1.0);
 
     //FragColor = vec4(vec3(alphat), 1.0);
 

@@ -15,9 +15,9 @@ namespace Engine {
         this->textureIdList[0] = heightmapTextureId;
         this->shaderProgramId = Core::getShader()->shaders[ShaderType::TERRAIN_RVT];
         this->texture_0_Id = GLTexture::createPhysicalPagesFrameBufferTexture(size);
-        this->texture_1_Id = GLTexture::createPhysicalPagesFrameBufferTexture(size);
-        this->texture_2_Id = GLTexture::createPhysicalPagesFrameBufferTexture(size);
-        this->FBO = GLBuffer::createTerrainRVT_FBO(texture_0_Id, texture_1_Id, texture_2_Id);
+        /*this->texture_1_Id = GLTexture::createPhysicalPagesFrameBufferTexture(size);
+        this->texture_2_Id = GLTexture::createPhysicalPagesFrameBufferTexture(size);*/
+        this->FBO = GLBuffer::createTerrainRVT_FBO(texture_0_Id);//, texture_1_Id, texture_2_Id
         this->planeVAO = GLBuffer::createQuadVAO();
 
         ImageGenerator imageGenerator;
@@ -43,13 +43,13 @@ namespace Engine {
         this->textureIdList[6] = channel_1_n.generateGLTexture();
         channel_1_n.clean();
 
-        Texture2D channel_0_d("../../../resource/texture/grasslawn_d.jpg");
+        /*Texture2D channel_0_d("../../../resource/texture/grasslawn_d.jpg");
         this->textureIdList[7] = channel_0_d.generateGLTexture();
         channel_0_d.clean();
 
         Texture2D channel_1_d("../../../resource/texture/rock_cliff_d.jpg");
         this->textureIdList[8] = channel_1_d.generateGLTexture();
-        channel_1_d.clean();
+        channel_1_d.clean();*/
     }
 
     FramePhsyicalPages::~FramePhsyicalPages() {}
@@ -66,7 +66,7 @@ namespace Engine {
         GLCommand::setScreen(viewportPos, viewportSize, FBO);
         GLShader::useProgram(shaderProgramId);
 
-        for (int i = 0; i < 9; i++) 
+        for (int i = 0; i < 7; i++) 
             GLTexture::useTexture(i, textureIdList[i]);
 
         GLUniform::setUInt1(shaderProgramId, "level", level);

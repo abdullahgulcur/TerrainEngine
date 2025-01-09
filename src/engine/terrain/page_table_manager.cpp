@@ -5,6 +5,7 @@
 #include "input.h"
 #include "gl_context.h"
 #include "heightmap.h"
+#include <chrono>
 
 #define SIZE_T 512
 
@@ -326,6 +327,8 @@ namespace Engine {
 
 	void PageTableManager::handleBlockJobs() {
 
+		bool jobDone = false;
+
 		while (!this->jobsLevel0.empty()) {
 
 			Block block = this->jobsLevel0.top();
@@ -339,6 +342,8 @@ namespace Engine {
 			glm::u16vec2 blockPos = this->clipmapLevel0.blockIndices[block.blockIndex];
 
 			PageTableManager::updatePageTableTexturePartial(pagePosition, block.level, blockPos);
+
+			jobDone = true;
 		}
 
 		while (!this->jobs.empty()) {
@@ -354,12 +359,34 @@ namespace Engine {
 			glm::u16vec2 blockPos = this->clipmaps[block.level].blockIndices[block.blockIndex];
 
 			PageTableManager::updatePageTableTexturePartial(pagePosition, block.level, blockPos);
+
+			jobDone = true;
 		}
 
-		//glBindTexture(GL_TEXTURE_2D, physicalPageGeneratorFrame.texture_0_Id);
-		//glGenerateMipmap(GL_TEXTURE_2D);
-		//glBindTexture(GL_TEXTURE_2D, physicalPageGeneratorFrame.texture_1_Id);
-		//glGenerateMipmap(GL_TEXTURE_2D);
+		auto start = std::chrono::high_resolution_clock::now();
+
+		if (jobDone) {
+			glBindTexture(GL_TEXTURE_2D, physicalPageGeneratorFrame.texture_0_Id);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			//glBindTexture(GL_TEXTURE_2D, physicalPageGeneratorFrame.texture_1_Id);
+			//glGenerateMipmap(GL_TEXTURE_2D);
+		}
+		
+		//Texture2D texTemp(physicalPageGeneratorFrame.size.x, physicalPageGeneratorFrame.size.y, 3);
+		//GLTexture::getTextureContent(3, texTemp.data, physicalPageGeneratorFrame.texture_0_Id);
+		//texTemp.writeDataToFile("testphysicalpages.png", 0);
+		//
+		//int x = 5;
+
+		//// Record the end time
+		//auto end = std::chrono::high_resolution_clock::now();
+
+		//// Calculate the elapsed time in milliseconds
+		//unsigned long elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+
+		//if(elapsed != 0)
+		//	std::cout << "Elapsed time: " << elapsed << " micro seconds" << std::endl;
+		
 	}
 
 	void PageTableManager::updatePageTableTexturePartial(glm::u8vec2 pagePosition, UINT8 level, glm::u16vec2 blockPos) {
@@ -371,7 +398,7 @@ namespace Engine {
 		glm::ivec2 blockPosInPageTable(blockPos.x << level, blockPos.y << level);
 		glm::ivec2 blockSizeInPageTable(1 << level);
 
-		unsigned int pageTableColor = (blockPos.x << 22) + (blockPos.y << 12) + (pagePosition.x << 8) + (pagePosition.y << 4) + level;
+		unsigned int pageTableColor = (pagePosition.x << 8) + (pagePosition.y << 4) + level;
 
 		Heightmap subDataPhysicalTexture(heightmapData.blockSize, heightmapData.blockSize);
 		subDataPhysicalTexture.data = &heightmapData.data[heightmapData.getArrayIndex(level, blockPos)];
