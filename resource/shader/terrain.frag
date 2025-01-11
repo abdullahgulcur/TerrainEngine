@@ -54,45 +54,35 @@ void main(){
 
     uint scale;
     vec2 uv = getUV(scale);
-    
     vec2 dx = dFdx(uv * textureSize(physicalPages, 0));
     vec2 dy = dFdy(uv * textureSize(physicalPages, 0));
-
     float deltaMax = max(dot(dx, dx), dot(dy, dy));
     float lod = 0.5 * log2(deltaMax);
-
     //lod += -0.5;
-//
-    vec3 albedo = textureLod(physicalPages, uv, lod).rgb;
-    //vec3 albedo = texture(physicalPages, uv).rgb;
-    //vec3 normal = textureLod(physicalPagesNormal, uv, lod).rgb;
 
-    //vec3 albedo = texture(physicalPages, uv).rgb;
-    //vec3 normal = texture(physicalPagesNormal, uv).rgb;
-    //float specularity = (albedo.x + albedo.y + albedo.z) * 0.33;
+    vec3 albedo = textureLod(physicalPages, uv, lod).rgb;
+    float specularity = (albedo.x + albedo.y + albedo.z) * 0.33;
 
     ////------------
     //albedo = vec3(1,1,1);
 
-    //mat3 tbn = getTBN(Normal,Tangent);
-    //vec3 N = tbn * (normal * 2 - 1);
+    vec3 N = Normal;
 
-//    float lightPow = 5;
-//    vec3 lightDir = vec3(-1,-1,-1);
-//    vec3 L = normalize(-lightDir);
-//    vec3 radiance = vec3(lightPow);
+    float lightPow = 5;
+    vec3 lightDir = vec3(-1,-1,-1);
+    vec3 L = normalize(-lightDir);
+    vec3 radiance = vec3(lightPow);
             
-    //float NdotL = max(dot(N, L), 0.0);        
+    float NdotL = max(dot(N, L), 0.0);        
 
-    //vec3 viewDir = normalize(cameraPosition - WorldPos);
+    vec3 viewDir = normalize(cameraPosition - WorldPos);
 
-//    vec3 reflectDir = reflect(-L, N);  
-//    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 3.5) * specularity * 0.25;
+    vec3 reflectDir = reflect(-L, N);  
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 3.5) * specularity * 0.1;
 
-//    vec3 Lo = (albedo / 3.14 + spec) * radiance * NdotL;
-//    vec3 color = albedo * 0.5 + Lo;
-    //------------
+    vec3 Lo = spec * radiance * NdotL;
+    vec3 color = albedo + Lo;
 
     //color = vec3(1,1,1);
-    FragColor = vec4(albedo, 1);
+    FragColor = vec4(color, 1);
 }

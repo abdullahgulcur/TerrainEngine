@@ -57,8 +57,8 @@ namespace Engine {
         GLTexture::setTextureUniformLocation("tex4", shaderProgramId, 4);
         GLTexture::setTextureUniformLocation("tex5", shaderProgramId, 5);
         GLTexture::setTextureUniformLocation("tex6", shaderProgramId, 6);
-        /*GLTexture::setTextureUniformLocation("tex7", shaderProgramId, 7);
-        GLTexture::setTextureUniformLocation("tex8", shaderProgramId, 8);*/
+        GLTexture::setTextureUniformLocation("tex7", shaderProgramId, 7);
+        GLTexture::setTextureUniformLocation("tex8", shaderProgramId, 8);
         shaders[ShaderType::TERRAIN_RVT] = shaderProgramId;
     }
 

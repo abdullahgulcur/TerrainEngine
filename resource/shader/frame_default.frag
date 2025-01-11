@@ -18,7 +18,7 @@ vec3 getColorAfterFogFilter(vec3 color){
 
     float depth = texture(frameDepthTexture, texCoord).r;
     float depthLinearized = linearizeDepth(depth);// / 10000;
-    float fogBlend = clamp((depthLinearized - 370.f) / 350.f + 0.5, 0, 1.f);
+    float fogBlend = clamp((depthLinearized - 450.f) / 400.f + 0.5, 0, 1.f);
     return mix(color, vec3(0.9,0.95,1), fogBlend); 
 }
 

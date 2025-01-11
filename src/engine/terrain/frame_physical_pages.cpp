@@ -24,7 +24,7 @@ namespace Engine {
         this->textureIdList[1] = imageGenerator.generatePerlinNoiseTexture(glm::u16vec2(1024, 1024), 50.f);
 
         Texture2D texMacroVariation("../../../resource/texture/macrovariation.png");
-        this->textureIdList[2] = GLTexture::generateTerrainPaletteTexture2D(texMacroVariation.width, texMacroVariation.height, texMacroVariation.data);
+        this->textureIdList[2] = texMacroVariation.generateGLTexture();
         texMacroVariation.clean();
 
         //Texture2D channel_0_a("../../../resource/texture/terrain/grass_lawn_a.png");
@@ -47,6 +47,8 @@ namespace Engine {
         this->textureIdList[4] = GLTexture::generateCompressedTerrainPaletteTexture2D("../../../resource/texture/terrain_new/grass_lawn_n.dds");
         this->textureIdList[5] = GLTexture::generateCompressedTerrainPaletteTexture2D("../../../resource/texture/terrain_new/rock_cliff_a.dds");
         this->textureIdList[6] = GLTexture::generateCompressedTerrainPaletteTexture2D("../../../resource/texture/terrain_new/rock_cliff_n.dds");
+        this->textureIdList[7] = GLTexture::generateCompressedTerrainPaletteTexture2D("../../../resource/texture/terrain_new/bark_soil_a.dds");
+        this->textureIdList[8] = GLTexture::generateCompressedTerrainPaletteTexture2D("../../../resource/texture/terrain_new/bark_soil_n.dds");
 
     }
 
@@ -64,7 +66,7 @@ namespace Engine {
         GLCommand::setScreen(viewportPos, viewportSize, FBO);
         GLShader::useProgram(shaderProgramId);
 
-        for (int i = 0; i < 7; i++) 
+        for (int i = 0; i < 9; i++) 
             GLTexture::useTexture(i, textureIdList[i]);
 
         GLUniform::setUInt1(shaderProgramId, "level", level);

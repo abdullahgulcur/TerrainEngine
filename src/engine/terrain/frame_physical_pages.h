@@ -21,7 +21,7 @@ namespace Engine {
         glm::u8vec2 pagePosition;
         glm::u8vec2 physicalTextureSize;
 
-        unsigned int textureIdList[7];
+        unsigned int textureIdList[9];
 
     public:
 

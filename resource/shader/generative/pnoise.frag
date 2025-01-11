@@ -70,14 +70,14 @@ float getHeight(){
 
     float scale = 5;
     float noiseVal0 = getNormalized(pnoise(1245 + texCoord * scale, vec2(scale)));
-    float noiseVal1 = getNormalized(pnoise(1245 + texCoord * scale * 3, vec2(scale * 3))) / 4;
-    float noiseVal2 = getNormalized(pnoise(1245 + texCoord * scale * 9, vec2(scale * 9))) / 8;
-    float noiseVal3 = getNormalized(pnoise(1245 + texCoord * scale * 20, vec2(scale * 20))) / 16;
-    return noiseVal0 + noiseVal1 + noiseVal2;
+    float noiseVal1 = getNormalized(pnoise(1245 + texCoord * scale * 2, vec2(scale * 3))) / 4;
+    float noiseVal2 = getNormalized(pnoise(1245 + texCoord * scale * 4, vec2(scale * 9))) / 8;
+    float noiseVal3 = getNormalized(pnoise(1245 + texCoord * scale * 8, vec2(scale * 20))) / 16;
+    return noiseVal0 + noiseVal1 + noiseVal2 + noiseVal3;
 }
 
 void main(){
 
-    float height = getHeight() * 0.75;
+    float height = getHeight() * 1;
     FragColor = uint(height * 8191);
 }

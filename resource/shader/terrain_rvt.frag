@@ -13,8 +13,8 @@ uniform sampler2D tex3;
 uniform sampler2D tex4;
 uniform sampler2D tex5;
 uniform sampler2D tex6;
-//uniform sampler2D tex7;
-//uniform sampler2D tex8;
+uniform sampler2D tex7;
+uniform sampler2D tex8;
 
 uniform uvec2 blockPosition;
 uniform uint level;
@@ -168,39 +168,45 @@ void main() {
     vec2 uv = uvBase * scaleMult;
     vec2 uv0 = uv;
     vec2 uv1 = uv * 0.5;
+    vec2 uv2 = uv;
 
-    vec2 uvMacro = uvBase * 0.3;
+    vec2 uvMacro = uvBase * 0.2;
 
     vec2 uvMask_0 = uvBase * 0.03;
     vec2 uvMask_1 = uvBase * 0.05;
+    vec2 uvMask_2 = uvBase * 0.025;
+    vec2 uvMask_3 = uvBase * 0.01;
 
     vec3 macroVariation = textureLod(tex2, uvMacro, level).rgb;
     float macroScalar = (macroVariation.r + macroVariation.g + macroVariation.b) * 0.33;
-    macroScalar = mix(macroScalar, 1, 0.6);
+    macroScalar = mix(macroScalar, 1, 0.7);
 
     vec3 a0 = textureLod(tex3, uv0, level).rgb;
     vec3 a1 = textureLod(tex3, 1 - uv0, level).rgb;
-
+    vec3 a2 = textureLod(tex5, uv1, level).rgb;
+    vec3 a3 = textureLod(tex5, 1 - uv1, level).rgb;
+    vec3 a4 = textureLod(tex7, uv2, level).rgb;
+    vec3 a5 = textureLod(tex7, 1 - uv2, level).rgb;
+    
     vec3 n0 = textureLod(tex4, uv0, level).rgb;
     vec3 n1 = textureLod(tex4, 1 - uv0, level).rgb;
-
-//    float d0 = textureLod(tex7, uv0, level).r;
-//    float d1 = textureLod(tex7, 1 - uv0, level).r;
-
-    vec3 a2 = textureLod(tex5, uv1, level).rgb;
-    vec3 a3 = textureLod(tex5, 1 - uv1 * 1, level).rgb;
-
     vec3 n2 = textureLod(tex6, uv1, level).rgb;
     vec3 n3 = textureLod(tex6, 1 - uv1 * 1, level).rgb;
-
-//    float d2 = textureLod(tex8, uv1, level).r;
-//    float d3 = textureLod(tex8, 1 - uv1 * 1, level).r;
+    vec3 n4 = textureLod(tex8, uv2, level).rgb;
+    vec3 n5 = textureLod(tex8, 1 - uv2, level).rgb;
 
     float alpha = textureLod(tex1, uvMask_0, level).r;
     alpha = pow(alpha,2);
     a0 = mix(a0, a1, alpha);
     n0 = mix(n0, n1, alpha);
-    //d0 = mix(d0, d1, alpha);
+    
+    alpha = clamp(textureLod(tex1, uvMask_2, level).r * 0.85, 0, 1);
+    alpha = pow(alpha,1.2);
+    a0 = mix(a0, a4, alpha);
+    n0 = mix(n0, n4, alpha);
+
+//    float whiter = 1 + textureLod(tex1, uvMask_3, level).r * 0.5;
+//    a0 *= whiter;
 
     alpha = textureLod(tex1, uvMask_1, level).r;
     alpha = pow(alpha,5);
