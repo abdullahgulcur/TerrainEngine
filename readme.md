@@ -11,6 +11,7 @@ This is an OpenGL terrain engine designed for the specialized implementation of 
 ![wireframe_1](screenshot/wireframe_1.png)
 
 ## Runtime Virtual Textures
+![physical_pages](screenshot/physical_pages.png) ![physical_pages_1](screenshot/physical_pages_1.png) |
 ![physical_pages](screenshot/physical_pages.png)
 ![physical_pages_1](screenshot/physical_pages_1.png)
 
