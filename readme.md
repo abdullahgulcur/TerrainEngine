@@ -1,21 +1,22 @@
 # Procedural Terrain Engine
 This is an OpenGL terrain engine designed for the specialized implementation of runtime virtual texturing for terrain. It is inspired by the Frostbite Engine's terrain system and John Carmack's Id Tech Engine for virtual textures. For geometry rendering, I have made some adjustments to Hugues Hoppe’s clipmap rendering technique. Streaming virtual textures are also employed for the heightmap. These techniques enable the rendering of vast terrain areas spanning several square kilometers with high visual quality.
 
-### ScreenShots
+## ScreenShots
 ![scene_0](screenshot/scene_0.png)
 ![scene_1](screenshot/scene_1.png)
 ![scene_2](screenshot/scene_2.png)
 
-### Clipmap Rendering
+## Clipmap Rendering
 ![wireframe_0](screenshot/wireframe_0.png)
 ![wireframe_1](screenshot/wireframe_1.png)
 
 ## Physical Pages Textures
+### Colormap
 <p align="center">
   <img src="screenshot/physical_pages.png" alt="physical_pages" width="45%">
   <img src="screenshot/physical_pages_1.png" alt="physical_pages_1" width="45%">
 </p>
-
+### Heightmap
 ![physical_pages_heightmap](screenshot/physical_pages_heightmap.png)
 
 ## Slope Based Dampening
