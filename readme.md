@@ -1,5 +1,5 @@
 # Procedural Terrain Engine
-This is an OpenGL terrain engine that aims specialized implementation of runtime virtual texturing for terrain. It is inspired by the Frostbite Engine's terrain and also John Carmack's Id Tech Engine for virtual textures. For the geometry part, I made a little change on Hugues Hoppe’s clipmap rendering technique. Streaming virtual textures are also used for heightmap. Those techniques allows to render large kilometer squares of areas with high visual quality.
+This is an OpenGL terrain engine designed for the specialized implementation of runtime virtual texturing for terrain. It is inspired by the Frostbite Engine's terrain system and John Carmack's Id Tech Engine for virtual textures. For geometry rendering, I have made some adjustments to Hugues Hoppe’s clipmap rendering technique. Streaming virtual textures are also employed for the heightmap. These techniques enable the rendering of vast terrain areas spanning several square kilometers with high visual quality.
 
 ### ScreenShots
 ![scene_0](screenshot/scene_0.png)
@@ -18,24 +18,33 @@ This is an OpenGL terrain engine that aims specialized implementation of runtime
 ![slope_based_dampening](screenshot/slope_based_dampening.png)
 
 ## How To Build
-It is a CMake project. There is no external dependencies. It is tested on Windows machine.
+This is a CMake project with no external dependencies. It has been tested on Windows.
 
 ## How To Use
-Right mouse click allows to fly on the terrain. W: Go forward. S: Go backward. A: Go left. D: Go Right. E: Elevate. Q: Descend.
+* Right Mouse Click: Enables free-flight mode over the terrain.
+* W: Move forward.
+* S: Move backward.
+* A: Move left.
+* D: Move right.
+* E: Ascend.
+* Q: Descend.
 
 ## Future Plans
-* Terrain blended objects like rocks.
-* Vegetation (Tree, bush and grass).
-* Lakes and sea.
-* Volumetric Clouds.
-* Decals.
+* Adding terrain-blended objects such as rocks.
+* Implementing vegetation, including trees, bushes, and grass.
+* Introducing lakes and seas.
+* Adding volumetric clouds.
+* Supporting decals.
 
 ## References
-* Clipmap rendering using nested grids. Reference : https://developer.nvidia.com/gpugems/gpugems2/part-i-geometric-complexity/chapter-2-terrain-rendering-using-gpu-based-geometry
-* Virtual texturing for heightmaps. Reference: https://notkyon.moe/vt/Clipmap.pdf
-* Terrain in Battlefield 3: A modern, complete and scalable system. Reference: https://media.contentapi.ea.com/content/dam/eacom/frostbite/files/gdc12-terrain-in-battlefield3.pdf
-* Terrain Procedural Tools in Frostbite. Reference: https://www.youtube.com/watch?v=tBXzyoK4GvE&ab_channel=GDC2025
-* Procedural shader splatting. Reference: https://media.contentapi.ea.com/content/dam/eacom/frostbite/files/chapter5-andersson-terrain-rendering-in-frostbite.pdf
-* Nice terrain material tutorial series: https://www.youtube.com/watch?v=yCRzOdo4b68&t=8s&ab_channel=UnrealSensei
-* FXAA implementation: https://github.com/mitsuhiko/webgl-meincraft
-* OpenGL tutorial: https://learnopengl.com
+- **Clipmap Rendering**  
+  - [Clipmap Rendering Using Nested Grids](https://developer.nvidia.com/gpugems/gpugems2/part-i-geometric-complexity/chapter-2-terrain-rendering-using-gpu-based-geometry): NVIDIA's guide on GPU-based geometry for terrain rendering.
+  - [Virtual Texturing for Heightmaps](https://notkyon.moe/vt/Clipmap.pdf): Detailed documentation on implementing virtual texturing for heightmaps.
+
+- **Frostbite Engine**  
+  - [Terrain in Battlefield 3: A Modern, Scalable System](https://media.contentapi.ea.com/content/dam/eacom/frostbite/files/gdc12-terrain-in-battlefield3.pdf): Insights into Frostbite's terrain rendering system.  
+  - [Procedural Shader Splatting](https://media.contentapi.ea.com/content/dam/eacom/frostbite/files/chapter5-andersson-terrain-rendering-in-frostbite.pdf): Explanation of shader-based terrain texturing in Frostbite.
+
+- **Tutorials**  
+  - [Learn OpenGL](https://learnopengl.com): Comprehensive tutorials for mastering OpenGL.  
+  - [Terrain Material Tutorial Series](https://www.youtube.com/watch?v=yCRzOdo4b68&t=8s&ab_channel=UnrealSensei): Step-by-step guide for creating realistic terrain materials in Unreal Engine.  
