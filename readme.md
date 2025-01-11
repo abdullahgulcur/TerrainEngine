@@ -13,8 +13,8 @@ This is an OpenGL terrain engine designed for the specialized implementation of 
 ## Physical Pages Textures
 ### Colormap
 <p align="center">
-  <img src="screenshot/physical_pages.png" alt="physical_pages" width="49%">
-  <img src="screenshot/physical_pages_1.png" alt="physical_pages_1" width="49%">
+  <img src="screenshot/physical_pages.png" alt="physical_pages" width="50%">
+  <img src="screenshot/physical_pages_1.png" alt="physical_pages_1" width="50%">
 </p>
 
 ### Heightmap
