@@ -372,11 +372,11 @@ namespace Engine {
 			//glGenerateMipmap(GL_TEXTURE_2D);
 		}
 		
-		Texture2D texTemp(physicalPageGeneratorFrame.size.x, physicalPageGeneratorFrame.size.y, 3);
-		GLTexture::getTextureContent(3, texTemp.data, physicalPageGeneratorFrame.texture_0_Id);
-		texTemp.writeDataToFile("testphysicalpages.png", 0);
-		
-		exit(3);
+		//Texture2D texTemp(physicalPageGeneratorFrame.size.x, physicalPageGeneratorFrame.size.y, 3);
+		//GLTexture::getTextureContent(3, texTemp.data, physicalPageGeneratorFrame.texture_0_Id);
+		//texTemp.writeDataToFile("testphysicalpages.png", 0);
+		//
+		//exit(3);
 		//// Record the end time
 		//auto end = std::chrono::high_resolution_clock::now();
 

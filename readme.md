@@ -1,27 +1,41 @@
-# Terrain Generator
-This is an OpenGL terrain engine that can be used for both games and simulations. Project is started to make a high quality offroad game for mobile devices. For this purpose I wanted to make a large scale terrain that has high performance. For the geometry part, I used Hugues Hoppe’s clipmap rendering technique. Streaming virtual clipmaps are also used to sample height values from heightmap. Those old but powerful techniques allowed me to render large kilometer squares of areas with too small memory footprint. For the shading part, I used different masking techniques according to slope and height values.
+# Procedural Terrain Engine
+This is an OpenGL terrain engine that aims specialized implementation of runtime virtual texturing for terrain. It is inspired by the Frostbite Engine's terrain and also John Carmack's Id Tech Engine for virtual textures. For the geometry part, I made a little change on Hugues Hoppe’s clipmap rendering technique. Streaming virtual textures are also used for heightmap. Those techniques allows to render large kilometer squares of areas with high visual quality.
+
 ### ScreenShots
 ![scene_0](screenshot/scene_0.png)
 ![scene_1](screenshot/scene_1.png)
+![scene_2](screenshot/scene_2.png)
+
 ### Clipmap Rendering
+![wireframe_0](screenshot/wireframe_0.png)
+![wireframe_1](screenshot/wireframe_1.png)
+
+## Runtime Virtual Textures
+![physical_pages](screenshot/physical_pages.png)
+![physical_pages_1](screenshot/physical_pages_1.png)
 
 ## Slope Based Dampening
+![slope_based_dampening](screenshot/slope_based_dampening.png)
 
 ## How To Build
-To run the project, open Visual Studio .sln file, set project “Application” as a startup project. Build it and copy all the binaries in the “Binaries” folder to the build directory where the .exe file was created.
+It is a CMake project. There is no external dependencies. It is tested on Windows machine.
+
 ## How To Use
-After running the project just click the terrain button and change terrain properties. You can change light and fog from the environment options as well.
+Right mouse click allows to fly on the terrain. W: Go forward. S: Go backward. A: Go left. D: Go Right. E: Elevate. Q: Descend.
+
 ## Future Plans
-* Roads
-* Vegetation (Tree, bush and grass)
-* Rocks
-* Lakes
-* Volumetric Clouds
-* Decals
+* Terrain blended objects like rocks.
+* Vegetation (Tree, bush and grass).
+* Lakes and sea.
+* Volumetric Clouds.
+* Decals.
+
 ## References
 * Clipmap rendering using nested grids. Reference : https://developer.nvidia.com/gpugems/gpugems2/part-i-geometric-complexity/chapter-2-terrain-rendering-using-gpu-based-geometry
 * Virtual texturing for heightmaps. Reference: https://notkyon.moe/vt/Clipmap.pdf
-* Procedural shader splatting. Reference : https://media.contentapi.ea.com/content/dam/eacom/frostbite/files/chapter5-andersson-terrain-rendering-in-frostbite.pdf
+* Terrain in Battlefield 3: A modern, complete and scalable system. Reference: https://media.contentapi.ea.com/content/dam/eacom/frostbite/files/gdc12-terrain-in-battlefield3.pdf
+* Terrain Procedural Tools in Frostbite. Reference: https://www.youtube.com/watch?v=tBXzyoK4GvE&ab_channel=GDC2025
+* Procedural shader splatting. Reference: https://media.contentapi.ea.com/content/dam/eacom/frostbite/files/chapter5-andersson-terrain-rendering-in-frostbite.pdf
 * Nice terrain material tutorial series: https://www.youtube.com/watch?v=yCRzOdo4b68&t=8s&ab_channel=UnrealSensei
 * FXAA implementation: https://github.com/mitsuhiko/webgl-meincraft
-* Best OpenGL tutorial in my opinion: https://learnopengl.com
+* OpenGL tutorial: https://learnopengl.com
