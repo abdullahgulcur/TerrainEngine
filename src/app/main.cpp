@@ -13,7 +13,7 @@ int main() {
     cameraCtrl->start();
     Engine::Terrain* terrain = new Engine::Terrain;
     core->scene->terrain = terrain;
-    terrain->init(glm::u16vec2(4096), static_cast<unsigned short>(Engine::TerrainClipmapSize::BLOCK_SIZE_32), 4, 1);
+    terrain->init(glm::u16vec2(4096), static_cast<unsigned short>(Engine::TerrainClipmapSize::BLOCK_SIZE_64), 4, 1);
 
     while (!core->getGlfwContext()->shouldClose()) {
 

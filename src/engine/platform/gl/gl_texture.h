@@ -10,6 +10,8 @@ namespace Engine {
     public:
 
         static unsigned int generateTexture2D(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data);
+        static unsigned int generateTerrainPaletteTexture2D(unsigned short width, unsigned short height, const unsigned char* data);
+        static unsigned int generateCompressedTerrainPaletteTexture2D(std::string path);
         static unsigned int generateMaskTexture(unsigned short width, unsigned short height);
         static unsigned int generateDepthTexture(unsigned short width, unsigned short height);
         static unsigned int generateHeightmapTexture2D(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data);

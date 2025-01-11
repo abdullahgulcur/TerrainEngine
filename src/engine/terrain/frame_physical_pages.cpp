@@ -24,32 +24,30 @@ namespace Engine {
         this->textureIdList[1] = imageGenerator.generatePerlinNoiseTexture(glm::u16vec2(1024, 1024), 50.f);
 
         Texture2D texMacroVariation("../../../resource/texture/macrovariation.png");
-        this->textureIdList[2] = texMacroVariation.generateGLTexture();
+        this->textureIdList[2] = GLTexture::generateTerrainPaletteTexture2D(texMacroVariation.width, texMacroVariation.height, texMacroVariation.data);
         texMacroVariation.clean();
 
-        Texture2D channel_0_a("../../../resource/texture/grasslawn_a.png");
-        this->textureIdList[3] = channel_0_a.generateGLTexture();
-        channel_0_a.clean();
+        //Texture2D channel_0_a("../../../resource/texture/terrain/grass_lawn_a.png");
+        //this->textureIdList[3] = GLTexture::generateTerrainPaletteTexture2D(channel_0_a.width, channel_0_a.height, channel_0_a.data);
+        //channel_0_a.clean();
 
-        Texture2D channel_0_n("../../../resource/texture/grasslawn_n.png");
-        this->textureIdList[4] = channel_0_n.generateGLTexture();
-        channel_0_n.clean();
+        //Texture2D channel_0_n("../../../resource/texture/terrain/grass_lawn_n.png");
+        //this->textureIdList[4] = GLTexture::generateTerrainPaletteTexture2D(channel_0_n.width, channel_0_n.height, channel_0_n.data);
+        //channel_0_n.clean();
 
-        Texture2D channel_1_a("../../../resource/texture/rock_cliff_a.jpg");
-        this->textureIdList[5] = channel_1_a.generateGLTexture();
-        channel_1_a.clean();
+        //Texture2D channel_1_a("../../../resource/texture/terrain/rock_cliff_a.jpg");
+        //this->textureIdList[5] = GLTexture::generateTerrainPaletteTexture2D(channel_1_a.width, channel_1_a.height, channel_1_a.data);
+        //channel_1_a.clean();
      
-        Texture2D channel_1_n("../../../resource/texture/rock_cliff_n.jpg");
-        this->textureIdList[6] = channel_1_n.generateGLTexture();
-        channel_1_n.clean();
+        //Texture2D channel_1_n("../../../resource/texture/terrain/rock_cliff_n.jpg");
+        //this->textureIdList[6] = GLTexture::generateTerrainPaletteTexture2D(channel_1_n.width, channel_1_n.height, channel_1_n.data);
+        //channel_1_n.clean();
 
-        /*Texture2D channel_0_d("../../../resource/texture/grasslawn_d.jpg");
-        this->textureIdList[7] = channel_0_d.generateGLTexture();
-        channel_0_d.clean();
+        this->textureIdList[3] = GLTexture::generateCompressedTerrainPaletteTexture2D("../../../resource/texture/terrain_new/grass_lawn_a.dds");
+        this->textureIdList[4] = GLTexture::generateCompressedTerrainPaletteTexture2D("../../../resource/texture/terrain_new/grass_lawn_n.dds");
+        this->textureIdList[5] = GLTexture::generateCompressedTerrainPaletteTexture2D("../../../resource/texture/terrain_new/rock_cliff_a.dds");
+        this->textureIdList[6] = GLTexture::generateCompressedTerrainPaletteTexture2D("../../../resource/texture/terrain_new/rock_cliff_n.dds");
 
-        Texture2D channel_1_d("../../../resource/texture/rock_cliff_d.jpg");
-        this->textureIdList[8] = channel_1_d.generateGLTexture();
-        channel_1_d.clean();*/
     }
 
     FramePhsyicalPages::~FramePhsyicalPages() {}

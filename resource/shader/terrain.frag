@@ -33,7 +33,7 @@ vec2 getUV(inout uint scalee){
     vec2 pageStartWorld = floor(WorldPos2D / pageSizeMultiplier) * pageSizeMultiplier;
     vec2 offset_world = WorldPos2D - pageStartWorld ;
 
-    float margin = 2.0 / 512;
+    float margin = 1.0 / 512;
     float a = margin;
     float b = 1 - margin * 2;
 
@@ -60,6 +60,8 @@ void main(){
 
     float deltaMax = max(dot(dx, dx), dot(dy, dy));
     float lod = 0.5 * log2(deltaMax);
+
+    //lod += -0.5;
 //
     vec3 albedo = textureLod(physicalPages, uv, lod).rgb;
     //vec3 albedo = texture(physicalPages, uv).rgb;

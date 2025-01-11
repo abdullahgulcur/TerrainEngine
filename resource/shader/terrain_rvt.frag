@@ -85,7 +85,7 @@ float getSlopeBlend(mat3 TBN, vec3 macroNormal, vec3 mircoNormal, float slopeBia
 
     float worldSpaceSlope = dot(macroNormal, vec3(0,1,0));
     float worldSpaceSlopeBlend = clamp((slopeBias - worldSpaceSlope) / slopeSharpness + 0.5, 0, 1);
-    vec3 tangentSpaceNormal = TBN * (mircoNormal * 2 - 1);
+    vec3 tangentSpaceNormal = TBN * (mircoNormal * 2 - 1); // yumusatma burada yapilabilir.
     float worldSpaceTextureSlope = dot(tangentSpaceNormal, vec3(0,1,0));
     float slope = mix(worldSpaceSlope, worldSpaceTextureSlope, worldSpaceSlopeBlend);
     float slopeBlend = clamp((slopeBias - slope) / slopeSharpness + 0.5, 0, 1);
@@ -219,17 +219,18 @@ void main() {
 //
 
     vec3 albedo = mix(a0, a2, slopeBlend);
-    //vec3 normal = mix(vec3(0.5,0.5,1), n2, slopeBlend);
     vec3 normal = mix(n0, n2, slopeBlend);
-
-    //float displacement = mix(d0, d2, slopeBlend);
-
+//
+//    vec3 albedo = mix(vec3(1), a2, slopeBlend);
+//    vec3 normal = mix(vec3(0.5,0.5,1), n2, slopeBlend);
+//
     albedo *= macroScalar;
 
 
 
     //---------
 
+    //vec3 N = tbn * vec3(0,0,1);
     vec3 N = tbn * (normal * 2 - 1);
 
     float lightPow = 5;

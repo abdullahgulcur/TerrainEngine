@@ -66,7 +66,7 @@ void main() {
 //	}else{
 //		outColor = rgbB;
 //	}
-//
+
 	float depth = texture(frameDepthTexture, texCoord).r;
     depth = linearizeDepth(depth);// / 10000;
 	outColor = getColorAfterFogFilter(outColor);

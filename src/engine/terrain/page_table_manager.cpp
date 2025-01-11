@@ -7,7 +7,7 @@
 #include "heightmap.h"
 #include <chrono>
 
-#define SIZE_T 512
+#define SIZE_T 1024
 
 namespace Engine {
 
@@ -371,13 +371,13 @@ namespace Engine {
 			//glBindTexture(GL_TEXTURE_2D, physicalPageGeneratorFrame.texture_1_Id);
 			//glGenerateMipmap(GL_TEXTURE_2D);
 		}
+		/*
+		Texture2D texTemp(physicalPageGeneratorFrame.size.x, physicalPageGeneratorFrame.size.y, 3);
+		GLTexture::getTextureContent(3, texTemp.data, physicalPageGeneratorFrame.texture_0_Id);
+		texTemp.writeDataToFile("testphysicalpages.png", 0);
 		
-		//Texture2D texTemp(physicalPageGeneratorFrame.size.x, physicalPageGeneratorFrame.size.y, 3);
-		//GLTexture::getTextureContent(3, texTemp.data, physicalPageGeneratorFrame.texture_0_Id);
-		//texTemp.writeDataToFile("testphysicalpages.png", 0);
-		//
-		//int x = 5;
-
+		int x = 5;
+		exit(3);*/
 		//// Record the end time
 		//auto end = std::chrono::high_resolution_clock::now();
 
