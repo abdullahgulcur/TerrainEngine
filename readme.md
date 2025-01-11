@@ -1,7 +1,8 @@
 # Terrain Generator
 This is an OpenGL terrain engine that can be used for both games and simulations. Project is started to make a high quality offroad game for mobile devices. For this purpose I wanted to make a large scale terrain that has high performance. For the geometry part, I used Hugues Hoppe’s clipmap rendering technique. Streaming virtual clipmaps are also used to sample height values from heightmap. Those old but powerful techniques allowed me to render large kilometer squares of areas with too small memory footprint. For the shading part, I used different masking techniques according to slope and height values.
 ### ScreenShots
-
+![scene_0](screenshot/scene_0.png)
+![scene_1](screenshot/scene_1.png)
 ### Clipmap Rendering
 
 ## Slope Based Dampening
