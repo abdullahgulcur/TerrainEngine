@@ -12,6 +12,10 @@ This is an OpenGL terrain engine designed for the specialized implementation of 
 
 ## Runtime Virtual Textures
 ![physical_pages](screenshot/physical_pages.png) ![physical_pages_1](screenshot/physical_pages_1.png)
+<p align="center">
+  <img src="screenshot/physical_pages.png" alt="physical_pages" width="45%">
+  <img src="screenshot/physical_pages_1.png" alt="physical_pages_1" width="45%">
+</p>
 
 ## Slope Based Dampening
 ![slope_based_dampening](screenshot/slope_based_dampening.png)
