@@ -10,15 +10,16 @@ This is an OpenGL terrain engine designed for the specialized implementation of 
 ![wireframe_0](screenshot/wireframe_0.png)
 ![wireframe_1](screenshot/wireframe_1.png)
 
-## Runtime Virtual Textures
-![physical_pages](screenshot/physical_pages.png) ![physical_pages_1](screenshot/physical_pages_1.png)
+## Physical Pages Textures
 <p align="center">
   <img src="screenshot/physical_pages.png" alt="physical_pages" width="45%">
   <img src="screenshot/physical_pages_1.png" alt="physical_pages_1" width="45%">
 </p>
+![physical_pages_heightmap](screenshot/physical_pages_heightmap.png)
 
 ## Slope Based Dampening
 ![slope_based_dampening](screenshot/slope_based_dampening.png)
+Slope-Based Dampening is a technique used to reduce the intensity of texture blending and displacement on steep terrain slopes.
 
 ## How To Build
 This is a CMake project with no external dependencies. It has been tested on Windows.
