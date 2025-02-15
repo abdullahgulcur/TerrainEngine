@@ -3,11 +3,13 @@
 namespace Engine {
 
     enum class ShaderType {
-        TERRAIN = 0,
+        //TERRAIN = 0,
         TERRAIN_RVT = 1,
         PBR = 2,
         TERRAIN_PAGE_TABLE = 3,
-        FRAME_DEFAULT = 4
+        FRAME_DEFAULT = 4,
+        TERRAIN_GEOMETRY = 5,
+        TERRAIN_RVT_COARSE = 6,
     };
 
     class Shader {
@@ -22,8 +24,10 @@ namespace Engine {
         void init();
         void loadPBR();
         void loadEnvironmentCubemapBackground();
-        void loadTerrain();
+        //void loadTerrain();
+        void loadTerrainGeometry();
         void loadTerrainRVT();
+        void loadTerrainRVTCoarse();
         void loadTerrainPageTable();
         void loadFrameDefaultShader();
     };

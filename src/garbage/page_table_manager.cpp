@@ -21,7 +21,7 @@ namespace Engine {
 
 	void PageTableManager::init(glm::u16vec2 terrainSize, unsigned short blockSize, UINT8 clipmapLevels, UINT8 innerClipmapLevel) {
 
-		const unsigned short totalBlocks = clipmapLevels * BLOCK_COUNT_PER_LEVEL + BLOCK_COUNT_INNER;
+		const unsigned short totalBlocks = clipmapLevels * BLOCK_COUNT_PER_LEVEL;
 		for (int i = 0;; i++) {
 			unsigned short width = 1 << (i / 2);
 			unsigned short height = 1 << ((i+1) / 2);
@@ -75,15 +75,11 @@ namespace Engine {
 
 	void PageTableManager::calculateBlockPositionIndices(const glm::vec2 camPos) {
 
-		PageTableManager::calculateBlockPositionIndicesLevel0(camPos);
-
 		for (int i = 0; i < clipmaps.size(); i++)
 			PageTableManager::calculateBlockPositionIndices(i, camPos);
 	}
 
 	void PageTableManager::calculateBlockPositionIndicesAtFirst(const glm::vec2 camPos) {
-
-		PageTableManager::calculateBlockPositionIndicesAtFirstLevel0(camPos);
 
 		for (int i = 0; i < clipmaps.size(); i++)
 			PageTableManager::calculateBlockPositionIndicesAtFirst(i, camPos);
@@ -95,33 +91,22 @@ namespace Engine {
 		this->clipmaps[level].startGridIndex = PageTableManager::getStartGridIndex(gridIndex);
 
 		glm::u16vec2 blockIndices[BLOCK_COUNT_PER_LEVEL];
+		unsigned short pageTableIndices[BLOCK_COUNT_PER_LEVEL];
+		glm::u8vec2 blockLocalIndices[BLOCK_COUNT_PER_LEVEL];
+		UINT8 isInners[BLOCK_COUNT_PER_LEVEL];
 
-		PageTableManager::getBlockIndices(gridIndex, this->clipmaps[level].startGridIndex, blockIndices);
+		PageTableManager::getBlockIndices(level, gridIndex, this->clipmaps[level].startGridIndex, blockIndices, pageTableIndices, blockLocalIndices, isInners);
 		for (int i = 0; i < BLOCK_COUNT_PER_LEVEL; i++) {
 			this->clipmaps[level].blockIndices[i] = blockIndices[i];
+			this->clipmaps[level].pageTableIndices[i] = pageTableIndices[i];
+			this->clipmaps[level].blockLocalIndices[i] = blockLocalIndices[i];
+			this->clipmaps[level].isInners[i] = isInners[i];
 
 			Block block(level, static_cast<unsigned short>(i));
 			this->jobs.push(block);
 		}
 
 		this->clipmaps[level].gridIndex = gridIndex;
-	}
-
-	void PageTableManager::calculateBlockPositionIndicesAtFirstLevel0(const glm::vec2 camPos) {
-
-		glm::u16vec2 gridIndex = getGridIndex(0, camPos);
-		clipmapLevel0.startGridIndex = PageTableManager::getStartGridIndexLevel0(gridIndex);
-
-		glm::u16vec2 blockIndices[BLOCK_COUNT_INNER];
-
-		PageTableManager::getBlockIndicesLevel0(clipmapLevel0.startGridIndex, blockIndices);
-		for (int i = 0; i < BLOCK_COUNT_INNER; i++) {
-			clipmapLevel0.blockIndices[i] = blockIndices[i];
-			Block block(0, static_cast<unsigned short>(i));
-			this->jobsLevel0.push(block);
-		}
-
-		clipmapLevel0.gridIndex = gridIndex;
 	}
 
 	void PageTableManager::calculateBlockPositionIndices(const UINT8 level, const glm::vec2 camPos) {
@@ -133,22 +118,32 @@ namespace Engine {
 		if (clipmap.gridIndex != gridIndex) {
 			clipmap.gridIndex = gridIndex;
 
-			glm::u16vec2 previous[BLOCK_COUNT_PER_LEVEL];
-			glm::u16vec2 current[BLOCK_COUNT_PER_LEVEL];
+			glm::u16vec2 previousBlockIndices[BLOCK_COUNT_PER_LEVEL];
+			unsigned short previousPageTableIndices[BLOCK_COUNT_PER_LEVEL];
+			glm::u8vec2 previousBlockLocalIndices[BLOCK_COUNT_PER_LEVEL];
+			bool previousIsInners[BLOCK_COUNT_PER_LEVEL];
+
+			glm::u16vec2 currentBlockIndices[BLOCK_COUNT_PER_LEVEL];
+			unsigned short currentPageTableIndices[BLOCK_COUNT_PER_LEVEL];
+			glm::u8vec2 currentBlockLocalIndices[BLOCK_COUNT_PER_LEVEL];
+			UINT8 currentIsInners[BLOCK_COUNT_PER_LEVEL];
+
 			bool previousCommon[BLOCK_COUNT_PER_LEVEL];
 			bool currentCommon[BLOCK_COUNT_PER_LEVEL];
 
 			for (int i = 0; i < BLOCK_COUNT_PER_LEVEL; i++) {
-				previous[i] = clipmap.blockIndices[i];
+				previousBlockIndices[i] = clipmap.blockIndices[i];
+				previousBlockLocalIndices[i] = clipmap.blockLocalIndices[i];
+				previousIsInners[i] = clipmap.isInners[i];
 				previousCommon[i] = false;
 				currentCommon[i] = false;
 			}
-			PageTableManager::getBlockIndices(gridIndex, clipmap.startGridIndex, current);
+			PageTableManager::getBlockIndices(level, gridIndex, clipmap.startGridIndex, currentBlockIndices, currentPageTableIndices, currentBlockLocalIndices, currentIsInners);
 
 			int counter = BLOCK_COUNT_PER_LEVEL;
 			for (int i = 0; i < BLOCK_COUNT_PER_LEVEL; i++) {
 				for (int j = 0; j < BLOCK_COUNT_PER_LEVEL; j++) {
-					if (previous[i] == current[j]) {
+					if (previousBlockIndices[i] == currentBlockIndices[j] && previousIsInners[i] == currentIsInners[j]) {
 						previousCommon[i] = true;
 						currentCommon[j] = true;
 						counter--;
@@ -171,137 +166,102 @@ namespace Engine {
 			for (int i = 0; i < willBeDiscarded.size(); i++) {
 				UINT8 discardIndex = willBeDiscarded[i];
 				UINT8 addIndex = willBeAdded[i];
-				clipmap.blockIndices[discardIndex] = current[addIndex];
+
+				clipmap.blockIndices[discardIndex] = currentBlockIndices[addIndex];
+				clipmap.blockLocalIndices[discardIndex] = currentBlockLocalIndices[addIndex];
+				clipmap.isInners[discardIndex] = currentIsInners[addIndex];
+
 				this->jobs.push(Block(level, discardIndex));
 				this->emptyStack.push(clipmap.pageTableIndices[discardIndex]);
 			}
 		}
 	}
 
-	void PageTableManager::calculateBlockPositionIndicesLevel0(const glm::vec2 camPos) {
+	void PageTableManager::getBlockIndices(UINT8 level, const glm::u16vec2 gridIndex, const glm::u16vec2 startGridIndex, glm::u16vec2* currentBlockIndices, unsigned short* currentPageTableIndices, glm::u8vec2* currentBlockLocalIndices, UINT8* currentIsInners) {
 
-		glm::u16vec2 gridIndex = getGridIndex(0, camPos);
-		TerrainClipmap0& clipmap = this->clipmapLevel0;
-		clipmap.startGridIndex = PageTableManager::getStartGridIndexLevel0(gridIndex);
-
-		if (clipmap.gridIndex != gridIndex) {
-			clipmap.gridIndex = gridIndex;
-
-			glm::u16vec2 previous[BLOCK_COUNT_INNER];
-			glm::u16vec2 current[BLOCK_COUNT_INNER];
-			bool previousCommon[BLOCK_COUNT_INNER];
-			bool currentCommon[BLOCK_COUNT_INNER];
-
-			for (int i = 0; i < BLOCK_COUNT_INNER; i++) {
-				previous[i] = clipmap.blockIndices[i];
-				previousCommon[i] = false;
-				currentCommon[i] = false;
+		for (int y = 0; y < 6; y++) {
+			for (int x = 0; x < 6; x++) {
+				int index = y * 6 + x;
+				currentBlockIndices[index] = glm::u16vec2(startGridIndex.x + x, startGridIndex.y + y);
+				currentBlockLocalIndices[index] = glm::u16vec2(x, y);
+				currentIsInners[index] = 0;
 			}
-			PageTableManager::getBlockIndicesLevel0(clipmap.startGridIndex, current);
+		}
 
-			int counter = BLOCK_COUNT_INNER;
-			for (int i = 0; i < BLOCK_COUNT_INNER; i++) {
-				for (int j = 0; j < BLOCK_COUNT_INNER; j++) {
-					if (previous[i] == current[j]) {
-						previousCommon[i] = true;
-						currentCommon[j] = true;
-						counter--;
-					}
+		if (level != 0) {
+			glm::u16vec2 startInnerIndex = (gridIndex - startGridIndex) - glm::u16vec2(1);
+			for (int y = 0; y < 3; y++) {
+				for (int x = 0; x < 3; x++) {
+					int index = (y + startInnerIndex.y) * 6 + x + startInnerIndex.x;
+					currentIsInners[index] = 1;
 				}
 			}
-
-			std::vector<UINT8> willBeDiscarded(counter);
-			std::vector<UINT8> willBeAdded(counter);
-
-			UINT8 lastPrevious = 0;
-			UINT8 lastCurrent = 0;
-			for (UINT8 i = 0; i < BLOCK_COUNT_INNER; i++) {
-				if (!previousCommon[i])
-					willBeDiscarded[lastPrevious++] = i;
-				if (!currentCommon[i])
-					willBeAdded[lastCurrent++] = i;
-			}
-
-			for (int i = 0; i < willBeDiscarded.size(); i++) {
-				UINT8 discardIndex = willBeDiscarded[i];
-				UINT8 addIndex = willBeAdded[i];
-				clipmap.blockIndices[discardIndex] = current[addIndex];
-				this->jobsLevel0.push(Block(0, discardIndex));
-				this->emptyStack.push(clipmap.pageTableIndices[discardIndex]);
-			}
 		}
+			
 	}
 
-	void PageTableManager::getBlockIndices(const glm::u16vec2 gridIndex, const glm::u16vec2 startGridIndex, glm::u16vec2* indices) {
+	//void PageTableManager::getBlockIndices(const glm::u16vec2 gridIndex, const glm::u16vec2 startGridIndex, glm::u16vec2* indices) {
 
-		int counter = 0;
+	//	int counter = 0;
 
-		// ---------------- DYNAMIC BLOCKS ----------------
+	//	// ---------------- DYNAMIC BLOCKS ----------------
 
-		auto findIndicesHorizontal = [](glm::u16vec2 startGridIndex, glm::u16vec2* indices, int xOffset, int yOffset, int& index)
-		{
-			int start = startGridIndex.x + xOffset;
-			int end = start + 4;
-			for (int i = start; i < end; i++)
-				indices[index++] = glm::u16vec2(i, startGridIndex.y + yOffset);
-		};
-		auto findIndicesVertical = [](glm::u16vec2 startGridIndex, glm::u16vec2* indices, int xOffset, int yOffset, int& index)
-		{
-			int start = startGridIndex.y + yOffset;
-			int end = start + 3;
-			for (int i = start; i < end; i++)
-				indices[index++] = glm::u16vec2(startGridIndex.x + xOffset, i);
-		};
+	//	auto findIndicesHorizontal = [](glm::u16vec2 startGridIndex, glm::u16vec2* indices, int xOffset, int yOffset, int& index)
+	//	{
+	//		int start = startGridIndex.x + xOffset;
+	//		int end = start + 4;
+	//		for (int i = start; i < end; i++)
+	//			indices[index++] = glm::u16vec2(i, startGridIndex.y + yOffset);
+	//	};
+	//	auto findIndicesVertical = [](glm::u16vec2 startGridIndex, glm::u16vec2* indices, int xOffset, int yOffset, int& index)
+	//	{
+	//		int start = startGridIndex.y + yOffset;
+	//		int end = start + 3;
+	//		for (int i = start; i < end; i++)
+	//			indices[index++] = glm::u16vec2(startGridIndex.x + xOffset, i);
+	//	};
 
-		if (gridIndex.x % 2 == 0 && gridIndex.y % 2 == 0) {
+	//	if (gridIndex.x % 2 == 0 && gridIndex.y % 2 == 0) {
 
-			findIndicesHorizontal(startGridIndex, indices, 1, 4, counter);
-			findIndicesVertical(startGridIndex, indices, 4, 1, counter);
-		}
-		else if (gridIndex.x % 2 == 1 && gridIndex.y % 2 == 0) {
+	//		findIndicesHorizontal(startGridIndex, indices, 1, 4, counter);
+	//		findIndicesVertical(startGridIndex, indices, 4, 1, counter);
+	//	}
+	//	else if (gridIndex.x % 2 == 1 && gridIndex.y % 2 == 0) {
 
-			findIndicesHorizontal(startGridIndex, indices, 1, 4, counter);
-			findIndicesVertical(startGridIndex, indices, 1, 1, counter);
-		}
-		else if (gridIndex.x % 2 == 0 && gridIndex.y % 2 == 1) {
+	//		findIndicesHorizontal(startGridIndex, indices, 1, 4, counter);
+	//		findIndicesVertical(startGridIndex, indices, 1, 1, counter);
+	//	}
+	//	else if (gridIndex.x % 2 == 0 && gridIndex.y % 2 == 1) {
 
-			findIndicesHorizontal(startGridIndex, indices, 1, 1, counter);
-			findIndicesVertical(startGridIndex, indices, 4, 2, counter);
-		}
-		else {
+	//		findIndicesHorizontal(startGridIndex, indices, 1, 1, counter);
+	//		findIndicesVertical(startGridIndex, indices, 4, 2, counter);
+	//	}
+	//	else {
 
-			findIndicesHorizontal(startGridIndex, indices, 1, 1, counter);
-			findIndicesVertical(startGridIndex, indices, 1, 2, counter);
-		}
+	//		findIndicesHorizontal(startGridIndex, indices, 1, 1, counter);
+	//		findIndicesVertical(startGridIndex, indices, 1, 2, counter);
+	//	}
 
-		// ---------------- STATIC BLOCKS ----------------
+	//	// ---------------- STATIC BLOCKS ----------------
 
-		for (int i = startGridIndex.x; i < startGridIndex.x + 6; i++) {
+	//	for (int i = startGridIndex.x; i < startGridIndex.x + 6; i++) {
 
-			// above horizontal
-			indices[counter++] = glm::u16vec2(i, startGridIndex.y);
+	//		// above horizontal
+	//		indices[counter++] = glm::u16vec2(i, startGridIndex.y);
 
-			// below horizontal
-			indices[counter++] = glm::u16vec2(i, startGridIndex.y + 5);
-		}
+	//		// below horizontal
+	//		indices[counter++] = glm::u16vec2(i, startGridIndex.y + 5);
+	//	}
 
-		for (int i = startGridIndex.y + 1; i < startGridIndex.y + 5; i++) {
+	//	for (int i = startGridIndex.y + 1; i < startGridIndex.y + 5; i++) {
 
-			// left vertical
-			indices[counter++] = glm::u16vec2(startGridIndex.x, i);
+	//		// left vertical
+	//		indices[counter++] = glm::u16vec2(startGridIndex.x, i);
 
-			// right vertical
-			indices[counter++] = glm::u16vec2(startGridIndex.x + 5, i);
-		}
-	}
-
-	void PageTableManager::getBlockIndicesLevel0(const glm::u16vec2 startGridIndex, glm::u16vec2* indices) {
-
-		int counter = 0;
-		for (int y = startGridIndex.y; y < startGridIndex.y + 3; y++)
-			for (int x = startGridIndex.x; x < startGridIndex.x + 3; x++)
-				indices[counter++] = glm::u16vec2(x, y);
-	}
+	//		// right vertical
+	//		indices[counter++] = glm::u16vec2(startGridIndex.x + 5, i);
+	//	}
+	//}
 
 	glm::u16vec2 PageTableManager::getGridIndex(const UINT8 level, const glm::vec2 camPos) {
 
@@ -311,11 +271,6 @@ namespace Engine {
 	glm::u16vec2 PageTableManager::getStartGridIndex(glm::u16vec2 gridIndex) {
 
 		return  glm::u16vec2((gridIndex.x / 2) * 2 - 2, (gridIndex.y / 2) * 2 - 2);
-	}
-
-	glm::u16vec2 PageTableManager::getStartGridIndexLevel0(glm::u16vec2 gridIndex) {
-
-		return glm::u16vec2(gridIndex.x - 1, gridIndex.y - 1);
 	}
 
 	void PageTableManager::initEmptyStack() {
@@ -329,22 +284,6 @@ namespace Engine {
 
 		bool jobDone = false;
 
-		while (!this->jobsLevel0.empty()) {
-
-			Block block = this->jobsLevel0.top();
-			this->jobsLevel0.pop();
-
-			unsigned short topEmpty = this->emptyStack.top();
-			this->clipmapLevel0.pageTableIndices[block.blockIndex] = topEmpty;
-			this->emptyStack.pop();
-
-			glm::u16vec2 pagePosition(topEmpty % physicalTextureSize.x, topEmpty / physicalTextureSize.x);
-			glm::u16vec2 blockPos = this->clipmapLevel0.blockIndices[block.blockIndex];
-
-			PageTableManager::updatePageTableTexturePartial(pagePosition, block.level, blockPos);
-
-			jobDone = true;
-		}
 
 		while (!this->jobs.empty()) {
 
@@ -357,8 +296,9 @@ namespace Engine {
 
 			glm::u16vec2 pagePosition(topEmpty % physicalTextureSize.x, topEmpty / physicalTextureSize.x);
 			glm::u16vec2 blockPos = this->clipmaps[block.level].blockIndices[block.blockIndex];
+			UINT8 inner = this->clipmaps[block.level].isInners[block.blockIndex];
 
-			PageTableManager::updatePageTableTexturePartial(pagePosition, block.level, blockPos);
+			PageTableManager::updatePageTableTexturePartial(pagePosition, block.level, blockPos, inner);
 
 			jobDone = true;
 		}
@@ -388,14 +328,27 @@ namespace Engine {
 		
 	}
 
-	void PageTableManager::updatePageTableTexturePartial(glm::u8vec2 pagePosition, UINT8 level, glm::u16vec2 blockPos) {
+	void PageTableManager::updatePageTableTexturePartial(glm::u8vec2 pagePosition, UINT8 level, glm::u16vec2 blockPos, UINT8 inner) {
 
 		glm::uvec2 pageSize(SIZE_T, SIZE_T);
 
 		glm::ivec2 blockPosInPage(pagePosition.x * heightmapData.blockSize, pagePosition.y * heightmapData.blockSize);
 		glm::u16vec2 blockPosInPhysicalPagesTexture(pagePosition.x * pageSize.x, pagePosition.y * pageSize.y);
-		glm::ivec2 blockPosInPageTable(blockPos.x << level, blockPos.y << level);
-		glm::ivec2 blockSizeInPageTable(1 << level);
+
+		unsigned short pageTableSizeX = heightmapData.columns;
+
+		if (level != 0)
+			int aaa = 5;
+
+		unsigned short xOffset = 0;
+		UINT8 maxLevel = heightmapData.mipStartIndices.size() - 1;
+		for (int i = 0; i < level; i++) {
+			xOffset += pageTableSizeX;
+			pageTableSizeX >>= 1;
+		}
+
+		glm::ivec2 blockPosInPageTable = blockPos;
+		blockPosInPageTable.x += xOffset;
 
 		unsigned int pageTableColor = (pagePosition.x << 8) + (pagePosition.y << 4) + level;
 
@@ -404,8 +357,8 @@ namespace Engine {
 
 		GLTexture::updateHeightmapPhysicalTexture(heightmapTextureId, subDataPhysicalTexture.width, subDataPhysicalTexture.height, subDataPhysicalTexture.data, blockPosInPage);
 
-		pageTableGeneratorFrame.setViewport(blockPosInPageTable, blockSizeInPageTable);
-		pageTableGeneratorFrame.setUniforms(pageTableColor);
+		pageTableGeneratorFrame.setViewport(blockPosInPageTable, glm::ivec2(1));
+		pageTableGeneratorFrame.setUniforms(pageTableColor, level, inner);
 		pageTableGeneratorFrame.draw();
 
 		physicalPageGeneratorFrame.setViewport(blockPosInPhysicalPagesTexture, pageSize);

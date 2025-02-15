@@ -11,7 +11,7 @@ namespace Engine {
 		data = new unsigned int[terrainSize.x * terrainSize.y];
 
 		unsigned int shaderProgramId = GLShader::loadShader("../../../resource/shader/generative/pnoise.vert", "../../../resource/shader/generative/pnoise.frag");
-		unsigned int textureId = GLTexture::generateHeightmapTexture(terrainSize);
+		textureId = GLTexture::generateHeightmapTexture(terrainSize);
 		unsigned int FBO = GLBuffer::createFBO(textureId);
 		unsigned int planeVAO = GLBuffer::createQuadVAO();
 
@@ -33,8 +33,20 @@ namespace Engine {
 		
 		//textureData1.writeDataToFile("fuckeri.png", 0);
 
-		GLTexture::deleteTexture(textureId);
+		//GLTexture::deleteTexture(textureId);
 
+	}
+
+	float HeightmapGenerator::getHeight(glm::vec2 cameraPosition) {
+
+		unsigned int camPosX = unsigned int(cameraPosition.x);
+		unsigned int camPosY = unsigned int(cameraPosition.y);
+
+		if (camPosX < 0 || camPosY < 0 || camPosX >= terrainSize.x || camPosY >= terrainSize.y)
+			return 0;
+
+		unsigned int index = camPosY * terrainSize.x + camPosX;
+		return data[index] * 0.03f;
 	}
 
 }

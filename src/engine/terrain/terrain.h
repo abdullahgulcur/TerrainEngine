@@ -1,18 +1,20 @@
 #pragma once
 
 #include "terrain_config.h"
-#include "page_table_manager.h"
+#include "terrain_texturing.h"
 #include "terrain_geometry.h"
+#include "terrain_geometry_manager.h"
 
 // TODO: data lari freelemeyi unutma
 
 namespace Engine {
 
 	enum class TerrainClipmapSize {
-		BLOCK_SIZE_8 = 8, // low quality terrain, if there is no elevation at all, it can be used.
-		BLOCK_SIZE_16 = 16, // medium quality terrain
-		BLOCK_SIZE_32 = 32, // high quality terrain (most of the time, it is good enough)
-		BLOCK_SIZE_64 = 64, // ultra quality terrain
+		BLOCK_SIZE_4 = 4, // very low
+		BLOCK_SIZE_8 = 8, // low
+		BLOCK_SIZE_16 = 16, // medium
+		BLOCK_SIZE_32 = 32, // high
+		BLOCK_SIZE_64 = 64, // ultra
 	};
 
 	class Terrain {
@@ -21,8 +23,10 @@ namespace Engine {
 
 	public:
 
-		PageTableManager pageTableManager;
+		HeightmapGenerator hg;
+		TerrainTexturing terrainTexturing;
 		TerrainGeometry terrainGeometry;
+		TerrainGeometryManager terrainGeometryManager;
 
 		Terrain() {}
 		~Terrain() {}

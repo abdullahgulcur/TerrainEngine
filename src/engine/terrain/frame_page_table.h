@@ -13,10 +13,12 @@ namespace Engine {
 
     public:
 
-        FramePageTable();
-        FramePageTable(glm::u16vec2 size, unsigned int shaderProgramId);
-        ~FramePageTable();
-        void setUniforms(unsigned int color);
+        glm::u8vec2 mipCounts;
+
+        FramePageTable() {}
+        FramePageTable(glm::u8vec2 mipCounts);
+        ~FramePageTable() {}
+        void setUniforms(unsigned int color, unsigned int level);
         void draw();
     };
 }

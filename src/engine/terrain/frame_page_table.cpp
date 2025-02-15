@@ -1,22 +1,22 @@
 #include "pch.h"
 #include "frame_page_table.h"
 #include "gl_context.h"
+#include "core.h"
 
 namespace Engine {
 
-    FramePageTable::FramePageTable() {}
+    FramePageTable::FramePageTable(glm::u8vec2 mipCounts) {
 
-    FramePageTable::FramePageTable(glm::u16vec2 size, unsigned int shaderProgramId) {
-        this->size = size;
-        this->shaderProgramId = shaderProgramId;
+        this->mipCounts = mipCounts;
+        this->size = mipCounts * glm::u8vec2(5);
+        this->shaderProgramId = Core::getShader()->shaders[ShaderType::TERRAIN_PAGE_TABLE];
         textureId = GLTexture::createPageTableFrameBufferTexture(size);
         FBO = GLBuffer::createFBO(textureId);
         planeVAO = GLBuffer::createQuadVAO();
     }
 
-    FramePageTable::~FramePageTable() {}
+    void FramePageTable::setUniforms(unsigned int color, unsigned int level) {
 
-    void FramePageTable::setUniforms(unsigned int color) {
         this->color = color;
     }
 

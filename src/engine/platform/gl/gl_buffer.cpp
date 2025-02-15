@@ -127,22 +127,38 @@ namespace Engine {
         return FBO;
     }
 
-    unsigned int GLBuffer::createTerrainRVT_FBO(unsigned int texture_0_Id) { //, unsigned int texture_1_Id, unsigned int texture_2_Id
+    unsigned int GLBuffer::createTerrainRVT_FBO(unsigned int textureId, unsigned short pageCount) { //, unsigned int texture_1_Id, unsigned int texture_2_Id
 
         unsigned int FBO;
         glGenFramebuffers(1, &FBO);
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_0_Id, 0);
-        /*glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, texture_1_Id, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, texture_2_Id, 0);*/
 
-        //GLenum drawBuffers[1] = { GL_COLOR_ATTACHMENT0}; // , GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2
-        //glDrawBuffers(1, drawBuffers);
+        // do we really need that loop ? 
+        for (int i = 0; i < pageCount; i++) {
+            
+            glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureId, 0, i);
 
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-            std::cerr << "Framebuffer not complete" << std::endl;
+            // Ensure the framebuffer is complete
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+                std::cerr << "Framebuffer not complete!" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+
+
+        //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_0_Id, 0);
+        ///*glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, texture_1_Id, 0);
+        //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, texture_2_Id, 0);*/
+
+        ////GLenum drawBuffers[1] = { GL_COLOR_ATTACHMENT0}; // , GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2
+        ////glDrawBuffers(1, drawBuffers);
 
         return FBO;
+    }
+
+    void GLBuffer::frameBufferTextureLayer(unsigned int textureId, unsigned short tileId) {
+
+        glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureId, 0, tileId);
     }
 
     unsigned int GLBuffer::createFBO(unsigned int textureId, unsigned int depthTextureId) {

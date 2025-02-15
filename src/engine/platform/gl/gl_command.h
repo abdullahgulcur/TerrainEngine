@@ -17,6 +17,7 @@ namespace Engine {
 		static void drawInstancedWithSubData1(unsigned int VAO, unsigned int indiceCount, unsigned int instanceCount, unsigned int buffer, unsigned int offset, unsigned int size, void* ptr);
 		static void drawArrays(unsigned int count);
 		static void setScreen(glm::u16vec2 pos, glm::u16vec2 size, unsigned int FBO);
+		//static void setScreen(glm::u16vec2 pos, glm::u16vec2 size, unsigned int FBO, unsigned int textureId, unsigned short tileId);
 		static void drawQuad(unsigned int quadVAO);
     };
 }

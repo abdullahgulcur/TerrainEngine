@@ -6,8 +6,8 @@
 //#define BLOCK_SIZE 16 // min 8
 
 // STATIC
-#define BLOCK_COUNT_PER_LEVEL 27
-#define BLOCK_COUNT_INNER 9
+#define BLOCK_COUNT_PER_LEVEL 36
+#define PAGE_COUNT_PER_LEVEL 16
 //#define BLOCK_TEMP 2
 
 //#define BLOCK_COUNT_LEVEL_0 36

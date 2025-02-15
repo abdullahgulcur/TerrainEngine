@@ -18,10 +18,12 @@ namespace Engine {
 
         Shader::loadPBR();
         Shader::loadEnvironmentCubemapBackground();
-        Shader::loadTerrain();
+        //Shader::loadTerrain();
         Shader::loadTerrainRVT();
+        Shader::loadTerrainRVTCoarse();
         Shader::loadTerrainPageTable();
         Shader::loadFrameDefaultShader();
+        Shader::loadTerrainGeometry();
     }
 
     void Shader::loadPBR() {
@@ -32,25 +34,36 @@ namespace Engine {
 
     }
 
-    void Shader::loadTerrain() {
+    void Shader::loadTerrainGeometry() {
 
-        std::string vertexShaderPath = "../../../resource/shader/terrain.vert";
-        std::string fragmentShaderPath = "../../../resource/shader/terrain.frag";
+        std::string vertexShaderPath = "../../../resource/shader/terrain/terrain_geometry.vert";
+        std::string fragmentShaderPath = "../../../resource/shader/terrain/terrain_geometry.frag";
         unsigned int shaderProgramId = GLShader::loadShader(vertexShaderPath, fragmentShaderPath);
-        GLTexture::setTextureUniformLocation("pageTable", shaderProgramId, 0);
-        GLTexture::setTextureUniformLocation("physicalHeightmap", shaderProgramId, 1);
+        GLTexture::setTextureUniformLocation("heightmap", shaderProgramId, 0);
+        GLTexture::setTextureUniformLocation("pageTable", shaderProgramId, 1);
         GLTexture::setTextureUniformLocation("physicalPages", shaderProgramId, 2);
-        /*GLTexture::setTextureUniformLocation("physicalPagesNormal", shaderProgramId, 3);
-        GLTexture::setTextureUniformLocation("physicalPagesDisplacement", shaderProgramId, 4); */
-        shaders[ShaderType::TERRAIN] = shaderProgramId;
+        shaders[ShaderType::TERRAIN_GEOMETRY] = shaderProgramId;
     }
+
+    //void Shader::loadTerrain() {
+
+    //    std::string vertexShaderPath = "../../../resource/shader/terrain.vert";
+    //    std::string fragmentShaderPath = "../../../resource/shader/terrain.frag";
+    //    unsigned int shaderProgramId = GLShader::loadShader(vertexShaderPath, fragmentShaderPath);
+    //    GLTexture::setTextureUniformLocation("pageTable", shaderProgramId, 0);
+    //    GLTexture::setTextureUniformLocation("physicalHeightmap", shaderProgramId, 1);
+    //    GLTexture::setTextureUniformLocation("physicalPages", shaderProgramId, 2);
+    //    /*GLTexture::setTextureUniformLocation("physicalPagesNormal", shaderProgramId, 3);
+    //    GLTexture::setTextureUniformLocation("physicalPagesDisplacement", shaderProgramId, 4); */
+    //    shaders[ShaderType::TERRAIN] = shaderProgramId;
+    //}
 
     void Shader::loadTerrainRVT() {
 
         std::string vertexShaderPath = "../../../resource/shader/terrain_rvt.vert";
         std::string fragmentShaderPath = "../../../resource/shader/terrain_rvt.frag";
         unsigned int shaderProgramId = GLShader::loadShader(vertexShaderPath, fragmentShaderPath);
-        GLTexture::setTextureUniformLocation("tex0", shaderProgramId, 0);
+        GLTexture::setTextureUniformLocation("heightmap", shaderProgramId, 0);
         GLTexture::setTextureUniformLocation("tex1", shaderProgramId, 1);
         GLTexture::setTextureUniformLocation("tex2", shaderProgramId, 2);
         GLTexture::setTextureUniformLocation("tex3", shaderProgramId, 3);
@@ -60,6 +73,14 @@ namespace Engine {
         GLTexture::setTextureUniformLocation("tex7", shaderProgramId, 7);
         GLTexture::setTextureUniformLocation("tex8", shaderProgramId, 8);
         shaders[ShaderType::TERRAIN_RVT] = shaderProgramId;
+    }
+
+    void Shader::loadTerrainRVTCoarse() {
+
+        std::string vertexShaderPath = "../../../resource/shader/terrain/terrain_rvt_coarse.vert";
+        std::string fragmentShaderPath = "../../../resource/shader/terrain/terrain_rvt_coarse.frag";
+        unsigned int shaderProgramId = GLShader::loadShader(vertexShaderPath, fragmentShaderPath);
+        shaders[ShaderType::TERRAIN_RVT_COARSE] = shaderProgramId;
     }
 
     void Shader::loadTerrainPageTable() {

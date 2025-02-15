@@ -7,21 +7,23 @@
 
 namespace Engine {
 
-    FramePhsyicalPages::FramePhsyicalPages() {}
-
-    FramePhsyicalPages::FramePhsyicalPages(glm::u16vec2 size, unsigned int heightmapTextureId, unsigned int blockSize) {
-        this->size = size;
-        this->blockSize = blockSize;
+    FramePhsyicalPages::FramePhsyicalPages(unsigned short pageCounts, unsigned short pageSize, unsigned int heightmapTextureId) {
+        //this->blockSize = 1;
+        this->pageSize = pageSize;
+        this->pageCounts = pageCounts;
         this->textureIdList[0] = heightmapTextureId;
         this->shaderProgramId = Core::getShader()->shaders[ShaderType::TERRAIN_RVT];
-        this->texture_0_Id = GLTexture::createPhysicalPagesFrameBufferTexture(size);
+        this->shaderProgramId1 = Core::getShader()->shaders[ShaderType::TERRAIN_RVT_COARSE];
+        //this->size = glm::u16vec2(pageCounts.x, pageCounts.y) * pageSize;
+        UINT8 mipLevels = 6;
+        this->textureId = GLTexture::createPhysicalPagesFrameBufferTextureArray(pageSize, mipLevels, this->pageCounts);
         /*this->texture_1_Id = GLTexture::createPhysicalPagesFrameBufferTexture(size);
         this->texture_2_Id = GLTexture::createPhysicalPagesFrameBufferTexture(size);*/
-        this->FBO = GLBuffer::createTerrainRVT_FBO(texture_0_Id);//, texture_1_Id, texture_2_Id
+        this->FBO = GLBuffer::createTerrainRVT_FBO(textureId, this->pageCounts);//, texture_1_Id, texture_2_Id
         this->planeVAO = GLBuffer::createQuadVAO();
 
         ImageGenerator imageGenerator;
-        this->textureIdList[1] = imageGenerator.generatePerlinNoiseTexture(glm::u16vec2(1024, 1024), 50.f);
+        this->textureIdList[1] = imageGenerator.generatePerlinNoiseTexture(glm::u16vec2(2048, 2048), 50.f);
 
         Texture2D texMacroVariation("../../../resource/texture/macrovariation.png");
         this->textureIdList[2] = texMacroVariation.generateGLTexture();
@@ -52,33 +54,38 @@ namespace Engine {
 
     }
 
-    FramePhsyicalPages::~FramePhsyicalPages() {}
-
-    void FramePhsyicalPages::setUniforms(unsigned int level, glm::u16vec2 blockPosition, glm::u8vec2 pagePosition, glm::u8vec2 physicalTextureSize) {
+    void FramePhsyicalPages::setUniforms(unsigned int level, glm::u16vec2 blockPosition) {
         this->level = level;
         this->blockPosition = blockPosition;
-        this->pagePosition = pagePosition;
-        this->physicalTextureSize = physicalTextureSize;
     }
 
-    void FramePhsyicalPages::draw() {
+    void FramePhsyicalPages::draw(unsigned short tileIndex, UINT8 mipmapLevel) {
 
-        GLCommand::setScreen(viewportPos, viewportSize, FBO);
-        GLShader::useProgram(shaderProgramId);
 
-        for (int i = 0; i < 9; i++) 
-            GLTexture::useTexture(i, textureIdList[i]);
+        GLCommand::setScreen(glm::u16vec2(0), glm::u16vec2(pageSize), FBO);
+        GLBuffer::frameBufferTextureLayer(textureId, tileIndex);
 
-        GLUniform::setUInt1(shaderProgramId, "level", level);
-        GLUniform::setUInt2(shaderProgramId, "blockPosition", blockPosition);
-        GLUniform::setUInt1(shaderProgramId, "blockSize", blockSize);
-        GLUniform::setUInt2(shaderProgramId, "pagePosition", pagePosition);
-        GLUniform::setUInt2(shaderProgramId, "physicalTextureSize", physicalTextureSize);
-        GLCommand::drawQuad(planeVAO);
+        if (mipmapLevel < 103) { /////
+
+            GLShader::useProgram(shaderProgramId);
+
+            for (int i = 0; i < 9; i++)
+                GLTexture::useTexture(i, textureIdList[i]);
+
+            GLUniform::setUInt1(shaderProgramId, "level", level);
+            GLUniform::setUInt2(shaderProgramId, "blockPosition", blockPosition);
+            //GLUniform::setUInt1(shaderProgramId, "blockSize", blockSize);
+            //GLUniform::setUInt1(shaderProgramId, "pageSize", pageSize);
+            //GLUniform::setUInt2(shaderProgramId, "pagePosition", pagePosition);
+            //GLUniform::setUInt1(shaderProgramId, "pageCounts", pageCounts);
+            GLCommand::drawQuad(planeVAO);
+        }
+        else {
+
+            GLShader::useProgram(shaderProgramId1);
+
+            GLCommand::drawQuad(planeVAO);
+        }
     }
 
-    void FramePhsyicalPages::setViewport(glm::u16vec2 pos, glm::u16vec2 size) {
-        this->viewportPos = pos;
-        this->viewportSize = size;
-    }
 }

@@ -66,11 +66,11 @@ void main() {
 //	}else{
 //		outColor = rgbB;
 //	}
-
-	float depth = texture(frameDepthTexture, texCoord).r;
-    depth = linearizeDepth(depth);// / 10000;
-	outColor = getColorAfterFogFilter(outColor);
-
+//
+//	float depth = texture(frameDepthTexture, texCoord).r;
+//    depth = linearizeDepth(depth);// / 10000;
+//	outColor = getColorAfterFogFilter(outColor);
+//
 
 
     FragColor = vec4(outColor, 1);

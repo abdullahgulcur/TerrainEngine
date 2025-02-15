@@ -12,7 +12,7 @@ namespace Engine {
 		glm::u16vec2 bounds;
 		float fov = 90.f;
 		float nearClip = 0.1f;
-		float farClip = 10000.f;
+		float farClip = 16000.f;
 		float aspectRatio;
 		glm::mat4 viewMatrix;
 		glm::mat4 projectionMatrix;

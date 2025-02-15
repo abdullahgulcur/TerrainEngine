@@ -11,7 +11,9 @@ namespace Engine {
 	/*
 	* Creates all the vao for the meshes of the terrain
 	*/
-	void TerrainGeometry::generateTerrainGeometryVertexArrays(const int blockResolution, const int totalLevel, const int totalInstance) {
+	void TerrainGeometry::generateTerrainGeometryVertexArrays(const int blockResolutionn, const int totalLevel) {
+
+		int blockResolution = blockResolutionn - 0;
 
 		std::vector<unsigned short> blockIndices;
 		std::vector<unsigned short> outerDegenerateIndices;
@@ -65,8 +67,9 @@ namespace Engine {
 		block.indiceCount = blockIndices.size();
 		outerDegenerate.indiceCount = outerDegenerateIndices.size();
 
+		const int totalInstance = totalLevel * 36;
 		GLBuffer::createInstancedTerrainStaticMesh2D(block.VAO, block.instanceBuffer, &blockVerts[0], blockVerts.size() * sizeof(glm::u16vec2), &blockIndices[0], blockIndices.size() * sizeof(unsigned short), totalInstance);
-		GLBuffer::createInstancedTerrainStaticMesh2D(outerDegenerate.VAO, outerDegenerate.instanceBuffer, &outerDegenerateVerts[0], outerDegenerateVerts.size() * sizeof(glm::u16vec2), &outerDegenerateIndices[0], outerDegenerateIndices.size() * sizeof(unsigned short), totalInstance);
+		GLBuffer::createInstancedTerrainStaticMesh2D(outerDegenerate.VAO, outerDegenerate.instanceBuffer, &outerDegenerateVerts[0], outerDegenerateVerts.size() * sizeof(glm::u16vec2), &outerDegenerateIndices[0], outerDegenerateIndices.size() * sizeof(unsigned short), totalLevel);
 		// 
 		//std::vector<unsigned short> blockIndices;
 		//std::vector<unsigned short> outerDegenerateIndices;

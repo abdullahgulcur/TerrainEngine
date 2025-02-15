@@ -77,6 +77,15 @@ namespace Engine {
 		glViewport(pos.x, pos.y, size.x, size.y);
 	}
 
+	//void GLCommand::setScreen(glm::u16vec2 pos, glm::u16vec2 size, unsigned int FBO, unsigned int textureId, unsigned short tileId) {
+
+	//	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+	//	glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureId, 0, tileId);
+
+	//	glViewport(pos.x, pos.y, size.x, size.y);
+	//}
+
 	void GLCommand::drawQuad(unsigned int quadVAO) {
 
 		glBindVertexArray(quadVAO);

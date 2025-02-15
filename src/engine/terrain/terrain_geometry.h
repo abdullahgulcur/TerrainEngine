@@ -17,6 +17,6 @@ namespace Engine {
 
 		TerrainGeometry();
 		~TerrainGeometry();
-		void generateTerrainGeometryVertexArrays(const int blockResolution, const int totalLevel, const int totalInstance);
+		void generateTerrainGeometryVertexArrays(const int blockResolution, const int totalLevel);
 	};
 }
