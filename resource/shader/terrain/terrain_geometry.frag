@@ -10,6 +10,7 @@ uniform sampler2DArray physicalPages;
 uniform vec3 cameraPosition;
 uniform uint totalMipmapLevel;
 uniform uvec2 mipCounts;
+uniform int mipmapLevelList[16];
 
 int getLODLevelBorder(vec3 worldPosition, inout float dist) {
 
@@ -80,10 +81,10 @@ void main(){
     int maxLodLevel = int(totalMipmapLevel - 1);
 
     float dist, lodDistanceFiner, lodDistanceCoarse;
-    int mipLevel = getLODLevelRevised(WorldPos, dist, lodDistanceFiner, lodDistanceCoarse);
+    int mipLevel = mipmapLevelList[getLODLevelRevised(WorldPos, dist, lodDistanceFiner, lodDistanceCoarse)];
 
     float dist1;
-    int mipLevelBorder = getLODLevelBorder(WorldPos, dist1);
+    int mipLevelBorder = mipmapLevelList[getLODLevelBorder(WorldPos, dist1)];
 
     float ratio = (dist - lodDistanceFiner) / (lodDistanceCoarse - lodDistanceFiner);
     ratio = clamp(ratio, 0, 1);

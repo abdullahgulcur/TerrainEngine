@@ -38,11 +38,11 @@ namespace Engine {
 		mipmapGridIndexList = std::vector<glm::u16vec2>(totalMipmapLevel);
 		mipmapStartGridIndexList = std::vector<glm::u16vec2>(totalMipmapLevel);
 		blockIndexToAddQueue = std::vector<std::queue<BlockJob>>(totalMipmapLevel);
-		//availableMipmapLevelList = std::vector<int>(totalMipmapLevel, -1);
+		availableMipmapLevelList = std::vector<int>(totalMipmapLevel, -1);
 		//availableMipmapLevelList.back() = totalMipmapLevel - 1;
 
-		//for (int i = 0; i < totalMipmapLevel; i++)
-		//	availableMipmapLevelList[i] = i;
+		for (int i = 0; i < totalMipmapLevel; i++)
+			availableMipmapLevelList[i] = i;
 
 		blockIndexList = std::vector<glm::u16vec2>(pageCounts);
 		pageTableIndexList = std::vector<unsigned short>(pageCounts);
@@ -98,20 +98,9 @@ namespace Engine {
 		glm::vec2 camPos = glm::vec2(camera->position.x, camera->position.z);
 		camPos = glm::clamp(glm::vec2(1), glm::vec2(terrainSize - 1), camPos);
 
-		//currentMipmapIndex = 0; //TerrainTexturing::getMinMipmapLevel(camPos, camera->position.y);
-		//currentMipmapIndexForShader = currentMipmapIndex;
-
 		for (int i = 0; i < totalMipmapLevel; i++)
 			TerrainTexturing::calculateBlockPositionIndices(i, camPos);
 
-		// priority queue depending on camera elevetion
-		//for (int i = 0; i < totalMipmapLevel; i++) {
-		//	if (!blockIndexToAddQueue[i].empty()) {
-		//		TerrainTexturing::rasterBlock(blockIndexToAddQueue[i].front());
-		//		blockIndexToAddQueue[i].pop();
-		//		break;
-		//	}
-		//}
 		for (int i = totalMipmapLevel - 1; i >= 0; i--) {
 			if (!blockIndexToAddQueue[i].empty()) {
 				TerrainTexturing::rasterBlock(blockIndexToAddQueue[i].front());
@@ -120,36 +109,26 @@ namespace Engine {
 			}
 		}
 
+		const UINT8 maxMipmapIndexToCheck = 5;
+		for (int i = 0; i < maxMipmapIndexToCheck; i++)
+			availableMipmapLevelList[i] = TerrainTexturing::checkIfEveryCornerInDistance(i, camPos) ? i : -1;
 
+		for (int i = 0; i < maxMipmapIndexToCheck; i++) {
+			if (availableMipmapLevelList[i] == -1) {
+				for (int j = i + 1; j < totalMipmapLevel; j++) {
+					if (availableMipmapLevelList[j] != -1) {
+						availableMipmapLevelList[i] = availableMipmapLevelList[j];
+						break;
+					}
+				}
+			}
+		}
 
-		//for (int i = 0; i < totalMipmapLevel; i++)
-		//	availableMipmapLevelList[i] = TerrainTexturing::checkIfEveryCornerInDistance(i, camPos) ? i : -1;
-
-
-		//for (int i = 0; i < totalMipmapLevel; i++) {
-		//	if (availableMipmapLevelList[i] == -1) {
-		//		for (int j = i + 1; j < totalMipmapLevel; j++) {
-		//			if (availableMipmapLevelList[j] != -1) {
-		//				availableMipmapLevelList[i] = availableMipmapLevelList[j];
-		//				break;
-		//			}
-		//		}
-		//	}
-		//}
-
-		/*if (true) {
-			Texture2D texTemp(physicalPageGeneratorFrame.size.x, physicalPageGeneratorFrame.size.y, 3);
-			GLTexture::getTextureContent(3, texTemp.data, physicalPageGeneratorFrame.texture_0_Id);
-			texTemp.writeDataToFile("testphysicalpages.png", 0);
-			std::exit(0);
-		}*/
 	}
 
 	bool TerrainTexturing::checkIfEveryCornerInDistance(const UINT8 clipmapLevel, const glm::vec2 cameraPosition) {
 
-		return true;
-
-		float margin = 0.2; ///// ?????
+		float margin = 0.2;
 
 		for (int i = 0; i < 25; i++) {
 
@@ -158,7 +137,7 @@ namespace Engine {
 				continue;
 
 			unsigned short sideLength = (1 << clipmapLevel);
-			glm::vec2 blockCorner0 = glm::vec2(TerrainTexturing::getBlockIndex(clipmapLevel, i)) + glm::vec2(1 << clipmapLevel) * 0.5f;;// +glm::vec2(1 << clipmapLevel) * 0.5f;
+			glm::vec2 blockCorner0 = glm::vec2(TerrainTexturing::getBlockIndex(clipmapLevel, i)) + glm::vec2(1 << clipmapLevel) * 0.5f;// +glm::vec2(1 << clipmapLevel) * 0.5f;
 			glm::u16vec2 blockCorner1(blockCorner0.x + sideLength, blockCorner0.y);
 			glm::u16vec2 blockCorner2(blockCorner0.x, blockCorner0.y + sideLength);
 			glm::u16vec2 blockCorner3(blockCorner0.x + sideLength, blockCorner0.y + sideLength);

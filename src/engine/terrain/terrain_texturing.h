@@ -45,7 +45,7 @@ namespace Engine {
 		//std::vector<UINT8> outOfBorderList;
 		std::vector<UINT8> isActiveList;
 
-		//std::vector<int> availableMipmapLevelList;
+		std::vector<int> availableMipmapLevelList;
 
 		std::vector<std::queue<BlockJob>> blockIndexToAddQueue;
 

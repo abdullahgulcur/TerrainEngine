@@ -28,7 +28,7 @@ namespace Engine {
 		GLUniform::setUInt2(shaderProgramId, "mipCounts", terrain->terrainTexturing.pageTableGeneratorFrame.mipCounts);
 		//GLUniform::setUInt2(shaderProgramId, "pageCounts", terrain->terrainTexturing.physicalPageGeneratorFrame.pageCounts);
 
-		//GLUniform::setIntArray(shaderProgramId, "mipmapLevelList", &terrain->terrainTexturing.availableMipmapLevelList[0], 16);
+		GLUniform::setIntArray(shaderProgramId, "mipmapLevelList", &terrain->terrainTexturing.availableMipmapLevelList[0], 16);
 
 		GLTexture::useTexture(0, terrain->terrainTexturing.heightmapGenerator->textureId);
 		GLTexture::useTexture(1, terrain->terrainTexturing.pageTableGeneratorFrame.getTextureId());
