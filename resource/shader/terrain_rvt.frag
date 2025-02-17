@@ -92,15 +92,17 @@ void main() {
 
     //---------------
 
+    float bbbb = 0.05 * 1;
     vec2 ttt = texCoord;
-    ttt = ttt * 1.1 - 0.05;
+    ttt = (ttt * (1 + bbbb * 2)) - bbbb;
 
     vec2 pos2DF = (blockPosition + ttt - 0.5) * scale; // AAA   - 0.5
     vec2 fraction = fract(pos2DF);
 
-    float borderDistance = 0.05;
+    //float borderDistance = bbbb;
 
-    float bbb = step(borderDistance, min(texCoord.x, texCoord.y)) * step(max(texCoord.x, texCoord.y), 1 - borderDistance);
+//    float bbb = step(borderDistance, min(texCoord.x, texCoord.y)) * step(max(texCoord.x, texCoord.y), 1 - borderDistance);
+//    bbb = mix(bbb, 1, 0.5);
 
     ivec2 pos2DI = ivec2(pos2DF);
 
@@ -151,7 +153,7 @@ void main() {
     vec2 uv1 = uv * 1;
     vec2 uv2 = uv;
 
-    vec2 uvMacro = uvBase * 0.02;
+    vec2 uvMacro = uvBase * 0.015;
 
     vec2 uvMask_0 = uvBase * 0.003;
     vec2 uvMask_1 = uvBase * 0.005;
@@ -159,23 +161,27 @@ void main() {
     vec2 uvMask_3 = uvBase * 0.001;
 
     vec3 macroVariation = textureLod(tex2, uvMacro, level).rgb;
+    vec3 macroVariation1 = textureLod(tex2, uvMacro * 0.25, level).rgb;
+    macroVariation += macroVariation1;
+    macroVariation *= 0.5;
+
     float macroScalar = (macroVariation.r + macroVariation.g + macroVariation.b) * 0.33;
-    macroScalar = mix(macroScalar, 1, 0.7);
+    macroScalar = mix(macroScalar, 1, 0.8);
 
     uint texLevel = level;
     clamp(texLevel, 0, 8);
 
     vec3 a0 = textureLod(tex3, uv0, texLevel).rgb;
     vec3 a1 = textureLod(tex3, 1 - uv0, texLevel).rgb;
-    vec3 a2 = textureLod(tex5, uv1, texLevel).rgb;
-    vec3 a3 = textureLod(tex5, 1 - uv1, texLevel).rgb;
+    vec3 a2 = textureLod(tex5, uv1 * 0.35, texLevel).rgb;
+    vec3 a3 = textureLod(tex5, 1 - uv1 * 0.3, texLevel).rgb;
     vec3 a4 = textureLod(tex7, uv2, texLevel).rgb;
     vec3 a5 = textureLod(tex7, 1 - uv2, texLevel).rgb;
     
     vec3 n0 = textureLod(tex4, uv0, texLevel).rgb;
     vec3 n1 = textureLod(tex4, 1 - uv0, texLevel).rgb;
-    vec3 n2 = textureLod(tex6, uv1, texLevel).rgb;
-    vec3 n3 = textureLod(tex6, 1 - uv1 * 1, texLevel).rgb;
+    vec3 n2 = textureLod(tex6, uv1 * 0.35, texLevel).rgb;
+    vec3 n3 = textureLod(tex6, 1 - uv1 * 0.3, texLevel).rgb;
     vec3 n4 = textureLod(tex8, uv2, texLevel).rgb;
     vec3 n5 = textureLod(tex8, 1 - uv2, texLevel).rgb;
 
@@ -205,13 +211,14 @@ void main() {
 
     vec3 albedo = mix(a0, a2, slopeBlend);
     vec3 normal = mix(n0, n2, slopeBlend);
-    //normal.z = normal.z * scale;
+    normal.z = normal.z * scale;
+    //normal.z *= smoothstep(0, 1, level * 0.1);
     normal = normalize(normal);
 //
 //    vec3 albedo = mix(vec3(1), a2, slopeBlend);
 //    vec3 normal = mix(vec3(0.5,0.5,1), n2, slopeBlend);
 ////
-//    albedo *= macroScalar;
+    albedo *= macroScalar;
 //
 //
 //

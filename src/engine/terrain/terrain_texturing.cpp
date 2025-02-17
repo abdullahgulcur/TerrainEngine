@@ -9,7 +9,7 @@
 //
 //#define STBI_MSC_SECURE_CRT
 //#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+//#include "stb_image_write.h"
 
 namespace Engine {
 
@@ -38,7 +38,7 @@ namespace Engine {
 		mipmapGridIndexList = std::vector<glm::u16vec2>(totalMipmapLevel);
 		mipmapStartGridIndexList = std::vector<glm::u16vec2>(totalMipmapLevel);
 		blockIndexToAddQueue = std::vector<std::queue<BlockJob>>(totalMipmapLevel);
-		availableMipmapLevelList = std::vector<int>(totalMipmapLevel, -1);
+		//availableMipmapLevelList = std::vector<int>(totalMipmapLevel, -1);
 		//availableMipmapLevelList.back() = totalMipmapLevel - 1;
 
 		//for (int i = 0; i < totalMipmapLevel; i++)
@@ -104,6 +104,14 @@ namespace Engine {
 		for (int i = 0; i < totalMipmapLevel; i++)
 			TerrainTexturing::calculateBlockPositionIndices(i, camPos);
 
+		// priority queue depending on camera elevetion
+		//for (int i = 0; i < totalMipmapLevel; i++) {
+		//	if (!blockIndexToAddQueue[i].empty()) {
+		//		TerrainTexturing::rasterBlock(blockIndexToAddQueue[i].front());
+		//		blockIndexToAddQueue[i].pop();
+		//		break;
+		//	}
+		//}
 		for (int i = totalMipmapLevel - 1; i >= 0; i--) {
 			if (!blockIndexToAddQueue[i].empty()) {
 				TerrainTexturing::rasterBlock(blockIndexToAddQueue[i].front());
@@ -112,19 +120,22 @@ namespace Engine {
 			}
 		}
 
-		for (int i = 0; i < totalMipmapLevel; i++)
-			availableMipmapLevelList[i] = TerrainTexturing::checkIfEveryCornerInDistance(i, camPos) ? i : -1;
 
-		for (int i = 0; i < totalMipmapLevel; i++) {
-			if (availableMipmapLevelList[i] == -1) {
-				for (int j = i + 1; j < totalMipmapLevel; j++) {
-					if (availableMipmapLevelList[j] != -1) {
-						availableMipmapLevelList[i] = availableMipmapLevelList[j];
-						break;
-					}
-				}
-			}
-		}
+
+		//for (int i = 0; i < totalMipmapLevel; i++)
+		//	availableMipmapLevelList[i] = TerrainTexturing::checkIfEveryCornerInDistance(i, camPos) ? i : -1;
+
+
+		//for (int i = 0; i < totalMipmapLevel; i++) {
+		//	if (availableMipmapLevelList[i] == -1) {
+		//		for (int j = i + 1; j < totalMipmapLevel; j++) {
+		//			if (availableMipmapLevelList[j] != -1) {
+		//				availableMipmapLevelList[i] = availableMipmapLevelList[j];
+		//				break;
+		//			}
+		//		}
+		//	}
+		//}
 
 		/*if (true) {
 			Texture2D texTemp(physicalPageGeneratorFrame.size.x, physicalPageGeneratorFrame.size.y, 3);
@@ -228,7 +239,7 @@ namespace Engine {
 		TerrainTexturing::setPageTableIndex(blockJob.level, inactiveBlockIndexInArray, topEmpty);
 		TerrainTexturing::setBlockIndex(blockJob.level, inactiveBlockIndexInArray, blockJob.index);
 
-		auto start = std::chrono::high_resolution_clock::now();
+		//auto start = std::chrono::high_resolution_clock::now();
 
 		TerrainTexturing::updatePageTableTexturePartial(topEmpty, blockJob.index, blockJob.level);
 
@@ -236,9 +247,9 @@ namespace Engine {
 		glBindTexture(GL_TEXTURE_2D_ARRAY, physicalPageGeneratorFrame.textureId);
 		glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
 		
-		auto end = std::chrono::high_resolution_clock::now();
-		auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-		int x = 5;
+		//auto end = std::chrono::high_resolution_clock::now();
+		//auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+		//int x = 5;
 		
 
 		//if (true) {
@@ -248,69 +259,69 @@ namespace Engine {
 		//	std::exit(0);
 		//}
 
-		if (false) {
+		//if (false) {
 
-			if (topEmpty == 274) {
+		//	if (topEmpty == 274) {
 
-				//glBindTexture(GL_TEXTURE_2D_ARRAY, physicalPageGeneratorFrame.textureId);
+		//		//glBindTexture(GL_TEXTURE_2D_ARRAY, physicalPageGeneratorFrame.textureId);
 
-				//// Get the size of the texture (width, height, layers, format, type, etc.)
-				//GLint width, height, layers;
-				//glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_WIDTH, &width);
-				//glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_HEIGHT, &height);
-				//glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_DEPTH, &layers);
+		//		//// Get the size of the texture (width, height, layers, format, type, etc.)
+		//		//GLint width, height, layers;
+		//		//glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_WIDTH, &width);
+		//		//glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_HEIGHT, &height);
+		//		//glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_DEPTH, &layers);
 
-				//// Allocate memory to store the texture data
-				//// Assume it's RGBA format and unsigned byte for simplicity. Adjust format/type based on your actual texture.
-				//GLubyte* data = new GLubyte[width * height * layers * 3];  // 4 for RGBA
+		//		//// Allocate memory to store the texture data
+		//		//// Assume it's RGBA format and unsigned byte for simplicity. Adjust format/type based on your actual texture.
+		//		//GLubyte* data = new GLubyte[width * height * layers * 3];  // 4 for RGBA
 
-				//// Retrieve the texture data
-				//glGetTexImage(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		//		//// Retrieve the texture data
+		//		//glGetTexImage(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
-				//stbi_write_png("testphysicalpages_.png", width, height, 3, &data[topEmpty * width * height * 3], width * 3);
+		//		//stbi_write_png("testphysicalpages_.png", width, height, 3, &data[topEmpty * width * height * 3], width * 3);
 
-				//std::exit(0);
+		//		//std::exit(0);
 
-				// Create and bind a framebuffer
-				GLuint fbo;
-				glGenFramebuffers(1, &fbo);
-				glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		//		// Create and bind a framebuffer
+		//		GLuint fbo;
+		//		glGenFramebuffers(1, &fbo);
+		//		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-				// Attach a specific layer of the texture array to the framebuffer
-				int layerIndex = topEmpty;  // Specify which layer you want to read
-				glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, physicalPageGeneratorFrame.textureId, 0, layerIndex);
+		//		// Attach a specific layer of the texture array to the framebuffer
+		//		int layerIndex = topEmpty;  // Specify which layer you want to read
+		//		glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, physicalPageGeneratorFrame.textureId, 0, layerIndex);
 
-				// Check if framebuffer is complete
-				if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-					std::cerr << "Framebuffer is not complete!" << std::endl;
-				}
+		//		// Check if framebuffer is complete
+		//		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		//			std::cerr << "Framebuffer is not complete!" << std::endl;
+		//		}
 
-				// Get the size of the texture (width, height)
-				GLint width, height;
-				glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_WIDTH, &width);
-				glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_HEIGHT, &height);
+		//		// Get the size of the texture (width, height)
+		//		GLint width, height;
+		//		glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_WIDTH, &width);
+		//		glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_HEIGHT, &height);
 
-				// Allocate memory to read back the layer data
-				GLubyte* layerData = new GLubyte[width * height * 3];  // 3 for RGB
+		//		// Allocate memory to read back the layer data
+		//		GLubyte* layerData = new GLubyte[width * height * 3];  // 3 for RGB
 
-				// Read the data from the framebuffer
-				glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, layerData);
+		//		// Read the data from the framebuffer
+		//		glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, layerData);
 
-				stbi_write_png("testphysicalpages_.png", width, height, 3, layerData, width * 3);
-				// Now, 'layerData' contains the data of the specified layer.
-				// You can process or save it.
+		//		stbi_write_png("testphysicalpages_.png", width, height, 3, layerData, width * 3);
+		//		// Now, 'layerData' contains the data of the specified layer.
+		//		// You can process or save it.
 
-				// Clean up
-				delete[] layerData;
-				glBindFramebuffer(GL_FRAMEBUFFER, 0);
-				glDeleteFramebuffers(1, &fbo);
+		//		// Clean up
+		//		delete[] layerData;
+		//		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		//		glDeleteFramebuffers(1, &fbo);
 
-				std::exit(0);
+		//		std::exit(0);
 
-			}
+		//	}
 
-			
-		}
+		//	
+		//}
 
 	}
 
@@ -372,9 +383,6 @@ namespace Engine {
 	}
 
 	glm::u16vec2 TerrainTexturing::getGridIndex(const UINT8 level, const glm::vec2 camPos) {
-
-		// + glm::vec2(0.5 * (1 << level))
-
 		return glm::u16vec2((camPos + glm::vec2(0.5 * (1 << level))) / glm::vec2(1 << level)); // AAA     + glm::vec2(0.5 * (1 << level))
 	}
 

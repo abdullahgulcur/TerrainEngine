@@ -12,6 +12,8 @@ uniform usampler2D heightmap;
 out vec2 WorldPos2D;
 out vec3 WorldPos;
 
+//out vec2 fragPos;
+
 vec3 getNormal(float dxF, float dyF){
 
     vec3 normal;
@@ -39,6 +41,8 @@ void main(void)
 
     WorldPos = vec3(worldPos2D.x, heightF, worldPos2D.y);
     WorldPos2D = worldPos2D;
+
+    //fragPos = (projectionView * vec4(WorldPos, 1.0)).xy;
 
     gl_Position = projectionView * vec4(WorldPos, 1.0);
 }

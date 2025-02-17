@@ -15,7 +15,7 @@ namespace Engine {
         this->shaderProgramId = Core::getShader()->shaders[ShaderType::TERRAIN_RVT];
         this->shaderProgramId1 = Core::getShader()->shaders[ShaderType::TERRAIN_RVT_COARSE];
         //this->size = glm::u16vec2(pageCounts.x, pageCounts.y) * pageSize;
-        UINT8 mipLevels = 6;
+        UINT8 mipLevels = 10;
         this->textureId = GLTexture::createPhysicalPagesFrameBufferTextureArray(pageSize, mipLevels, this->pageCounts);
         /*this->texture_1_Id = GLTexture::createPhysicalPagesFrameBufferTexture(size);
         this->texture_2_Id = GLTexture::createPhysicalPagesFrameBufferTexture(size);*/

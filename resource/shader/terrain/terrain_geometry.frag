@@ -1,23 +1,51 @@
 #version 460 core
 
+in vec2 fragPos;
 in vec2 WorldPos2D;
 in vec3 WorldPos;
 out vec4 FragColor;
 
 uniform usampler2D pageTable;
 uniform sampler2DArray physicalPages;
-//uniform uvec2 pageCounts;
 uniform vec3 cameraPosition;
 uniform uint totalMipmapLevel;
-//uniform uint currentMipmapIndexForShader;
 uniform uvec2 mipCounts;
-uniform int mipmapLevelList[16];
 
-uint getValue(uint color, int startBit, int bits){
-    return (color >> startBit) & ((1u << bits) - 1);
+int getLODLevelBorder(vec3 worldPosition, inout float dist) {
+
+    float lodDistanceFiner, lodDistanceCoarse;
+
+    float margin = 0.2;
+    float baseDistance = 2 * (1 - margin) * 1.5;
+    dist = distance(cameraPosition, worldPosition);
+    
+    lodDistanceFiner = 0;
+    for (int i = 0; i < 16; i++) {
+        lodDistanceCoarse = (1 << i) * baseDistance;
+        if (dist >= lodDistanceFiner && dist < lodDistanceCoarse)
+            return i + 1;
+        lodDistanceFiner = lodDistanceCoarse;
+    }
+    return -1;
 }
 
-int getLODLevel1(vec3 worldPosition) {
+int getLODLevelRevised(vec3 worldPosition, inout float dist, inout float lodDistanceFiner, inout float lodDistanceCoarse) {
+
+    float margin = 0.2;
+    float baseDistance = 2 * (1 - margin);
+    dist = distance(cameraPosition, worldPosition);
+    
+    lodDistanceFiner = 0;
+    for (int i = 0; i < 16; i++) {
+        lodDistanceCoarse = (1 << i) * baseDistance;
+        if (dist >= lodDistanceFiner && dist < lodDistanceCoarse)
+            return i;
+        lodDistanceFiner = lodDistanceCoarse;
+    }
+    return -1;
+}
+
+int getLODLevel(vec3 worldPosition) {
 
     float margin = 0.2;
     float baseDistance = 2 * (1 - margin);
@@ -28,22 +56,18 @@ int getLODLevel1(vec3 worldPosition) {
     return clamp(lodLevel, 0, maxLodLevel);
 }
 
-void getUV(uint mipmapLevel, inout uint pageIndex, inout vec2 uv){
+void getUV(uint mipmapLevel, inout uint pageIndex, inout vec2 uv, inout float pageBorder){
 
     uvec2 mipmapIndex = uvec2(mipmapLevel % mipCounts.x, mipmapLevel / mipCounts.y);
-
     vec2 pageIndexF = (WorldPos2D + 0.5 * (1 << mipmapLevel)) / (1 << mipmapLevel); // AAA  + 0.5 * (1 << mipmapLevel)
-    //pageIndexF = pageIndexF * 1.02 - 0.01;
-    uv = fract(pageIndexF);// + 0.5 / 1024;// - 0.5 / textureSize(physicalPages, int(mipmapLevel)).x;// + vec2(0.5 / textureSize(physicalPages, int(mipmapLevel)).x);;// + vec2(0.5 / textureSize(physicalPages, 0).x);
 
-    float border = 0.045;
+    uv = fract(pageIndexF);
+    float border = 0.045 * 1;
     uv = uv * (1 - border * 2) + border;
 
-    //uv = (uv + border) * (1 / (1 + border));
+    vec2 bbb = max(step(uv, vec2(0.1)) * smoothstep(0.0, 0.8, (0.1 - uv) / 0.1), step(vec2(0.9), uv) * smoothstep(0.0, 0.8, (uv - 0.9) / 0.1));
+    pageBorder = max(bbb.x, bbb.y);
 
-    //uv = uv * 1.02 - 0.01;
-    //uv = mix(vec2(0.02), vec2(0.98), uv);
-    //uv = clamp(uv, vec2(0.01), vec2(0.99));
     uvec2 texelIndex = uvec2(pageIndexF) % uvec2(5);
     texelIndex += mipmapIndex * 5;
 
@@ -51,74 +75,42 @@ void getUV(uint mipmapLevel, inout uint pageIndex, inout vec2 uv){
     pageIndex = color;
 }
 
-float computeMipLevel(vec2 texCoords) {
-    vec2 dx = dFdx(texCoords);
-    vec2 dy = dFdy(texCoords);
-    float deltaMax = max(dot(dx, dx), dot(dy, dy));
-    return 0.5 * log2(deltaMax);  // This is the approximate mip level
-}
-
 void main(){
-
-    float margin = 0.2;
-    float baseDistance = 2 * (1 - margin);
-
-    float uniformDistance = 0.25;
 
     int maxLodLevel = int(totalMipmapLevel - 1);
 
-    int mipLevel = getLODLevel1(WorldPos);
+    float dist, lodDistanceFiner, lodDistanceCoarse;
+    int mipLevel = getLODLevelRevised(WorldPos, dist, lodDistanceFiner, lodDistanceCoarse);
 
-    int mipLevelTemp = max(mipLevel, 1);
-    float lodDistanceFiner = (1 << (mipLevelTemp - 1)) * baseDistance;
-    int zeroFlag = 1 - int(step(mipLevel, 0));
-    lodDistanceFiner *= zeroFlag;
-    float lodDistanceCoarse = (1 << mipLevel) * baseDistance;
-    float dist = distance(cameraPosition, WorldPos);
+    float dist1;
+    int mipLevelBorder = getLODLevelBorder(WorldPos, dist1);
+
     float ratio = (dist - lodDistanceFiner) / (lodDistanceCoarse - lodDistanceFiner);
-    ratio = max(0, ratio - uniformDistance) * (1 / (1 - uniformDistance));
     ratio = clamp(ratio, 0, 1);
 
-    //float border = step(0.9, ratio) * step(0.1, ratio);
-    //ratio = smoothstep(0.0, 1.0, ratio);
-
-    //uint mipLevelIndex = max(currentMipmapIndexForShader, uint(mipLevel));
-    uint mipLevelFiner = mipmapLevelList[mipLevel];
-    uint mipLevelCoarse = mipmapLevelList[min(mipLevel + 1, maxLodLevel)];
-    uint mipLevelCoarse1 = mipmapLevelList[min(mipLevel + 2, maxLodLevel)];
+    float bleedDist = 0.3;
+    bleedDist = min(bleedDist, 0.5);
+    float aaaaa = max(step(ratio, 0.01), step(1 - bleedDist, ratio));
+    aaaaa = clamp(step(ratio, 0.01) + ((ratio + bleedDist - 1) / bleedDist) * step(1 - bleedDist, ratio), 0, 1);
 
     vec2 uvFiner;
     uint pageIndexFiner;
-    getUV(mipLevelFiner, pageIndexFiner, uvFiner);
+    float pageBorderFiner;
+    getUV(mipLevel, pageIndexFiner, uvFiner, pageBorderFiner);
 
     vec2 uvCoarse;
     uint pageIndexCoarse;
-    getUV(mipLevelCoarse, pageIndexCoarse, uvCoarse);
-
-//    vec2 uvCoarse1;
-//    uint pageIndexCoarse1;
-//    getUV(mipLevelCoarse1, pageIndexCoarse1, uvCoarse1);
-
-//    float mip0 = computeMipLevel(uvFiner);
-//    float mip1 = computeMipLevel(uvCoarse);
-
-//    vec3 albedoFinerManualMipmap = textureLod(physicalPages, vec3(uvFiner, pageIndexFiner), mip0).rgb;
-//    vec3 albedoCoarseManualMipmap = textureLod(physicalPages, vec3(uvCoarse, pageIndexCoarse), mip1).rgb;
-
-//    uvFiner = uvFiner * 0.9 + 0.05;
-//    uvCoarse = uvCoarse * 0.9 + 0.05;
+    float pageBorderCoarse;
+    getUV(mipLevelBorder, pageIndexCoarse, uvCoarse, pageBorderCoarse);
 
     vec3 albedoFinerAutoMipmap = texture(physicalPages, vec3(uvFiner, pageIndexFiner)).rgb;
     vec3 albedoCoarseAutoMipmap = texture(physicalPages, vec3(uvCoarse, pageIndexCoarse)).rgb;
-    //vec3 albedoCoarseAutoMipmap1 = texture(physicalPages, vec3(uvCoarse1, pageIndexCoarse1)).rgb;
+    vec3 albedoBadMipmap = textureLod(physicalPages, vec3(uvCoarse, pageIndexCoarse), 1).rgb;
 
-//    vec3 albedoFiner = mix(albedoFinerAutoMipmap, albedoFinerManualMipmap, border);
-//    vec3 albedoCoarse = mix(albedoCoarseAutoMipmap, albedoCoarseManualMipmap, border);
+    float borders = mix(pageBorderFiner, pageBorderCoarse, aaaaa);
 
-    vec3 color = mix(albedoFinerAutoMipmap, albedoCoarseAutoMipmap, ratio);
-    //color = (color + albedoCoarseAutoMipmap1) * 0.5;
-    FragColor = vec4(color, 1);// * mipLevelFiner * 0.1
-    //FragColor = vec4(vec3(vec3(mipLevelFiner * 0.1)), 1);
+    vec3 color = mix(albedoFinerAutoMipmap, albedoCoarseAutoMipmap, aaaaa);
+    color = mix(color, albedoBadMipmap, borders);
 
-    //FragColor = vec4(vec3(albedoFinerAutoMipmap), 1);
+    FragColor = vec4(color, 1);
 }

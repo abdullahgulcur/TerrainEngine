@@ -18,7 +18,7 @@ vec3 getColorAfterFogFilter(vec3 color){
 
     float depth = texture(frameDepthTexture, texCoord).r;
     float depthLinearized = linearizeDepth(depth);// / 10000;
-    float fogBlend = clamp((depthLinearized - 450.f) / 400.f + 0.5, 0, 1.f);
+    float fogBlend = clamp((depthLinearized - 1000.f) / 1000.f + 0.5, 0, 1.f);
     return mix(color, vec3(0.9,0.95,1), fogBlend); 
 }
 
@@ -27,7 +27,7 @@ void main() {
 	//vec3 outColor;
     vec3 outColor = texture(frameTexture, texCoord).rgb;
 
-//
+
 //
 //    float FXAA_REDUCE_MIN = (1.0/ 128.0);
 //	float FXAA_REDUCE_MUL = (1.0 / 8.0);
@@ -69,8 +69,8 @@ void main() {
 //
 //	float depth = texture(frameDepthTexture, texCoord).r;
 //    depth = linearizeDepth(depth);// / 10000;
-//	outColor = getColorAfterFogFilter(outColor);
-//
+	//outColor = getColorAfterFogFilter(outColor);
+
 
 
     FragColor = vec4(outColor, 1);
