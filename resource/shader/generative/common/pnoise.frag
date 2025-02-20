@@ -65,10 +65,8 @@ out float FragColor;
 uniform float scale;
 
 void main(){
-
     float noiseVal = pnoise(texCoord * scale, vec2(scale));
-    noiseVal *= 2;
-    noiseVal = pow(noiseVal, 2);
+    noiseVal = (noiseVal + 1) * 0.5;
     noiseVal = clamp(noiseVal, 0, 1);
-    FragColor = (noiseVal + 1) * 0.5;
+    FragColor = noiseVal;
 }

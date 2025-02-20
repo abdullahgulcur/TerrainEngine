@@ -63,10 +63,13 @@ void getUV(uint mipmapLevel, inout uint pageIndex, inout vec2 uv, inout float pa
     vec2 pageIndexF = (WorldPos2D + 0.5 * (1 << mipmapLevel)) / (1 << mipmapLevel); // AAA  + 0.5 * (1 << mipmapLevel)
 
     uv = fract(pageIndexF);
-    float border = 0.045 * 1;
+    float border = 0.045;
     uv = uv * (1 - border * 2) + border;
 
-    vec2 bbb = max(step(uv, vec2(0.1)) * smoothstep(0.0, 0.8, (0.1 - uv) / 0.1), step(vec2(0.9), uv) * smoothstep(0.0, 0.8, (uv - 0.9) / 0.1));
+    float temp = 0.1;
+    //vec2 bbb = max(step(uv, vec2(0.1)) * smoothstep(0.0, 0.8, (0.1 - uv) / 0.1), step(vec2(0.9), uv) * smoothstep(0.0, 0.8, (uv - 0.9) / 0.1));
+    vec2 bbb = max(step(uv, vec2(temp)) * smoothstep(0.0, 1-temp*2, (temp - uv)/(temp)), step(vec2(1-temp), uv) * smoothstep(0.0, 1-temp*2, (uv+temp-1)/temp));
+
     pageBorder = max(bbb.x, bbb.y);
 
     uvec2 texelIndex = uvec2(pageIndexF) % uvec2(5);
@@ -108,10 +111,11 @@ void main(){
     vec3 albedoCoarseAutoMipmap = texture(physicalPages, vec3(uvCoarse, pageIndexCoarse)).rgb;
     vec3 albedoBadMipmap = textureLod(physicalPages, vec3(uvCoarse, pageIndexCoarse), 1).rgb;
 
-    float borders = mix(pageBorderFiner, pageBorderCoarse, aaaaa);
+    float circleAlpha = clamp(((dist - 10) / 10), 0, 1);
+    float borders = mix(pageBorderFiner, pageBorderCoarse, aaaaa) * circleAlpha;
 
     vec3 color = mix(albedoFinerAutoMipmap, albedoCoarseAutoMipmap, aaaaa);
     color = mix(color, albedoBadMipmap, borders);
 
-    FragColor = vec4(color, 1);
+    FragColor = vec4(vec3(color), 1);
 }

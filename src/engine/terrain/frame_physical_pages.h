@@ -23,6 +23,7 @@ namespace Engine {
         unsigned short pageSize;
 
         unsigned int textureIdList[9];
+        unsigned int texturePaletteTextureArrayId;
 
     public:
 

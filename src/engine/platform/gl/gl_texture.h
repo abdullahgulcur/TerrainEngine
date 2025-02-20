@@ -6,12 +6,40 @@
 namespace Engine {
 
     class GLTexture {
+
+        struct DDSHeader {
+            uint32_t size;
+            uint32_t flags;
+            uint32_t height;
+            uint32_t width;
+            uint32_t pitchOrLinearSize;
+            uint32_t depth;
+            uint32_t mipMapCount;
+            uint32_t reserved1[11];
+            uint32_t pixelFormatSize;
+            uint32_t pixelFormatFlags;
+            uint32_t fourCC;
+            uint32_t rgbBitCount;
+            uint32_t rBitMask;
+            uint32_t gBitMask;
+            uint32_t bBitMask;
+            uint32_t aBitMask;
+            uint32_t caps;
+            uint32_t caps2;
+            uint32_t caps3;
+            uint32_t caps4;
+            uint32_t reserved2;
+        };
+
     private:
     public:
 
         static unsigned int generateTexture2D(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data);
+        static unsigned int generateMacroVariationTexture(std::string path);
         static unsigned int generateTerrainPaletteTexture2D(unsigned short width, unsigned short height, const unsigned char* data);
         static unsigned int generateCompressedTerrainPaletteTexture2D(std::string path);
+        static unsigned int generateCompressedTerrainPaletteTextureArray(std::vector<std::string>& texturePathList, unsigned short textureSize);
+        static void compressedTextureSubImage(std::string& texturePath, UINT8 index);
         static unsigned int generateMaskTexture(unsigned short width, unsigned short height);
         static unsigned int generateDepthTexture(unsigned short width, unsigned short height);
         static unsigned int generateHeightmapTexture2D(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data);
