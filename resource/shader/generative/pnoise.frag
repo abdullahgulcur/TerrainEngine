@@ -94,13 +94,28 @@ float getStaticHeight(){
 
     int rowSize = radius*2+1;
     float average = sum / float(rowSize * rowSize);
-    average *= 0.5;
+    average *= 0.75;
     return average / 255.f;
 
+}
+
+float applyAAA(float innerRadius, float outerRadius){
+
+    ivec2 position = ivec2(texCoord * 4096);
+    ivec2 center = ivec2(4096 / 2);
+
+    float distance = distance(center, position);
+    return smoothstep(outerRadius, innerRadius, distance);
 }
 
 void main(){
 
     float height = getStaticHeight() + getProceduralHeight();
+
+    height *= applyAAA(500, 2000);
+    height *= 1 - applyAAA(20, 500) * 0.6;
+
+    height *= 0.75;
+
     FragColor = uint(height * 8191);
 }

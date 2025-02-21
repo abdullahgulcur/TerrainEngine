@@ -32,13 +32,15 @@ namespace Engine {
 
         std::vector<std::string> texturePathList;
         texturePathList.push_back("../../../resource/texture/terrain_new/results/grass_dried_a.dds");
-        texturePathList.push_back("../../../resource/texture/terrain_new/results/wild_grass_a.dds");
+        texturePathList.push_back("../../../resource/texture/terrain_new/results/bark_soil_a.dds");//wild_grass_a
         texturePathList.push_back("../../../resource/texture/terrain_new/results/rock_cliff_a.dds");
         texturePathList.push_back("../../../resource/texture/terrain_new/results/grass_dried_n.dds");
-        texturePathList.push_back("../../../resource/texture/terrain_new/results/wild_grass_n.dds");
+        texturePathList.push_back("../../../resource/texture/terrain_new/results/bark_soil_n.dds");//wild_grass_n
         texturePathList.push_back("../../../resource/texture/terrain_new/results/rock_cliff_n.dds");
         texturePathList.push_back("../../../resource/texture/terrain_new/results/rock_cliff_a_.dds");
         texturePathList.push_back("../../../resource/texture/terrain_new/results/rock_cliff_n_.dds");
+        texturePathList.push_back("../../../resource/texture/terrain_new/sand_beach_a.dds");
+        texturePathList.push_back("../../../resource/texture/terrain_new/sand_beach_n.dds");
 
         texturePaletteTextureArrayId = GLTexture::generateCompressedTerrainPaletteTextureArray(texturePathList, 1024);
     }
@@ -53,7 +55,7 @@ namespace Engine {
         GLCommand::setScreen(glm::u16vec2(0), glm::u16vec2(pageSize), FBO);
         GLBuffer::frameBufferTextureLayer(textureId, tileIndex);
 
-        if (mipmapLevel <= 9)
+        if (mipmapLevel <= 90)
             GLShader::useProgram(shaderProgramId);
         else
             GLShader::useProgram(shaderProgramId1);
