@@ -59,6 +59,8 @@ float pnoise(in vec2 P, in vec2 rep) {
     return 2.3 * n_xy;
 }
 
+uniform usampler2D heightmap;
+
 in vec2 texCoord;
 out uint FragColor;
 
@@ -66,19 +68,39 @@ float getNormalized(float value){
    return (value + 1) * 0.5;
 }
 
-float getHeight(){
+float getProceduralHeight(){
 
-    float scale = 15;
+    float scale = 5;
     float noiseVal0 = getNormalized(pnoise(1432 + texCoord * scale, vec2(scale)));
-    float noiseVal1 = getNormalized(pnoise(1245 + texCoord * scale * 2, vec2(scale * 3))) / 4;
-    float noiseVal2 = getNormalized(pnoise(3465 + texCoord * scale * 4, vec2(scale * 9))) / 8;
+    float noiseVal1 = getNormalized(pnoise(1245 + texCoord * scale * 2, vec2(scale * 3))) / 2;
+    float noiseVal2 = getNormalized(pnoise(3465 + texCoord * scale * 4, vec2(scale * 9))) / 4;
     float noiseVal3 = getNormalized(pnoise(1245 + texCoord * scale * 8, vec2(scale * 20))) / 16;
-    float noiseVal4 = getNormalized(pnoise(1234 + texCoord * scale * 16, vec2(scale * 40))) / 24;
-    return noiseVal0 + noiseVal1 + noiseVal2 + noiseVal3 + noiseVal4;
+    float noiseVal4 = getNormalized(pnoise(1234 + texCoord * scale * 16, vec2(scale * 40))) / 32;
+    return (noiseVal0 + noiseVal1 + noiseVal2 + noiseVal3 + noiseVal4) * 0.3;
+}
+
+float getStaticHeight(){
+
+    ivec2 uv = ivec2(texCoord * 4096);
+
+    int radius = 3;
+    uint sum = 0;
+    for(int y = -radius; y <= radius; y++){
+        for(int x = -radius; x <= radius; x++){
+            uint col = texelFetch(heightmap, uv + ivec2(x, y), 0).r;
+            sum += col;
+        }
+    }
+
+    int rowSize = radius*2+1;
+    float average = sum / float(rowSize * rowSize);
+    average *= 0.5;
+    return average / 255.f;
+
 }
 
 void main(){
 
-    float height = getHeight() * 0.3;
+    float height = getStaticHeight() + getProceduralHeight();
     FragColor = uint(height * 8191);
 }

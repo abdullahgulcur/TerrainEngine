@@ -11,9 +11,19 @@ uniform sampler2DArray palette;
 uniform sampler2D tex1;
 uniform sampler2D tex2;
 uniform usampler2D heightmap;
+uniform usampler2D shadowmap;
 uniform uvec2 blockPosition;
 uniform uint level;
 
+//#ifndef HIGH_QUALITY
+//float getSlopeBlend(mat3 TBN, vec3 terrainNormal, float slopeBias, float slopeSharpness){
+//
+//    float worldSpaceSlope = dot(terrainNormal, vec3(0,1,0));
+//    return clamp((slopeBias - worldSpaceSlope) / slopeSharpness + 0.5, 0, 1);
+//}
+//#endif
+
+//#ifdef HIGH_QUALITY
 float getSlopeBlend(mat3 TBN, vec3 terrainNormal, vec3 mircoNormal, float slopeBias, float slopeSharpness, float reduceFactor){
 
     float worldSpaceSlope = dot(terrainNormal, vec3(0,1,0));
@@ -22,6 +32,7 @@ float getSlopeBlend(mat3 TBN, vec3 terrainNormal, vec3 mircoNormal, float slopeB
     float worldSpaceTextureSlope = dot(tangentSpaceNormal, vec3(0,1,0));
     return worldSpaceSlopeBlend * smoothstep(reduceFactor,1,worldSpaceTextureSlope);
 }
+//#endif
 
 float bilinearInterpolation(float val0, float val1, float val2, float val3, vec2 blendFactor){
     float valX0 = mix(val0, val1, blendFactor.x);
@@ -58,6 +69,15 @@ vec4 bilinearSample(sampler2D texture, vec2 uv) {
     vec4 mixX2 = mix(tex01, tex11, f.x); // Interpolate horizontally on the top row
     return mix(mixX1, mixX2, f.y);       // Interpolate vertically
 }
+
+//float bilinearSample(float a0, float a1, float a2, float a3, vec2 uv) {
+//
+//    vec2 fract = fract(uv);
+//
+//    float mixX1 = mix(a0, a1, fract.x); 
+//    float mixX2 = mix(a2, a3, fract.x); 
+//    return mix(mixX1, mixX2, fract.y); 
+//}
 
 void main() {
 
@@ -137,34 +157,40 @@ void main() {
 	terrainNormal.x = hC - hB;
 	terrainNormal.y = 2;
 	terrainNormal = normalize(terrainNormal);
-#else
-	terrainNormal.z = hA - hE;
-	terrainNormal.x = hA - hB;
-	terrainNormal.y = 1;
-	terrainNormal = normalize(terrainNormal);
-#endif
 
     vec3 T = normalize(vec3(2, hB - hC, 0));
     vec3 B = -normalize(cross(T,terrainNormal));
     mat3 tbn = mat3(T, B, terrainNormal);
 
+#else
+	terrainNormal.z = hA - hE;
+	terrainNormal.x = hA - hB;
+	terrainNormal.y = 1;
+	terrainNormal = normalize(terrainNormal);
+
+    vec3 T = normalize(vec3(1, hB - hA, 0));
+    vec3 B = -normalize(cross(T,terrainNormal));
+    mat3 tbn = mat3(T, B, terrainNormal);
+#endif
+
+    
+
     //---------------
 
-    float scaleMultiplier = 1.0; // uniform
-    vec2 uv = uvBase * scaleMultiplier;
+//    float scaleMultiplier = 1.0; // uniform
+//    vec2 uv = uvBase * scaleMultiplier;
 
-    vec2 uvMacro = uvBase * 0.015;
-    vec3 macroVariation = textureLod(tex2, uvMacro, level).rgb;
-    vec3 macroVariation1 = textureLod(tex2, uvMacro * 0.25, level).rgb;
-    macroVariation += macroVariation1;
-    macroVariation *= 0.5;
-
-    float macroScalar = (macroVariation.r + macroVariation.g + macroVariation.b) * 0.33;
-    macroScalar = mix(macroScalar, 1, 0.8);
-
+//    vec2 uvMacro = uvBase * 0.015;
+//    vec3 macroVariation = textureLod(tex2, uvMacro, level).rgb;
+//    vec3 macroVariation1 = textureLod(tex2, uvMacro * 0.25, level).rgb;
+//    macroVariation += macroVariation1;
+//    macroVariation *= 0.5;
+//
+//    float macroScalar = (macroVariation.r + macroVariation.g + macroVariation.b) * 0.33;
+//    macroScalar = mix(macroScalar, 1, 0.8);
+//
     uint texLevel = level;
-    clamp(texLevel, 0, 8);
-
+    clamp(texLevel, 0, 9);
 
     vec3 a0;
     vec3 a1;
@@ -173,75 +199,91 @@ void main() {
     float alpha;
 
     // grass dried
-    a0 = textureLod(palette, vec3(uv, 0), texLevel).rgb;
-    n0 = textureLod(palette, vec3(uv, 3), texLevel).rgb;
+    a0 = textureLod(palette, vec3(uvBase, 0), texLevel).rgb;
+    n0 = textureLod(palette, vec3(uvBase, 3), texLevel).rgb;
 
     // grass wild
-    a1 = textureLod(palette, vec3(uv, 1), texLevel).rgb;
-    n1 = textureLod(palette, vec3(uv, 4), texLevel).rgb;
+    a1 = textureLod(palette, vec3(uvBase, 1), texLevel).rgb;
+    n1 = textureLod(palette, vec3(uvBase, 4), texLevel).rgb;
 
     alpha = bilinearSample(tex2, uvBase * 0.03).r;
 
     a0 = mix(a0, a1, alpha);
     n0 = mix(n0, n1, alpha);
 
-    // small rock 
-    a1 = clamp(textureLod(palette, vec3(uv*0.5, 2), texLevel).rgb * 1.25, vec3(0), vec3(1));
-    n1 = textureLod(palette, vec3(uv*0.5, 5), texLevel).rgb;
+#ifdef HIGH_QUALITY
 
-    float mmm = 1 - smoothstep(0.9, 1, bilinearSample(tex2, uvBase * 0.02).r * 2);
-    alpha = smoothstep(0.4,0.7,dot(n1, vec3(0,1,0))) * mmm;
+    // small rock 
+    a1 = clamp(textureLod(palette, vec3(uvBase, 2), texLevel).rgb, vec3(0), vec3(1));
+    n1 = textureLod(palette, vec3(uvBase, 5), texLevel).rgb;
+
+    float mmm = 1-smoothstep(0.8, 1, bilinearSample(tex2, uvBase*0.01).r*2);
+    mmm *= textureLod(tex1, uvBase*0.01, texLevel).r;
+    alpha = smoothstep(0.1,0.9,dot(n1, vec3(0,1,0)))*mmm;
 
     a0 = mix(a0, a1, alpha);
     n0 = mix(n0, n1, alpha);
 
+#endif
+
     // rock 0
-    vec3 a2 = textureLod(palette, vec3(uv, 2), texLevel).rgb;
-    vec3 n2 = textureLod(palette, vec3(uv, 5), texLevel).rgb;
+    vec3 a2 = textureLod(palette, vec3(uvBase, 2), texLevel).rgb;
+    vec3 n2 = textureLod(palette, vec3(uvBase, 5), texLevel).rgb;
 
     // rock 1
-    vec3 a3 = textureLod(palette, vec3(uv, 6), texLevel).rgb * 0.2;
-    vec3 n3 = textureLod(palette, vec3(uv, 7), texLevel).rgb;
+    vec3 a3 = textureLod(palette, vec3(uvBase, 6), texLevel).rgb * 0.2;
+    vec3 n3 = textureLod(palette, vec3(uvBase, 7), texLevel).rgb;
 
     alpha = smoothstep(0.5, 1, bilinearSample(tex2, uvBase * 0.04).r);
 
     a2 = mix(a2, a3, alpha);
     n2 = mix(n2, n3, alpha);
 
-    //-------------------------
+    // ----------- SLOPE BLEND -----------
 
-    float slopeBlend = getSlopeBlend(tbn, terrainNormal, n2, 0.95, 0.01, 0.4);
+
+//#ifdef HIGH_QUALITY
+    float slopeBlend = getSlopeBlend(tbn, terrainNormal, n2, 0.96, 0.02, 0.2);
     vec3 albedo = mix(a0, a2, slopeBlend);
     vec3 normal = mix(n0, n2, slopeBlend);
     normal = normalize(normal);
+//#else
+//    float slopeBlend = getSlopeBlend(tbn, terrainNormal, 0.95, 0.01);
+//    vec3 albedo = mix(a0, a2, slopeBlend);
+//    vec3 normal = mix(n0, n2, slopeBlend);
+//    normal = normalize(normal);
+//#endif
 
-    //normal = vec3(0.5,0.5,1);
+    // bilinear sampling
+    // triangle intersection
+    // ao calculation
+
+    float shadow0 = texelFetch(shadowmap, pos2DI, 0).r;
+    float shadow1 = texelFetch(shadowmap, pos2DI + ivec2(1,0), 0).r;
+    float shadow2 = texelFetch(shadowmap, pos2DI + ivec2(0,1), 0).r;
+    float shadow3 = texelFetch(shadowmap, pos2DI + ivec2(1,1), 0).r;
+
+    float shadow = bilinearInterpolation(shadow0, shadow1, shadow2, shadow3, fraction);
+
+    //float shadow = bilinearSample(shadowmap, uvBase).r;
+
+
+    // ----------- LIGHTING -----------
     vec3 N = tbn * (normal * 2 - 1);
-
     float lightPow = 9;
     vec3 lightDir = vec3(-1,-1,-1);
     vec3 L = normalize(-lightDir);
     vec3 radiance = vec3(lightPow);
-            
     float NdotL = max(dot(N, L), 0.0);        
-
-    //vec3 viewDir = normalize(cameraPosition - WorldPos);
-
-    //vec3 reflectDir = reflect(-L, N);  
-    //float spec = pow(max(dot(viewDir, reflectDir), 0.0), 3.5) * specularity * 0.25;
-
-    vec3 Lo = (albedo / 3.14 + 0) * radiance * NdotL;
+    vec3 Lo = (albedo / 3.14) * radiance * NdotL;// * (1-shadow);
     vec3 color = albedo * 0.25 + Lo;
 
-    //---------
-
-#ifdef SHOW_PAGE_BORDERS
-    float isBorder = step(paddingAmount, min(texCoord.x, texCoord.y)) * step(max(texCoord.x, texCoord.y), 1 - paddingAmount);
-#endif
+    // ----------- OUTPUT -----------
 
 #ifndef SHOW_PAGE_BORDERS
     outAlbedo = vec4(vec3(color), 1.0); // * vec3(alpha)
 #else
+    float isBorder = step(paddingAmount, min(texCoord.x, texCoord.y)) * step(max(texCoord.x, texCoord.y), 1 - paddingAmount);
     outAlbedo = vec4(color * isBorder, 1.0);
 #endif
     

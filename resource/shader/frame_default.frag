@@ -24,11 +24,6 @@ vec3 getColorAfterFogFilter(vec3 color){
 
 void main() {
 
-	//vec3 outColor;
-    vec3 outColor = texture(frameTexture, texCoord).rgb;
-
-
-//
 //    float FXAA_REDUCE_MIN = (1.0/ 128.0);
 //	float FXAA_REDUCE_MUL = (1.0 / 8.0);
 //	float FXAA_SPAN_MAX =  8.0;
@@ -60,18 +55,32 @@ void main() {
 //	
 //	float lumaB = dot(rgbB, luma);
 //
-//
 //	if ((lumaB < lumaMin) || (lumaB > lumaMax)){
 //		outColor = rgbA;
 //	}else{
 //		outColor = rgbB;
 //	}
-//
-//	float depth = texture(frameDepthTexture, texCoord).r;
-//    depth = linearizeDepth(depth);// / 10000;
-	//outColor = getColorAfterFogFilter(outColor);
 
+    int radius = 3;
+    vec3 sum = vec3(0);
+    for(int y = -radius; y <= radius; y++){
+        for(int x = -radius; x <= radius; x++){
+            vec3 col = texture(frameTexture, texCoord + vec2(x, y) / vec2(1920, 1080)).rgb;
+            sum += col;
+        }
+    }
 
+    
+    int rowSize = radius*2+1;
+    vec3 average = sum / float(rowSize * rowSize);
+
+    vec3 outColor = texture(frameTexture, texCoord).rgb;
+
+	float depth = texture(frameDepthTexture, texCoord).r;
+    depth = linearizeDepth(depth);
+    outColor = mix(outColor, average, depth*0.001);
+
+	outColor = getColorAfterFogFilter(outColor);
 
     FragColor = vec4(outColor, 1);
 }

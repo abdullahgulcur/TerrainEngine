@@ -22,7 +22,7 @@ namespace Engine {
         //glm::u8vec2 pagePosition;
         unsigned short pageSize;
 
-        unsigned int textureIdList[9];
+        unsigned int textureIdList[4];
         unsigned int texturePaletteTextureArrayId;
 
     public:
@@ -35,7 +35,7 @@ namespace Engine {
 
         FramePhsyicalPages() {}
         ~FramePhsyicalPages() {}
-        FramePhsyicalPages(unsigned short pageCounts, unsigned short pageSize, unsigned int heightmapTextureId);
+        FramePhsyicalPages(unsigned short pageCounts, unsigned short pageSize, unsigned int heightmapTextureId, unsigned int shadowmapTextureId);
         void setUniforms(unsigned int level, glm::u16vec2 blockPosition);
         void draw(unsigned short tileIndex, UINT8 mipmapLevel);
         //void setViewport(glm::u16vec2 size);

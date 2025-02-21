@@ -55,7 +55,7 @@ namespace Engine {
 
 		//---------
 
-		physicalPageGeneratorFrame = FramePhsyicalPages(pageCounts, 1024, heightmapGenerator->textureId);
+		physicalPageGeneratorFrame = FramePhsyicalPages(pageCounts, 1024, heightmapGenerator->textureId, heightmapGenerator->shadowMapTextureId);
 		pageTableGeneratorFrame = FramePageTable(glm::u8vec2(4));
 
 		//---------
@@ -137,7 +137,7 @@ namespace Engine {
 				continue;
 
 			unsigned short sideLength = (1 << clipmapLevel);
-			glm::vec2 blockCorner0 = glm::vec2(TerrainTexturing::getBlockIndex(clipmapLevel, i)) + glm::vec2(1 << clipmapLevel) * 0.5f;// +glm::vec2(1 << clipmapLevel) * 0.5f;
+			glm::vec2 blockCorner0 = glm::vec2(TerrainTexturing::getBlockIndex(clipmapLevel, i)) + glm::vec2(1 << clipmapLevel) * 0.5f;// AAA +glm::vec2(1 << clipmapLevel) * 0.5f;
 			glm::u16vec2 blockCorner1(blockCorner0.x + sideLength, blockCorner0.y);
 			glm::u16vec2 blockCorner2(blockCorner0.x, blockCorner0.y + sideLength);
 			glm::u16vec2 blockCorner3(blockCorner0.x + sideLength, blockCorner0.y + sideLength);
@@ -349,10 +349,10 @@ namespace Engine {
 
 	bool TerrainTexturing::isInBorders(const UINT8 level, const glm::u16vec2 gridIndex) { // Causes PROBLEM
 
-		return true;
+		//return true;
 
 		unsigned short max = TerrainTexturing::getTerrainMaxBlockIndex(level);
-		if (gridIndex.x >= 0 && gridIndex.y >= 0 && gridIndex.x < max && gridIndex.y < max)
+		if (gridIndex.x >= 0 && gridIndex.y >= 0 && gridIndex.x <= max && gridIndex.y <= max)
 			return true;
 		return false;
 	}

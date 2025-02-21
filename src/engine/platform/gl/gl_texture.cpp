@@ -303,6 +303,41 @@ namespace Engine {
 		return textureId;
 	}
 
+	unsigned int GLTexture::generateHeightmapTexture(std::string path) {
+
+		int width;
+		int height;
+		int channels;
+		unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+
+		unsigned int textureId;
+		glGenTextures(1, &textureId);
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8UI, width, height, 0, GL_RGBA_INTEGER, GL_UNSIGNED_BYTE, data);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		return textureId;
+	}
+
+	unsigned int GLTexture::generateShadowmapTexture(glm::u16vec2 size, unsigned short* data) {
+
+		unsigned int textureId;
+		glGenTextures(1, &textureId);
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R16UI, size.x, size.y, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, data);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		return textureId;
+	}
+
 	unsigned int GLTexture::generatePhysicalPagesTexture(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data) {
 
 		GLenum internalFormats[4] = { GL_R8, GL_RG8, GL_RGB8, GL_RGBA8 };

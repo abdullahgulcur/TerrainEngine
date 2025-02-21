@@ -45,6 +45,8 @@ namespace Engine {
         static unsigned int generateHeightmapTexture2D(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data);
         static unsigned int generateHeightmapTexture2D(glm::u16vec2 size);
         static unsigned int generateHeightmapTexture(glm::u16vec2 size);
+        static unsigned int generateHeightmapTexture(std::string path);
+        static unsigned int generateShadowmapTexture(glm::u16vec2 size, unsigned short* data);
         static unsigned int generatePhysicalPagesTexture(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data);
         static unsigned int createPhysicalPagesFrameBufferTexture(glm::u16vec2 size);
         static unsigned int createPhysicalPagesFrameBufferTextureArray(unsigned short pageSize, UINT8 mipLevels, unsigned short pageCount);

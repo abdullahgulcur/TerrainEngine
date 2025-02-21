@@ -8,7 +8,7 @@
 
 namespace Engine {
 
-    FramePhsyicalPages::FramePhsyicalPages(unsigned short pageCounts, unsigned short pageSize, unsigned int heightmapTextureId) {
+    FramePhsyicalPages::FramePhsyicalPages(unsigned short pageCounts, unsigned short pageSize, unsigned int heightmapTextureId, unsigned int shadowmapTextureId) {
         this->pageSize = pageSize;
         this->pageCounts = pageCounts;
         this->textureIdList[0] = heightmapTextureId;
@@ -27,6 +27,8 @@ namespace Engine {
         //texMacroVariation.clean();
 
         this->textureIdList[2] = GLTexture::generateMacroVariationTexture("../../../resource/texture/macrovariation.png");
+
+        this->textureIdList[3] = shadowmapTextureId;
 
         std::vector<std::string> texturePathList;
         texturePathList.push_back("../../../resource/texture/terrain_new/results/grass_dried_a.dds");
@@ -51,20 +53,18 @@ namespace Engine {
         GLCommand::setScreen(glm::u16vec2(0), glm::u16vec2(pageSize), FBO);
         GLBuffer::frameBufferTextureLayer(textureId, tileIndex);
 
-        if (mipmapLevel < 13) { ///// ???????????????????
-
+        if (mipmapLevel <= 9)
             GLShader::useProgram(shaderProgramId);
-            for (int i = 0; i < 3; i++)
-                GLTexture::useTexture(i, textureIdList[i]);
-            GLTexture::useTextureArray(3, texturePaletteTextureArrayId);
-            GLUniform::setUInt1(shaderProgramId, "level", level);
-            GLUniform::setUInt2(shaderProgramId, "blockPosition", blockPosition);
-            GLCommand::drawQuad(planeVAO);
-        }
-        else {
+        else
             GLShader::useProgram(shaderProgramId1);
-            GLCommand::drawQuad(planeVAO);
-        }
+
+        for (int i = 0; i < 3; i++)
+            GLTexture::useTexture(i, textureIdList[i]);
+        GLTexture::useTextureArray(3, texturePaletteTextureArrayId);
+        GLTexture::useTexture(4, textureIdList[3]);
+        GLUniform::setUInt1(shaderProgramId, "level", level);
+        GLUniform::setUInt2(shaderProgramId, "blockPosition", blockPosition);
+        GLCommand::drawQuad(planeVAO);
     }
 
 }
