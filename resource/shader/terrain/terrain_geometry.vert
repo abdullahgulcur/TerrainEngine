@@ -1,7 +1,7 @@
 #version 460 core
 
 layout (location = 0) in uvec2 posVert;
-layout (location = 1) in uvec2 posInstance;
+layout (location = 1) in ivec2 posInstance;
 layout (location = 2) in uint levelInstance;
 
 uniform int blockSize;
@@ -34,7 +34,7 @@ vec3 getTangent(float dxF){
 
 void main(void)
 {
-    uvec2 worldPos2D = (posVert + posInstance * blockSize) * (1 << levelInstance);
+    vec2 worldPos2D = (posVert + posInstance * blockSize) * (1 << levelInstance);
     
     uint height = texelFetch(heightmap, ivec2(worldPos2D), 0).r;
     float heightF = height * 0.03; 

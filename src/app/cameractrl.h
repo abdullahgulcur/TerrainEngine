@@ -13,8 +13,8 @@ namespace Game {
 		float verticalAngle = 0.f;
 		float speed = 1.f;
 		float smoothSpeed = 0.15f;
-		glm::vec3 position = glm::vec3(2059.5, 100, 2059.5);
-		glm::vec3 targetPosition = glm::vec3(2059.5, 100, 2059.5);
+		glm::vec3 position = glm::vec3(200, 100, 200);
+		glm::vec3 targetPosition = glm::vec3(200, 100, 200);
 
 	public:
 

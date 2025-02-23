@@ -4,6 +4,7 @@
 #include "terrain_texturing.h"
 #include "terrain_geometry.h"
 #include "terrain_geometry_manager.h"
+#include "water.h"
 
 // TODO: data lari freelemeyi unutma
 
@@ -27,6 +28,7 @@ namespace Engine {
 		TerrainTexturing terrainTexturing;
 		TerrainGeometry terrainGeometry;
 		TerrainGeometryManager terrainGeometryManager;
+		Water water;
 
 		Terrain() {}
 		~Terrain() {}

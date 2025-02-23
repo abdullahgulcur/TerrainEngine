@@ -10,6 +10,7 @@ namespace Engine {
         FRAME_DEFAULT = 4,
         TERRAIN_GEOMETRY = 5,
         TERRAIN_RVT_COARSE = 6,
+        WATER = 7,
     };
 
     class Shader {
@@ -29,6 +30,7 @@ namespace Engine {
         void loadTerrainRVT();
         void loadTerrainRVTCoarse();
         void loadTerrainPageTable();
+        void loadWater();
         void loadFrameDefaultShader();
     };
 }

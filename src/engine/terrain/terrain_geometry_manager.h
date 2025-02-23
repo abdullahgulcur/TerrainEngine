@@ -18,8 +18,8 @@ namespace Engine {
 		UINT8 totalClipmapLevel;
 		UINT8 startClipmapLevel;
 
-		std::vector<glm::u16vec2> clipmapGridIndexList;
-		std::vector<glm::u16vec2> clipmapStartGridIndexList;
+		std::vector<glm::i16vec2> clipmapGridIndexList;
+		std::vector<glm::i16vec2> clipmapStartGridIndexList;
 
 		std::vector<glm::u16vec2> blockIndexList;
 		std::vector<glm::u8vec2> blockLocalIndexList;
@@ -39,10 +39,10 @@ namespace Engine {
 		UINT8 getMinClipmapLevel(const glm::vec2 cameraPosition, float elevation);
 		glm::u16vec2 getGridIndex(const UINT8 level, const glm::vec2 camPos);
 		glm::u16vec2 getStartGridIndex(glm::u16vec2 const gridIndex);
-		void setClipmapStartGridIndex(const UINT8 clipmapLevel, const glm::u16vec2 index);
-		void setClipmapGridIndex(const UINT8 clipmapLevel, const glm::u16vec2 index);
-		glm::u16vec2& getClipmapStartGridIndex(const UINT8 clipmapLevel);
-		glm::u16vec2& getClipmapGridIndex(const UINT8 clipmapLevel);
+		void setClipmapStartGridIndex(const UINT8 clipmapLevel, const glm::i16vec2 index);
+		void setClipmapGridIndex(const UINT8 clipmapLevel, const glm::i16vec2 index);
+		glm::i16vec2& getClipmapStartGridIndex(const UINT8 clipmapLevel);
+		glm::i16vec2& getClipmapGridIndex(const UINT8 clipmapLevel);
 		void setBlockIndex(const UINT8 clipmapLevel, const UINT8 blockIndex, const glm::u16vec2 index);
 		glm::u16vec2& getBlockIndex(const UINT8 clipmapLevel, const UINT8 blockIndex);
 		void setIsInner(const UINT8 clipmapLevel, const UINT8 blockIndex, const UINT8 index);
@@ -52,10 +52,10 @@ namespace Engine {
 		void setOutOfBorder(const UINT8 clipmapLevel, const UINT8 blockIndex, const UINT8 outOfBorder);
 		UINT8& getOutOfBorder(const UINT8 clipmapLevel, const UINT8 blockIndex);
 		glm::vec2 worldSpaceToTerrainSpace(const glm::vec2 cameraPosition);
-		glm::u16vec2 terrainSpaceToWorldSpace(const glm::u16vec2 blockPosition, const UINT8 level);
+		//glm::u16vec2 terrainSpaceToWorldSpace(const glm::u16vec2 blockPosition, const UINT8 level);
 		unsigned short getTerrainMinBlockIndex(const UINT8 level);
 		unsigned short getTerrainMaxBlockIndex(const UINT8 level);
 		glm::u16vec2 getBlockIndexWorldSpace(const UINT8 clipmapLevel, const UINT8 blockIndex);
-		glm::u16vec2 getOuterDegenerateIndexWorldSpace(const UINT8 clipmapLevel);
+		glm::i16vec2 getOuterDegenerateIndexWorldSpace(const UINT8 clipmapLevel);
 	};
 }

@@ -26,21 +26,21 @@ namespace Engine {
         //this->textureIdList[2] = texMacroVariation.generateGLTexture();
         //texMacroVariation.clean();
 
-        this->textureIdList[2] = GLTexture::generateMacroVariationTexture("../../../resource/texture/macrovariation.png");
+        this->textureIdList[2] = GLTexture::generateMacroVariationTexture("../../../resource/texture/terrain/macrovariation.png");
 
         this->textureIdList[3] = shadowmapTextureId;
 
         std::vector<std::string> texturePathList;
-        texturePathList.push_back("../../../resource/texture/terrain_new/results/grass_dried_a.dds");
-        texturePathList.push_back("../../../resource/texture/terrain_new/results/bark_soil_a.dds");//wild_grass_a
-        texturePathList.push_back("../../../resource/texture/terrain_new/results/rock_cliff_a.dds");
-        texturePathList.push_back("../../../resource/texture/terrain_new/results/grass_dried_n.dds");
-        texturePathList.push_back("../../../resource/texture/terrain_new/results/bark_soil_n.dds");//wild_grass_n
-        texturePathList.push_back("../../../resource/texture/terrain_new/results/rock_cliff_n.dds");
-        texturePathList.push_back("../../../resource/texture/terrain_new/results/rock_cliff_a_.dds");
-        texturePathList.push_back("../../../resource/texture/terrain_new/results/rock_cliff_n_.dds");
-        texturePathList.push_back("../../../resource/texture/terrain_new/sand_beach_a.dds");
-        texturePathList.push_back("../../../resource/texture/terrain_new/sand_beach_n.dds");
+        texturePathList.push_back("../../../resource/texture/terrain/grass_dried_a.dds");
+        texturePathList.push_back("../../../resource/texture/terrain/bark_soil_a.dds");//wild_grass_a
+        texturePathList.push_back("../../../resource/texture/terrain/rock_cliff_a.dds");
+        texturePathList.push_back("../../../resource/texture/terrain/grass_dried_n.dds");
+        texturePathList.push_back("../../../resource/texture/terrain/bark_soil_n.dds");//wild_grass_n
+        texturePathList.push_back("../../../resource/texture/terrain/rock_cliff_n.dds");
+        texturePathList.push_back("../../../resource/texture/terrain/rock_cliff_a_.dds");
+        texturePathList.push_back("../../../resource/texture/terrain/rock_cliff_n_.dds");
+        texturePathList.push_back("../../../resource/texture/terrain/sand_beach_a.dds");
+        texturePathList.push_back("../../../resource/texture/terrain/sand_beach_n.dds");
 
         texturePaletteTextureArrayId = GLTexture::generateCompressedTerrainPaletteTextureArray(texturePathList, 1024);
     }

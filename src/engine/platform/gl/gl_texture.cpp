@@ -308,12 +308,14 @@ namespace Engine {
 		int width;
 		int height;
 		int channels;
-		unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+		unsigned short* data = (unsigned short*)stbi_load_16(path.c_str(), &width, &height, &channels, 1);
 
 		unsigned int textureId;
 		glGenTextures(1, &textureId);
 		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8UI, width, height, 0, GL_RGBA_INTEGER, GL_UNSIGNED_BYTE, data);
+		//glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, width, height, 0, GL_RED_INTEGER, GL_UNSIGNED_SHORT, data);
+		//glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, width, height, 0, GL_RED, GL_FLOAT, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R16UI, width, height, 0, GL_RED_INTEGER, GL_UNSIGNED_SHORT, data);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);

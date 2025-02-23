@@ -9,7 +9,7 @@ in vec2 texCoord;
 float linearizeDepth(float depth)
 {
     float near = 0.1;
-    float far = 4000;
+    float far = 10000;
     float z = depth * 2.0 - 1.0; // Back to NDC 
     return (2.0 * near * far) / (far + near - z * (far - near));	
 }
@@ -18,11 +18,13 @@ vec3 getColorAfterFogFilter(vec3 color){
 
     float depth = texture(frameDepthTexture, texCoord).r;
     float depthLinearized = linearizeDepth(depth);// / 10000;
-    float fogBlend = clamp((depthLinearized - 1000.f) / 700.f + 0.5, 0, 1.f);
+    float fogBlend = clamp((depthLinearized - 3000.f) / 3000.f + 0.5, 0, 1.f);
     return mix(color, vec3(0.9,0.95,1), fogBlend); 
 }
 
 void main() {
+
+    vec2 frameSize = vec2(textureSize(frameTexture, 0));
 
 //    float FXAA_REDUCE_MIN = (1.0/ 128.0);
 //	float FXAA_REDUCE_MUL = (1.0 / 8.0);
@@ -61,15 +63,14 @@ void main() {
 //		outColor = rgbB;
 //	}
 
-    int radius = 3;
+    int radius = 4;
     vec3 sum = vec3(0);
     for(int y = -radius; y <= radius; y++){
         for(int x = -radius; x <= radius; x++){
-            vec3 col = texture(frameTexture, texCoord + vec2(x, y) / vec2(1920, 1080)).rgb;
+            vec3 col = texture(frameTexture, texCoord + vec2(x, y) / frameSize).rgb;
             sum += col;
         }
     }
-
     
     int rowSize = radius*2+1;
     vec3 average = sum / float(rowSize * rowSize);
@@ -78,7 +79,7 @@ void main() {
 
 	float depth = texture(frameDepthTexture, texCoord).r;
     depth = linearizeDepth(depth);
-    outColor = mix(outColor, average, depth*0.001);
+    outColor = mix(outColor, average, depth*0.0002);
 
 	outColor = getColorAfterFogFilter(outColor);
 

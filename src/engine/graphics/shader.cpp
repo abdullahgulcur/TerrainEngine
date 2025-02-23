@@ -24,6 +24,7 @@ namespace Engine {
         Shader::loadTerrainPageTable();
         Shader::loadFrameDefaultShader();
         Shader::loadTerrainGeometry();
+        Shader::loadWater();
     }
 
     void Shader::loadPBR() {
@@ -90,6 +91,14 @@ namespace Engine {
         std::string fragmentShaderPath = "../../../resource/shader/terrain_page_table.frag";
         unsigned int shaderProgramId = GLShader::loadShader(vertexShaderPath, fragmentShaderPath);
         shaders[ShaderType::TERRAIN_PAGE_TABLE] = shaderProgramId;
+    }
+
+    void Shader::loadWater() {
+
+        std::string vertexShaderPath = "../../../resource/shader/water/water.vert";
+        std::string fragmentShaderPath = "../../../resource/shader/water/water.frag";
+        unsigned int shaderProgramId = GLShader::loadShader(vertexShaderPath, fragmentShaderPath);
+        shaders[ShaderType::WATER] = shaderProgramId;
     }
 
     void Shader::loadFrameDefaultShader() {

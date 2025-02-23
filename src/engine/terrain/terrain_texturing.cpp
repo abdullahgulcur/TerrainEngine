@@ -109,7 +109,7 @@ namespace Engine {
 			}
 		}
 
-		const UINT8 maxMipmapIndexToCheck = 5;
+		const UINT8 maxMipmapIndexToCheck = 8;
 		for (int i = 0; i < maxMipmapIndexToCheck; i++)
 			availableMipmapLevelList[i] = TerrainTexturing::checkIfEveryCornerInDistance(i, camPos) ? i : -1;
 

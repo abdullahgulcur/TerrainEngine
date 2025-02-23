@@ -60,7 +60,6 @@ float pnoise(in vec2 P, in vec2 rep) {
 }
 
 uniform usampler2D heightmap;
-
 in vec2 texCoord;
 out uint FragColor;
 
@@ -81,9 +80,10 @@ float getProceduralHeight(){
 
 float getStaticHeight(){
 
-    ivec2 uv = ivec2(texCoord * 4096);
+    uvec2 texSize = textureSize(heightmap, 0);
+    ivec2 uv = ivec2(texCoord * texSize);
 
-    int radius = 3;
+    int radius = 5;
     uint sum = 0;
     for(int y = -radius; y <= radius; y++){
         for(int x = -radius; x <= radius; x++){
@@ -94,15 +94,16 @@ float getStaticHeight(){
 
     int rowSize = radius*2+1;
     float average = sum / float(rowSize * rowSize);
-    average *= 0.75;
-    return average / 255.f;
+    average *= 1;
+    return average / 65535.f;
 
 }
 
 float applyAAA(float innerRadius, float outerRadius){
-
-    ivec2 position = ivec2(texCoord * 4096);
-    ivec2 center = ivec2(4096 / 2);
+    
+    uvec2 texSize = textureSize(heightmap, 0);
+    ivec2 position = ivec2(texCoord * texSize);
+    ivec2 center = ivec2(texSize >> 1);
 
     float distance = distance(center, position);
     return smoothstep(outerRadius, innerRadius, distance);
@@ -110,12 +111,12 @@ float applyAAA(float innerRadius, float outerRadius){
 
 void main(){
 
-    float height = getStaticHeight() + getProceduralHeight();
+    float height = getStaticHeight();// + getProceduralHeight();
 
-    height *= applyAAA(500, 2000);
-    height *= 1 - applyAAA(20, 500) * 0.6;
+    height *= 1-applyAAA(100, 2000);
+    height *= applyAAA(2000, 4090);
 
-    height *= 0.75;
+//    height *= 0.75;
 
     FragColor = uint(height * 8191);
 }

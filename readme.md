@@ -2,13 +2,14 @@
 This is an OpenGL terrain engine designed for the specialized implementation of runtime virtual texturing for terrain. It is inspired by the Frostbite Engine's terrain system and John Carmack's Id Tech Engine for virtual textures. For geometry rendering, I have made some adjustments to Hugues Hoppe’s clipmap rendering technique. Streaming virtual textures are also employed for the heightmap. These techniques enable the rendering of vast terrain areas spanning several square kilometers with high visual quality.
 
 ## ScreenShots
-![scene_0](screenshot/scene_0.png)
-![scene_1](screenshot/scene_1.png)
-![scene_2](screenshot/scene_2.png)
+![s_4](screenshot/s_4.png)
+![s_0](screenshot/s_0.png)
+![s_1](screenshot/s_1.png)
+![s_2](screenshot/s_2.png)
+![s_3](screenshot/s_3.png)
 
-## Clipmap Rendering
-![wireframe_0](screenshot/wireframe_0.png)
-![wireframe_1](screenshot/wireframe_1.png)
+## Pages and Mipmaps
+![s_5](screenshot/s_5.png)
 
 ## Physical Pages Textures
 ### Colormap
@@ -17,12 +18,12 @@ This is an OpenGL terrain engine designed for the specialized implementation of 
   <img src="screenshot/physical_pages_1.png" alt="physical_pages_1" width="49%">
 </p>
 
-### Heightmap
-![physical_pages_heightmap](screenshot/physical_pages_heightmap.png)
+## Clipmap Rendering
+![wireframe_0](screenshot/wireframe_0.png)
+![wireframe_1](screenshot/wireframe_1.png)
 
-## Slope Based Dampening
-![slope_based_dampening](screenshot/slope_based_dampening.png)
-Slope-Based Dampening is a technique used to reduce the intensity of texture blending and displacement on steep terrain slopes.
+## 10 texels Per Centimeter
+![s_6](screenshot/s_6.png)
 
 ## How To Build
 This is a CMake project with no external dependencies. It has been tested on Windows.

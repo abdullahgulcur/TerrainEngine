@@ -114,6 +114,25 @@ namespace Engine {
         glBindVertexArray(0);
     }
 
+    void GLBuffer::createWaterQuadVAO(unsigned int& VAO) {
+
+        float quadVertices[] = {
+            // positions   // texCoords
+            -1.0f,  1.0f,  0.0f, 1.0f,
+             1.0f, -1.0f,  1.0f, 0.0f,
+            -1.0f, -1.0f,  0.0f, 0.0f,
+
+            -1.0f,  1.0f,  0.0f, 1.0f,
+             1.0f,  1.0f,  1.0f, 1.0f,
+             1.0f, -1.0f,  1.0f, 0.0f
+        };
+
+        VAO = GLBuffer::createVAO();
+        unsigned int quadVBO = GLBuffer::createVBO(sizeof(quadVertices), quadVertices);
+        GLBuffer::setVertexAttribute(0, 2, GL_FLOAT, 4 * sizeof(float), 0);
+        GLBuffer::setVertexAttribute(1, 2, GL_FLOAT, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+    }
+
     unsigned int GLBuffer::createFBO(unsigned int textureId) {
 
         unsigned int FBO;

@@ -3,20 +3,21 @@
 #include "core.h"
 #include "gl_context.h"
 #include "terrain.h"
+#include "water.h"
 
 namespace Engine {
 
 	void TerrainRender::draw(Terrain* terrain) {
 
 		struct TerrainVertexAttribs {
-			glm::u16vec2 position;
+			glm::i16vec2 position;
 			UINT8 level;
 			TerrainVertexAttribs() {}
-			TerrainVertexAttribs(glm::u16vec2 position, UINT8 level) : position(position), level(level) {}
+			TerrainVertexAttribs(glm::i16vec2 position, UINT8 level) : position(position), level(level) {}
 		};
 
 		Camera* camera = Core::getCamera();
-		unsigned int shaderProgramId = Core::getShader()->shaders[ShaderType::TERRAIN_GEOMETRY];
+		unsigned int shaderProgramId = Core::getShader()->shaders[ShaderType::TERRAIN_GEOMETRY]; // iyi deigl
 		TerrainGeometry& terrainGeometry = terrain->terrainGeometry;
 
 		GLShader::useProgram(shaderProgramId);
@@ -40,7 +41,7 @@ namespace Engine {
 
 		// BLOCKS
 		for (int i = terrain->terrainGeometryManager.startClipmapLevel; i < terrain->terrainGeometryManager.totalClipmapLevel; i++) {
-			for (int j = 0; j < BLOCK_COUNT_PER_LEVEL; j++) {
+			for (int j = 0; j < 36; j++) {
 				if((!terrain->terrainGeometryManager.getIsInner(i, j) || i == terrain->terrainGeometryManager.startClipmapLevel) &&
 					!terrain->terrainGeometryManager.getOutOfBorder(i, j))
 					instanceArray.push_back(TerrainVertexAttribs(terrain->terrainGeometryManager.getBlockIndexWorldSpace(i, j), i));
@@ -63,5 +64,13 @@ namespace Engine {
 		}
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+
+		//shaderProgramId = terrain->water.waterShaderProgramId;
+		//GLShader::useProgram(shaderProgramId);
+		//GLUniform::setMatrix4f(shaderProgramId, "projectionView", camera->projectionMatrix * camera->viewMatrix);
+		//GLUniform::setFloat3(shaderProgramId, "cameraPosition", camera->position);
+		//GLCommand::drawQuad(terrain->water.quadVAO);
+
 	}
 }

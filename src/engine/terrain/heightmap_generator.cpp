@@ -11,7 +11,7 @@ namespace Engine {
 		data = new unsigned int[terrainSize.x * terrainSize.y];
 
 		unsigned int shaderProgramId = GLShader::loadShader("../../../resource/shader/generative/pnoise.vert", "../../../resource/shader/generative/pnoise.frag");
-		unsigned int elevationMapTextureId = GLTexture::generateHeightmapTexture("../../../resource/texture/elevationmap.png");
+		unsigned int elevationMapTextureId = GLTexture::generateHeightmapTexture("../../../resource/texture/terrain/elevationmap.png");
 		textureId = GLTexture::generateHeightmapTexture(terrainSize);
 
 		unsigned int FBO = GLBuffer::createFBO(textureId);

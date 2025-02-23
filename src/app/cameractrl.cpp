@@ -60,8 +60,8 @@ namespace Game {
 			camera->setPosition(position);
 			camera->setViewMatrix(model);
 
-			speed += input->getMouseScrollDelta() * 0.1f;
-			speed = glm::clamp(speed, 0.003f, 30.f);
+			speed += input->getMouseScrollDelta() * 0.5f;
+			speed = glm::clamp(speed, 0.01f, 100.f);
 		}
 
 		if (input->getMouseUp(MOUSE_BUTTON_2))

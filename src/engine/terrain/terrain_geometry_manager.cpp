@@ -12,8 +12,8 @@ namespace Engine {
 
 		totalClipmapLevel = std::log2(terrainSize / blockSize) + 1;
 
-		clipmapGridIndexList = std::vector<glm::u16vec2>(totalClipmapLevel);
-		clipmapStartGridIndexList = std::vector<glm::u16vec2>(totalClipmapLevel);
+		clipmapGridIndexList = std::vector<glm::i16vec2>(totalClipmapLevel);
+		clipmapStartGridIndexList = std::vector<glm::i16vec2>(totalClipmapLevel);
 
 		blockIndexList = std::vector<glm::u16vec2>(totalClipmapLevel * 36);
 		blockLocalIndexList = std::vector<glm::u8vec2>(totalClipmapLevel * 36);
@@ -62,8 +62,8 @@ namespace Engine {
 	void TerrainGeometryManager::initBlockProperties(const glm::vec2 cameraPosition) {
 
 		for (int i = 0; i < totalClipmapLevel; i++) {
-			const glm::u16vec2 gridIndex = TerrainGeometryManager::getGridIndex(i, cameraPosition);
-			const glm::u16vec2 startGridIndex = TerrainGeometryManager::getStartGridIndex(gridIndex);
+			const glm::i16vec2 gridIndex = TerrainGeometryManager::getGridIndex(i, cameraPosition);
+			const glm::i16vec2 startGridIndex = TerrainGeometryManager::getStartGridIndex(gridIndex);
 			TerrainGeometryManager::setClipmapStartGridIndex(i, startGridIndex);
 			TerrainGeometryManager::setClipmapGridIndex(i, gridIndex);
 
@@ -78,8 +78,8 @@ namespace Engine {
 
 	void TerrainGeometryManager::calculateBlockPositionIndices(const UINT8 clipmapLevel, const glm::vec2 cameraPosition) {
 
-		const glm::u16vec2 gridIndex = TerrainGeometryManager::getGridIndex(clipmapLevel, cameraPosition);
-		const glm::u16vec2 startGridIndex = TerrainGeometryManager::getStartGridIndex(gridIndex);
+		const glm::i16vec2 gridIndex = TerrainGeometryManager::getGridIndex(clipmapLevel, cameraPosition);
+		const glm::i16vec2 startGridIndex = TerrainGeometryManager::getStartGridIndex(gridIndex);
 		TerrainGeometryManager::setClipmapStartGridIndex(clipmapLevel, startGridIndex);
 
 		if (TerrainGeometryManager::getClipmapGridIndex(clipmapLevel) != gridIndex) {
@@ -183,19 +183,19 @@ namespace Engine {
 		return  glm::u16vec2((gridIndex.x / 2) * 2 - 2, (gridIndex.y / 2) * 2 - 2);
 	}
 
-	void TerrainGeometryManager::setClipmapStartGridIndex(const UINT8 clipmapLevel, const glm::u16vec2 index) {
+	void TerrainGeometryManager::setClipmapStartGridIndex(const UINT8 clipmapLevel, const glm::i16vec2 index) {
 		clipmapStartGridIndexList[clipmapLevel] = index;
 	}
 
-	void TerrainGeometryManager::setClipmapGridIndex(const UINT8 clipmapLevel, const glm::u16vec2 index) {
+	void TerrainGeometryManager::setClipmapGridIndex(const UINT8 clipmapLevel, const glm::i16vec2 index) {
 		clipmapGridIndexList[clipmapLevel] = index;
 	}
 
-	glm::u16vec2& TerrainGeometryManager::getClipmapStartGridIndex(const UINT8 clipmapLevel) {
+	glm::i16vec2& TerrainGeometryManager::getClipmapStartGridIndex(const UINT8 clipmapLevel) {
 		return clipmapStartGridIndexList[clipmapLevel];
 	}
 
-	glm::u16vec2& TerrainGeometryManager::getClipmapGridIndex(const UINT8 clipmapLevel) {
+	glm::i16vec2& TerrainGeometryManager::getClipmapGridIndex(const UINT8 clipmapLevel) {
 		return clipmapGridIndexList[clipmapLevel];
 	}
 
@@ -235,9 +235,9 @@ namespace Engine {
 		return cameraPosition + glm::vec2(32768);
 	}
 
-	glm::u16vec2 TerrainGeometryManager::terrainSpaceToWorldSpace(const glm::u16vec2 blockPosition, const UINT8 level) {
-		return blockPosition - glm::u16vec2(32768) / glm::u16vec2(1 << level);
-	}
+	//glm::u16vec2 TerrainGeometryManager::terrainSpaceToWorldSpace(const glm::u16vec2 blockPosition, const UINT8 level) {
+	//	return blockPosition - glm::u16vec2(16384) / glm::u16vec2(1 << level);
+	//}
 
 	unsigned short TerrainGeometryManager::getTerrainMinBlockIndex(const UINT8 level) {
 		return 32768 / (blockSize << level);
@@ -252,7 +252,9 @@ namespace Engine {
 		return TerrainGeometryManager::getBlockIndex(clipmapLevel, blockIndex) - TerrainGeometryManager::getTerrainMinBlockIndex(clipmapLevel);
 	}
 
-	glm::u16vec2 TerrainGeometryManager::getOuterDegenerateIndexWorldSpace(const UINT8 clipmapLevel) {
-		return TerrainGeometryManager::getClipmapStartGridIndex(clipmapLevel) - TerrainGeometryManager::getTerrainMinBlockIndex(clipmapLevel);
+	glm::i16vec2 TerrainGeometryManager::getOuterDegenerateIndexWorldSpace(const UINT8 clipmapLevel) {
+		glm::i16vec2 a = glm::i16vec2(TerrainGeometryManager::getClipmapStartGridIndex(clipmapLevel));
+		glm::i16vec2 b = glm::i16vec2(TerrainGeometryManager::getTerrainMinBlockIndex(clipmapLevel));
+		return a - b;
 	}
 }

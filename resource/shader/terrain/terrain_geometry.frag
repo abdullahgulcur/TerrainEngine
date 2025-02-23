@@ -117,5 +117,5 @@ void main(){
     vec3 color = mix(albedoFinerAutoMipmap, albedoCoarseAutoMipmap, aaaaa);
     color = mix(color, albedoBadMipmap, borders);
 
-    FragColor = vec4(vec3(color), 1);
+    FragColor = vec4(color, 1);
 }

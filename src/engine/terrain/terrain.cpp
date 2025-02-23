@@ -17,6 +17,8 @@ namespace Engine {
 		terrainTexturing.init(terrainSize.x, &hg);
 		terrainGeometryManager.init(terrainSize.x, blockSize, &hg);
 		terrainGeometry.generateTerrainGeometryVertexArrays(terrainGeometryManager.blockSize, terrainGeometryManager.totalClipmapLevel);
+
+		water.init();
 	}
 
 	void Terrain::update() {

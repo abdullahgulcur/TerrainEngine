@@ -169,7 +169,7 @@ void main() {
 
     // grass dried
     a0 = textureLod(palette, vec3(uvBase, 0), texLevel).rgb;
-    float t = textureLod(tex1, uvBase*0.01, texLevel).r * 0.05;
+    float t = textureLod(tex1, uvBase*0.003, texLevel).r * 0.05;
     a0.r += t;
     a0.g += t;
     n0 = textureLod(palette, vec3(uvBase, 3), texLevel).rgb;
@@ -179,7 +179,7 @@ void main() {
     n1 = textureLod(palette, vec3(uvBase, 4), texLevel).rgb;
 
     vec3 temp = bilinearSample(tex2, uvBase * 0.01).rgb;
-    alpha = smoothstep(0.6, 1, (temp.r + temp.g + temp.b) * 0.33);
+    alpha = smoothstep(0.45, 1, (temp.r + temp.g + temp.b) * 0.33);
 
     alpha *= 1 - smoothstep(0.2,1,dot(n1, vec3(0,1,0)));
 
@@ -193,7 +193,7 @@ void main() {
     a1 = textureLod(palette, vec3(uvBase, 8), texLevel).rgb;
     n1 = textureLod(palette, vec3(uvBase, 9), texLevel).rgb;
 
-    float heightBlend = smoothstep(17, 15, hA);
+    float heightBlend = smoothstep(5, 4, hA);
     a0 = mix(a0, a1, heightBlend);
     n0 = mix(n0, n1, heightBlend);
 
@@ -228,7 +228,7 @@ void main() {
     // ----------- SLOPE BLEND -----------
 
 
-    float slopeBlend = getSlopeBlend(tbn, terrainNormal, n2, 0.97, 0.03, 0.2);
+    float slopeBlend = getSlopeBlend(tbn, terrainNormal, n2, 0.92, 0.05, 0.2);
     a0 = mix(a0, a2, slopeBlend);
     n0 = mix(n0, n2, slopeBlend);
     n0 = normalize(n0);
@@ -244,7 +244,7 @@ void main() {
     vec3 radiance = vec3(lightPow);
     float NdotL = max(dot(N, L), 0.0);        
     vec3 Lo = (albedo / 3.14) * radiance * NdotL;// * (1-shadow);
-    vec3 color = albedo * 0.25 + Lo;
+    vec3 color = albedo * 0.1 + Lo;
 
     // ----------- OUTPUT -----------
 
