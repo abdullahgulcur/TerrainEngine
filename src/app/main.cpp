@@ -18,7 +18,6 @@ int main() {
     while (!core->getGlfwContext()->shouldClose()) {
 
         //Engine code
-
         core->update();
 
         //Game code
