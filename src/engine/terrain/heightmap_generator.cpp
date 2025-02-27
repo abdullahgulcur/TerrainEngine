@@ -2,6 +2,7 @@
 #include "heightmap_generator.h"
 #include "gl_context.h"
 #include "texture2d.h"
+#include "config.h"
 
 namespace Engine {
 
@@ -10,8 +11,10 @@ namespace Engine {
 		this->terrainSize = terrainSize;
 		data = new unsigned int[terrainSize.x * terrainSize.y];
 
-		unsigned int shaderProgramId = GLShader::loadShader("../../../resource/shader/generative/pnoise.vert", "../../../resource/shader/generative/pnoise.frag");
-		unsigned int elevationMapTextureId = GLTexture::generateHeightmapTexture("../../../resource/texture/terrain/elevationmap.png");
+		std::string resource_dir(RESOURCES);
+
+		unsigned int shaderProgramId = GLShader::loadShader(resource_dir + "/shader/generative/pnoise.vert", resource_dir + "/shader/generative/pnoise.frag");
+		unsigned int elevationMapTextureId = GLTexture::generateHeightmapTexture(resource_dir + "/texture/terrain/elevationmap.png");
 		textureId = GLTexture::generateHeightmapTexture(terrainSize);
 
 		unsigned int FBO = GLBuffer::createFBO(textureId);

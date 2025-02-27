@@ -21,7 +21,7 @@ file(GLOB sourceFiles "src/app/*.cpp"
 	"src/engine/scene/*.cpp"
 	"src/engine/terrain/*.cpp")
 
-add_executable(${PROJECT_NAME} ${sourceFiles} src/engine/math/transform.cpp)
+add_executable(${PROJECT_NAME} ${sourceFiles})
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/engine/core/pch.h)
 
@@ -43,8 +43,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE src/engine/platform/glfw)
 target_include_directories(${PROJECT_NAME} PRIVATE src/engine/scene)
 target_include_directories(${PROJECT_NAME} PRIVATE src/engine/renderer)
 target_include_directories(${PROJECT_NAME} PRIVATE src/engine/terrain)
+target_include_directories(${PROJECT_NAME} PRIVATE src/engine/config)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLEW_STATIC)
+target_compile_definitions(${PROJECT_NAME} PRIVATE RESOURCE_DIR="${CMAKE_SOURCE_DIR}/resource")
 
 find_package(OpenGL REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE glew glfw OpenGL::GL)
