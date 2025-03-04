@@ -153,16 +153,16 @@ namespace Engine {
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
         // do we really need that loop ? 
-        for (int i = 0; i < pageCount; i++) {
-            
-            glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureId, 0, i);
+        //for (int i = 0; i < pageCount; i++) {
+        //    
+        //    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureId, 0, i);
 
-            // Ensure the framebuffer is complete
-            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-                std::cerr << "Framebuffer not complete!" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-        }
+        //    // Ensure the framebuffer is complete
+        //    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        //        std::cerr << "Framebuffer not complete!" << std::endl;
+        //        exit(EXIT_FAILURE);
+        //    }
+        //}
 
 
         //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_0_Id, 0);

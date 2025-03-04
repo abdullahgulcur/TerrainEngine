@@ -63,8 +63,6 @@ void getUV(uint mipmapLevel, inout uint pageIndex, inout vec2 uv, inout float pa
     vec2 pageIndexF = (WorldPos2D + 0.5 * (1 << mipmapLevel)) / (1 << mipmapLevel); // AAA  + 0.5 * (1 << mipmapLevel)
 
     uv = fract(pageIndexF);
-    float border = 0.045;
-    uv = uv * (1 - border * 2) + border;
 
     float temp = 0.1;
     //vec2 bbb = max(step(uv, vec2(0.1)) * smoothstep(0.0, 0.8, (0.1 - uv) / 0.1), step(vec2(0.9), uv) * smoothstep(0.0, 0.8, (uv - 0.9) / 0.1));

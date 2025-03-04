@@ -63,7 +63,7 @@ void main() {
 //		outColor = rgbB;
 //	}
 
-    int radius = 4;
+    int radius = 5;
     vec3 sum = vec3(0);
     for(int y = -radius; y <= radius; y++){
         for(int x = -radius; x <= radius; x++){

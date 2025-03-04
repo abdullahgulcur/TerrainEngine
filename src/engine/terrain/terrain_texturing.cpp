@@ -9,7 +9,7 @@
 //
 //#define STBI_MSC_SECURE_CRT
 //#define STB_IMAGE_WRITE_IMPLEMENTATION
-//#include "stb_image_write.h"
+#include "stb_image_write.h"
 
 namespace Engine {
 
@@ -55,7 +55,7 @@ namespace Engine {
 
 		//---------
 
-		physicalPageGeneratorFrame = FramePhsyicalPages(pageCounts, 1024, heightmapGenerator->textureId, heightmapGenerator->shadowMapTextureId);
+		physicalPageGeneratorFrame = FramePhsyicalPages(pageCounts, 512, heightmapGenerator->textureId, heightmapGenerator->shadowMapTextureId);
 		pageTableGeneratorFrame = FramePageTable(glm::u8vec2(4));
 
 		//---------
@@ -234,73 +234,73 @@ namespace Engine {
 		//if (true) {
 		//	Texture2D texTemp(physicalPageGeneratorFrame.size.x, physicalPageGeneratorFrame.size.y, 3);
 		//	GLTexture::getTextureContent(3, texTemp.data, physicalPageGeneratorFrame.texture_0_Id);
-			//texTemp.writeDataToFile("testphysicalpages.png", 0);
+		//	texTemp.writeDataToFile("testphysicalpages.png", 0);
 		//	std::exit(0);
 		//}
 
-		//if (false) {
+		if (false) {
 
-		//	if (topEmpty == 274) {
+			if (topEmpty == 274) {
 
-		//		//glBindTexture(GL_TEXTURE_2D_ARRAY, physicalPageGeneratorFrame.textureId);
+				//glBindTexture(GL_TEXTURE_2D_ARRAY, physicalPageGeneratorFrame.textureId);
 
-		//		//// Get the size of the texture (width, height, layers, format, type, etc.)
-		//		//GLint width, height, layers;
-		//		//glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_WIDTH, &width);
-		//		//glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_HEIGHT, &height);
-		//		//glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_DEPTH, &layers);
+				//// Get the size of the texture (width, height, layers, format, type, etc.)
+				//GLint width, height, layers;
+				//glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_WIDTH, &width);
+				//glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_HEIGHT, &height);
+				//glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_DEPTH, &layers);
 
-		//		//// Allocate memory to store the texture data
-		//		//// Assume it's RGBA format and unsigned byte for simplicity. Adjust format/type based on your actual texture.
-		//		//GLubyte* data = new GLubyte[width * height * layers * 3];  // 4 for RGBA
+				//// Allocate memory to store the texture data
+				//// Assume it's RGBA format and unsigned byte for simplicity. Adjust format/type based on your actual texture.
+				//GLubyte* data = new GLubyte[width * height * layers * 3];  // 4 for RGBA
 
-		//		//// Retrieve the texture data
-		//		//glGetTexImage(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+				//// Retrieve the texture data
+				//glGetTexImage(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
-		//		//stbi_write_png("testphysicalpages_.png", width, height, 3, &data[topEmpty * width * height * 3], width * 3);
+				//stbi_write_png("testphysicalpages_.png", width, height, 3, &data[topEmpty * width * height * 3], width * 3);
 
-		//		//std::exit(0);
+				//std::exit(0);
 
-		//		// Create and bind a framebuffer
-		//		GLuint fbo;
-		//		glGenFramebuffers(1, &fbo);
-		//		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+				// Create and bind a framebuffer
+				GLuint fbo;
+				glGenFramebuffers(1, &fbo);
+				glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-		//		// Attach a specific layer of the texture array to the framebuffer
-		//		int layerIndex = topEmpty;  // Specify which layer you want to read
-		//		glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, physicalPageGeneratorFrame.textureId, 0, layerIndex);
+				// Attach a specific layer of the texture array to the framebuffer
+				int layerIndex = topEmpty;  // Specify which layer you want to read
+				glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, physicalPageGeneratorFrame.textureId, 0, layerIndex);
 
-		//		// Check if framebuffer is complete
-		//		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		//			std::cerr << "Framebuffer is not complete!" << std::endl;
-		//		}
+				// Check if framebuffer is complete
+				if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+					std::cerr << "Framebuffer is not complete!" << std::endl;
+				}
 
-		//		// Get the size of the texture (width, height)
-		//		GLint width, height;
-		//		glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_WIDTH, &width);
-		//		glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_HEIGHT, &height);
+				// Get the size of the texture (width, height)
+				GLint width, height;
+				glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_WIDTH, &width);
+				glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_HEIGHT, &height);
 
-		//		// Allocate memory to read back the layer data
-		//		GLubyte* layerData = new GLubyte[width * height * 3];  // 3 for RGB
+				// Allocate memory to read back the layer data
+				GLubyte* layerData = new GLubyte[width * height * 3];  // 3 for RGB
 
-		//		// Read the data from the framebuffer
-		//		glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, layerData);
+				// Read the data from the framebuffer
+				glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, layerData);
 
-		//		stbi_write_png("testphysicalpages_.png", width, height, 3, layerData, width * 3);
-		//		// Now, 'layerData' contains the data of the specified layer.
-		//		// You can process or save it.
+				stbi_write_png("testphysicalpages_.png", width, height, 3, layerData, width * 3);
+				// Now, 'layerData' contains the data of the specified layer.
+				// You can process or save it.
 
-		//		// Clean up
-		//		delete[] layerData;
-		//		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		//		glDeleteFramebuffers(1, &fbo);
+				// Clean up
+				delete[] layerData;
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				glDeleteFramebuffers(1, &fbo);
 
-		//		std::exit(0);
+				std::exit(0);
 
-		//	}
+			}
 
-		//	
-		//}
+			
+		}
 
 	}
 

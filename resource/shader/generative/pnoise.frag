@@ -78,6 +78,17 @@ float getProceduralHeight(){
     return (noiseVal0 + noiseVal1 + noiseVal2 + noiseVal3 + noiseVal4) * 0.3;
 }
 
+float getProceduralHeight1(){
+
+    float scale = 50;
+    float noiseVal0 = getNormalized(pnoise(1432 + texCoord * scale, vec2(scale)));
+    float noiseVal1 = getNormalized(pnoise(1245 + texCoord * scale * 2, vec2(scale * 3))) / 2;
+    float noiseVal2 = getNormalized(pnoise(3465 + texCoord * scale * 4, vec2(scale * 9))) / 4;
+    float noiseVal3 = getNormalized(pnoise(1245 + texCoord * scale * 8, vec2(scale * 20))) / 16;
+    float noiseVal4 = getNormalized(pnoise(1234 + texCoord * scale * 16, vec2(scale * 40))) / 32;
+    return (noiseVal0 + noiseVal1 + noiseVal2 + noiseVal3 + noiseVal4) * 0.03;
+}
+
 float getStaticHeight(){
 
     uvec2 texSize = textureSize(heightmap, 0);
@@ -115,6 +126,8 @@ void main(){
 
     height *= 1-applyAAA(100, 2000);
     height *= applyAAA(2000, 4090);
+
+    height += getProceduralHeight1();
 
 //    height *= 0.75;
 

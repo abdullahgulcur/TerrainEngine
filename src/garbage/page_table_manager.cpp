@@ -7,7 +7,7 @@
 #include "heightmap.h"
 #include <chrono>
 
-#define SIZE_T 1024
+//#define SIZE_T 1024
 
 namespace Engine {
 
