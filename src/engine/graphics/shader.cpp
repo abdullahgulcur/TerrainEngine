@@ -19,13 +19,12 @@ namespace Engine {
 
         Shader::loadPBR();
         Shader::loadEnvironmentCubemapBackground();
-        //Shader::loadTerrain();
         Shader::loadTerrainRVT();
         Shader::loadTerrainRVTCoarse();
         Shader::loadTerrainPageTable();
         Shader::loadFrameDefaultShader();
         Shader::loadTerrainGeometry();
-        Shader::loadWater();
+        Shader::loadShadowmap();
     }
 
     void Shader::loadPBR() {
@@ -46,34 +45,21 @@ namespace Engine {
         GLTexture::setTextureUniformLocation("heightmap", shaderProgramId, 0);
         GLTexture::setTextureUniformLocation("pageTable", shaderProgramId, 1);
         GLTexture::setTextureUniformLocation("physicalPages", shaderProgramId, 2);
+        GLTexture::setTextureUniformLocation("shadowMap", shaderProgramId, 3);
         shaders[ShaderType::TERRAIN_GEOMETRY] = shaderProgramId;
     }
-
-    //void Shader::loadTerrain() {
-
-    //    std::string vertexShaderPath = resource_dir + "/shader/terrain.vert";
-    //    std::string fragmentShaderPath = resource_dir + "/shader/terrain.frag";
-    //    unsigned int shaderProgramId = GLShader::loadShader(vertexShaderPath, fragmentShaderPath);
-    //    GLTexture::setTextureUniformLocation("pageTable", shaderProgramId, 0);
-    //    GLTexture::setTextureUniformLocation("physicalHeightmap", shaderProgramId, 1);
-    //    GLTexture::setTextureUniformLocation("physicalPages", shaderProgramId, 2);
-    //    /*GLTexture::setTextureUniformLocation("physicalPagesNormal", shaderProgramId, 3);
-    //    GLTexture::setTextureUniformLocation("physicalPagesDisplacement", shaderProgramId, 4); */
-    //    shaders[ShaderType::TERRAIN] = shaderProgramId;
-    //}
 
     void Shader::loadTerrainRVT() {
 
         std::string resource_dir(RESOURCES);
 
-        std::string vertexShaderPath = resource_dir + "/shader/terrain_rvt.vert";
-        std::string fragmentShaderPath = resource_dir + "/shader/terrain_rvt.frag";
+        std::string vertexShaderPath = resource_dir + "/shader/terrain/terrain_rvt.vert";
+        std::string fragmentShaderPath = resource_dir + "/shader/terrain/terrain_rvt.frag";
         unsigned int shaderProgramId = GLShader::loadShader(vertexShaderPath, fragmentShaderPath);
         GLTexture::setTextureUniformLocation("heightmap", shaderProgramId, 0);
         GLTexture::setTextureUniformLocation("tex1", shaderProgramId, 1);
         GLTexture::setTextureUniformLocation("tex2", shaderProgramId, 2);
         GLTexture::setTextureUniformLocation("palette", shaderProgramId, 3);
-        GLTexture::setTextureUniformLocation("shadowmap", shaderProgramId, 4);
         shaders[ShaderType::TERRAIN_RVT] = shaderProgramId;
     }
 
@@ -96,8 +82,8 @@ namespace Engine {
 
         std::string resource_dir(RESOURCES);
 
-        std::string vertexShaderPath = resource_dir + "/shader/terrain_page_table.vert";
-        std::string fragmentShaderPath = resource_dir + "/shader/terrain_page_table.frag";
+        std::string vertexShaderPath = resource_dir + "/shader/terrain/terrain_page_table.vert";
+        std::string fragmentShaderPath = resource_dir + "/shader/terrain/terrain_page_table.frag";
         unsigned int shaderProgramId = GLShader::loadShader(vertexShaderPath, fragmentShaderPath);
         shaders[ShaderType::TERRAIN_PAGE_TABLE] = shaderProgramId;
     }
@@ -121,7 +107,22 @@ namespace Engine {
         unsigned int shaderProgramId = GLShader::loadShader(vertexShaderPath, fragmentShaderPath);
         GLTexture::setTextureUniformLocation("frameTexture", shaderProgramId, 0);
         GLTexture::setTextureUniformLocation("frameDepthTexture", shaderProgramId, 1);
+        GLTexture::setTextureUniformLocation("depthTextureArray", shaderProgramId, 2);
         shaders[ShaderType::FRAME_DEFAULT] = shaderProgramId;
+    }
+
+    void Shader::loadShadowmap() {
+
+        std::string resource_dir(RESOURCES);
+        std::string vertexShaderPath = resource_dir + "/shader/shadow/shadow_mapping_depth.vert";
+        std::string fragmentShaderPath = resource_dir + "/shader/shadow/shadow_mapping_depth.frag";
+        std::string geometryShaderPath = resource_dir + "/shader/shadow/shadow_mapping_depth.geom";
+
+        unsigned int shaderProgramId = GLShader::loadShader(vertexShaderPath, fragmentShaderPath, geometryShaderPath);
+        GLTexture::setTextureUniformLocation("heightmap", shaderProgramId, 0);
+
+        shaders[ShaderType::SHADOW_MAPPING] = shaderProgramId;
+
     }
 
 }

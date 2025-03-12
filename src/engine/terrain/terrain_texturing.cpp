@@ -1,15 +1,8 @@
 #include "pch.h"
 #include "terrain_texturing.h"
 #include "core.h"
-//#include "gl_context.h"
-//#include "texture2d.h"
-
-//#define STB_IMAGE_IMPLEMENTATION
-//#include "stb_image.h"
-//
-//#define STBI_MSC_SECURE_CRT
-//#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
+#include "gl_context.h"
 
 namespace Engine {
 
@@ -39,7 +32,6 @@ namespace Engine {
 		mipmapStartGridIndexList = std::vector<glm::u16vec2>(totalMipmapLevel);
 		blockIndexToAddQueue = std::vector<std::queue<BlockJob>>(totalMipmapLevel);
 		availableMipmapLevelList = std::vector<int>(totalMipmapLevel, -1);
-		//availableMipmapLevelList.back() = totalMipmapLevel - 1;
 
 		for (int i = 0; i < totalMipmapLevel; i++)
 			availableMipmapLevelList[i] = i;
@@ -81,9 +73,6 @@ namespace Engine {
 
 		//---------
 
-		//currentMipmapIndex = TerrainTexturing::getMinMipmapLevel(camPos, camera->position.y);
-		//currentMipmapIndexForShader = currentMipmapIndex;
-
 		for (int i = 0; i < totalMipmapLevel; i++) {
 			while (!blockIndexToAddQueue[i].empty()) {
 				TerrainTexturing::rasterBlock(blockIndexToAddQueue[i].front());
@@ -109,7 +98,7 @@ namespace Engine {
 			}
 		}
 
-		const UINT8 maxMipmapIndexToCheck = 8;
+		const UINT8 maxMipmapIndexToCheck = 10;
 		for (int i = 0; i < maxMipmapIndexToCheck; i++)
 			availableMipmapLevelList[i] = TerrainTexturing::checkIfEveryCornerInDistance(i, camPos) ? i : -1;
 
@@ -222,9 +211,7 @@ namespace Engine {
 
 		TerrainTexturing::updatePageTableTexturePartial(topEmpty, blockJob.index, blockJob.level);
 
-
-		glBindTexture(GL_TEXTURE_2D_ARRAY, physicalPageGeneratorFrame.textureId);
-		glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
+		GLTexture::generateMipmapArrayTexture2D(physicalPageGeneratorFrame.textureId);
 		
 		//auto end = std::chrono::high_resolution_clock::now();
 		//auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
@@ -238,69 +225,69 @@ namespace Engine {
 		//	std::exit(0);
 		//}
 
-		if (false) {
+		//if (false) {
 
-			if (topEmpty == 274) {
+		//	if (topEmpty == 274) {
 
-				//glBindTexture(GL_TEXTURE_2D_ARRAY, physicalPageGeneratorFrame.textureId);
+		//		//glBindTexture(GL_TEXTURE_2D_ARRAY, physicalPageGeneratorFrame.textureId);
 
-				//// Get the size of the texture (width, height, layers, format, type, etc.)
-				//GLint width, height, layers;
-				//glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_WIDTH, &width);
-				//glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_HEIGHT, &height);
-				//glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_DEPTH, &layers);
+		//		//// Get the size of the texture (width, height, layers, format, type, etc.)
+		//		//GLint width, height, layers;
+		//		//glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_WIDTH, &width);
+		//		//glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_HEIGHT, &height);
+		//		//glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_DEPTH, &layers);
 
-				//// Allocate memory to store the texture data
-				//// Assume it's RGBA format and unsigned byte for simplicity. Adjust format/type based on your actual texture.
-				//GLubyte* data = new GLubyte[width * height * layers * 3];  // 4 for RGBA
+		//		//// Allocate memory to store the texture data
+		//		//// Assume it's RGBA format and unsigned byte for simplicity. Adjust format/type based on your actual texture.
+		//		//GLubyte* data = new GLubyte[width * height * layers * 3];  // 4 for RGBA
 
-				//// Retrieve the texture data
-				//glGetTexImage(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		//		//// Retrieve the texture data
+		//		//glGetTexImage(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
-				//stbi_write_png("testphysicalpages_.png", width, height, 3, &data[topEmpty * width * height * 3], width * 3);
+		//		//stbi_write_png("testphysicalpages_.png", width, height, 3, &data[topEmpty * width * height * 3], width * 3);
 
-				//std::exit(0);
+		//		//std::exit(0);
 
-				// Create and bind a framebuffer
-				GLuint fbo;
-				glGenFramebuffers(1, &fbo);
-				glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		//		// Create and bind a framebuffer
+		//		GLuint fbo;
+		//		glGenFramebuffers(1, &fbo);
+		//		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-				// Attach a specific layer of the texture array to the framebuffer
-				int layerIndex = topEmpty;  // Specify which layer you want to read
-				glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, physicalPageGeneratorFrame.textureId, 0, layerIndex);
+		//		// Attach a specific layer of the texture array to the framebuffer
+		//		int layerIndex = topEmpty;  // Specify which layer you want to read
+		//		glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, physicalPageGeneratorFrame.textureId, 0, layerIndex);
 
-				// Check if framebuffer is complete
-				if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-					std::cerr << "Framebuffer is not complete!" << std::endl;
-				}
+		//		// Check if framebuffer is complete
+		//		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		//			std::cerr << "Framebuffer is not complete!" << std::endl;
+		//		}
 
-				// Get the size of the texture (width, height)
-				GLint width, height;
-				glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_WIDTH, &width);
-				glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_HEIGHT, &height);
+		//		// Get the size of the texture (width, height)
+		//		GLint width, height;
+		//		glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_WIDTH, &width);
+		//		glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_HEIGHT, &height);
 
-				// Allocate memory to read back the layer data
-				GLubyte* layerData = new GLubyte[width * height * 3];  // 3 for RGB
+		//		// Allocate memory to read back the layer data
+		//		GLubyte* layerData = new GLubyte[width * height * 3];  // 3 for RGB
 
-				// Read the data from the framebuffer
-				glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, layerData);
+		//		// Read the data from the framebuffer
+		//		glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, layerData);
 
-				stbi_write_png("testphysicalpages_.png", width, height, 3, layerData, width * 3);
-				// Now, 'layerData' contains the data of the specified layer.
-				// You can process or save it.
+		//		stbi_write_png("testphysicalpages_.png", width, height, 3, layerData, width * 3);
+		//		// Now, 'layerData' contains the data of the specified layer.
+		//		// You can process or save it.
 
-				// Clean up
-				delete[] layerData;
-				glBindFramebuffer(GL_FRAMEBUFFER, 0);
-				glDeleteFramebuffers(1, &fbo);
+		//		// Clean up
+		//		delete[] layerData;
+		//		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		//		glDeleteFramebuffers(1, &fbo);
 
-				std::exit(0);
+		//		std::exit(0);
 
-			}
+		//	}
 
-			
-		}
+		//	
+		//}
 
 	}
 
@@ -349,8 +336,6 @@ namespace Engine {
 
 	bool TerrainTexturing::isInBorders(const UINT8 level, const glm::u16vec2 gridIndex) { // Causes PROBLEM
 
-		//return true;
-
 		unsigned short max = TerrainTexturing::getTerrainMaxBlockIndex(level);
 		if (gridIndex.x >= 0 && gridIndex.y >= 0 && gridIndex.x <= max && gridIndex.y <= max)
 			return true;
@@ -386,32 +371,26 @@ namespace Engine {
 	}
 
 	void TerrainTexturing::setBlockIndex(const UINT8 clipmapLevel, const UINT8 blockIndex, const glm::u16vec2 index) {
-		unsigned short i = clipmapLevel * 25 + blockIndex;
-		blockIndexList[i] = index;
+		blockIndexList[clipmapLevel * 25 + blockIndex] = index;
 	}
 
 	glm::u16vec2& TerrainTexturing::getBlockIndex(const UINT8 clipmapLevel, const UINT8 blockIndex) {
-		unsigned short i = clipmapLevel * 25 + blockIndex;
-		return blockIndexList[i];
+		return blockIndexList[clipmapLevel * 25 + blockIndex];
 	}
 
 	void TerrainTexturing::setPageTableIndex(const UINT8 clipmapLevel, const UINT8 blockIndex, const unsigned short index) {
-		unsigned short i = clipmapLevel * 25 + blockIndex;
-		pageTableIndexList[i] = index;
+		pageTableIndexList[clipmapLevel * 25 + blockIndex] = index;
 	}
 
 	unsigned short& TerrainTexturing::getPageTableIndex(const UINT8 clipmapLevel, const UINT8 blockIndex) {
-		unsigned short i = clipmapLevel * 25 + blockIndex;
-		return pageTableIndexList[i];
+		return pageTableIndexList[clipmapLevel * 25 + blockIndex];
 	}
 
 	void TerrainTexturing::setIsActive(const UINT8 clipmapLevel, const UINT8 blockIndex, const UINT8 isActive) {
-		unsigned short i = clipmapLevel * 25 + blockIndex;
-		isActiveList[i] = isActive;
+		isActiveList[clipmapLevel * 25 + blockIndex] = isActive;
 	}
 
 	UINT8& TerrainTexturing::getIsActive(const UINT8 clipmapLevel, const UINT8 blockIndex) {
-		unsigned short i = clipmapLevel * 25 + blockIndex;
-		return isActiveList[i];
+		return isActiveList[clipmapLevel * 25 + blockIndex];
 	}
 }

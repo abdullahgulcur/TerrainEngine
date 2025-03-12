@@ -2,14 +2,13 @@
 This is an OpenGL terrain engine designed for the specialized implementation of runtime virtual texturing for terrain. It is inspired by the Frostbite Engine's terrain system and John Carmack's Id Tech Engine for virtual textures. For geometry rendering, I have made some adjustments to Hugues Hoppe’s clipmap rendering technique. Streaming virtual textures are also employed for the heightmap. These techniques enable the rendering of vast terrain areas spanning several square kilometers with high visual quality.
 
 ## ScreenShots
-![s_4](screenshot/s_4.png)
-![s_0](screenshot/s_0.png)
-![s_1](screenshot/s_1.png)
-![s_2](screenshot/s_2.png)
-![s_3](screenshot/s_3.png)
+![ss0](screenshot/ss0.png)
+![ss1](screenshot/ss1.png)
+![ss2](screenshot/ss2.png)
+![ss3](screenshot/ss3.png)
 
 ## Pages and Mipmaps
-![s_5](screenshot/s_5.png)
+![ss4](screenshot/ss4.png)
 
 ## Physical Pages Textures
 ### Colormap
@@ -19,14 +18,18 @@ This is an OpenGL terrain engine designed for the specialized implementation of 
 </p>
 
 ## Clipmap Rendering
-![wireframe_0](screenshot/wireframe_0.png)
-![wireframe_1](screenshot/wireframe_1.png)
+![ss5](screenshot/ss5.png)
 
-## 10 texels Per Centimeter
-![s_6](screenshot/s_6.png)
+## 5 texels Per Centimeter Resolution Terrain
+![ss6](screenshot/ss6.png)
 
 ## How To Build
-This is a CMake project with no external dependencies. It has been tested on Windows.
+* Clone the repository
+* Download CMake
+* Download Visual Studio 19
+* Generate project with Cmake
+* Open the project .sln file
+* Build and run
 
 ## How To Use
 * Right Mouse Click: Enables free-flight mode over the terrain.
@@ -39,7 +42,7 @@ This is a CMake project with no external dependencies. It has been tested on Win
 
 ## Future Plans
 * Adding terrain-blended objects such as rocks.
-* Implementing vegetation, including trees, bushes, and grass.
+* Implementing vegetation, including trees, bushes and grass.
 * Introducing lakes and seas.
 * Adding volumetric clouds.
 * Supporting decals.

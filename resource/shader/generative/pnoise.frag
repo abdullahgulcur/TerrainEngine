@@ -94,7 +94,7 @@ float getStaticHeight(){
     uvec2 texSize = textureSize(heightmap, 0);
     ivec2 uv = ivec2(texCoord * texSize);
 
-    int radius = 5;
+    int radius = 2;
     uint sum = 0;
     for(int y = -radius; y <= radius; y++){
         for(int x = -radius; x <= radius; x++){
@@ -129,7 +129,7 @@ void main(){
 
     height += getProceduralHeight1();
 
-//    height *= 0.75;
+    height *= 0.5;
 
-    FragColor = uint(height * 8191);
+    FragColor = uint(height * 65535);
 }

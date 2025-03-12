@@ -1,6 +1,5 @@
 #pragma once
 #include "glm.hpp"
-#include "terrain_config.h"
 #include "frame_physical_pages.h"
 #include "frame_page_table.h"
 #include "heightmap_generator.h"
@@ -21,9 +20,6 @@ namespace Engine {
 
 		HeightmapGenerator* heightmapGenerator;
 
-		//UINT8 currentMipmapIndexForShader;
-
-		//UINT8 currentMipmapIndex;
 		unsigned short terrainSize;
 
 		UINT8 totalMipmapLevel;
@@ -33,8 +29,6 @@ namespace Engine {
 		std::vector<glm::u16vec2> mipmapGridIndexList;
 		std::vector<glm::u16vec2> mipmapStartGridIndexList;
 
-		//glm::u8vec2 pageCounts;
-
 		std::stack<unsigned short> emptyStack;
 
 		FramePhsyicalPages physicalPageGeneratorFrame;
@@ -42,7 +36,6 @@ namespace Engine {
 
 		std::vector<glm::u16vec2> blockIndexList;
 		std::vector<unsigned short> pageTableIndexList;
-		//std::vector<UINT8> outOfBorderList;
 		std::vector<UINT8> isActiveList;
 
 		std::vector<int> availableMipmapLevelList;
@@ -56,7 +49,6 @@ namespace Engine {
 		void update();
 		bool checkIfEveryCornerInDistance(const UINT8 clipmapLevel, const glm::vec2 cameraPosition);
 		void calculateBlockPositionIndices(const UINT8 clipmapLevel, const glm::vec2 cameraPosition);
-		//void handleBlockJobs();
 		void rasterBlock(BlockJob blockJob);
 		void updatePageTableTexturePartial(unsigned short pageIndex, glm::u16vec2 blockIndex, UINT8 level);
 		void getCurrentBlockProperties(const glm::u16vec2 startGridIndex, glm::u16vec2* currentBlockIndices);

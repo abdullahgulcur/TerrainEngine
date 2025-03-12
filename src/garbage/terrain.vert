@@ -32,13 +32,13 @@ float bilinearInterpolation(float val0, float val1, float val2, float val3, vec2
 
 float getHeight(uint color){
 
-    float heightScale = 0.03; //uniform ?
+    float heightScale = 0.01; //uniform ?
     return color * heightScale;
 }
 
 void getValues(uint color, inout float dxF, inout float dyF, inout float heightF){
 
-    float heightScale = 0.03; //uniform ?
+    float heightScale = 0.01; //uniform ?
 
     uint height = getValue(color, 0, 16);
     uint dx = getValue(color, 24, 7);
@@ -217,7 +217,7 @@ void getValueFromWorldPos2D(uvec2 worldPos2D, float h0, float h1){
 
 void main(void)
 {
-    float heightScale = 0.03; //uniform ?
+    float heightScale = 0.01; //uniform ?
 
     uvec2 worldPos2D = (posVert + posInstance * blockSize) * (1 << levelInstance);
 

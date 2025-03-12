@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "gl_texture.h"
+
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 #define FOURCC_DXT1 0x31545844 // "DXT1"
@@ -46,23 +48,6 @@ namespace Engine {
 		glGenTextures(1, &textureId);
 		glBindTexture(GL_TEXTURE_2D, textureId);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		return textureId;
-	}
-
-	unsigned int GLTexture::generateTerrainPaletteTexture2D(unsigned short width, unsigned short height, const unsigned char* data) {
-
-		unsigned int textureId;
-		glGenTextures(1, &textureId);
-		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -153,6 +138,7 @@ namespace Engine {
 		glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, index, width, height, 1, format, size, textureData.data()); // GL_RGBA8 ??????????????????????????
 	}
 
+	// birlesebilir 
 	unsigned int GLTexture::generateCompressedTerrainPaletteTexture2D(std::string imagepath) {
 
 		std::ifstream file(imagepath.c_str(), std::ios::binary);
@@ -252,48 +238,12 @@ namespace Engine {
 		return textureId;
 	}
 
-	unsigned int GLTexture::generateHeightmapTexture2D(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data) {
-
-		GLenum internalFormats[4] = { GL_R8, GL_RG8, GL_RGB8, GL_RGBA8 };
-		GLenum formats[4] = { GL_RED, GL_RG, GL_RGB, GL_RGBA };
-
-		GLenum internalFormat = internalFormats[channels - 1];
-		GLenum format = formats[channels - 1];
-
-		unsigned int textureId;
-		glGenTextures(1, &textureId);
-		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-		return textureId;
-	}
-
-	unsigned int GLTexture::generateHeightmapTexture2D(glm::u16vec2 size) {
-
-		unsigned int textureId;
-		glGenTextures(1, &textureId);
-		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RG8, size.x, size.y, 0, GL_RG, GL_UNSIGNED_BYTE, nullptr);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-		return textureId;
-	}
-
 	unsigned int GLTexture::generateHeightmapTexture(glm::u16vec2 size) {
 
 		unsigned int textureId;
 		glGenTextures(1, &textureId);
 		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, size.x, size.y, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, nullptr);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R16UI, size.x, size.y, 0, GL_RED_INTEGER, GL_UNSIGNED_SHORT, nullptr);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -313,78 +263,12 @@ namespace Engine {
 		unsigned int textureId;
 		glGenTextures(1, &textureId);
 		glBindTexture(GL_TEXTURE_2D, textureId);
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, width, height, 0, GL_RED_INTEGER, GL_UNSIGNED_SHORT, data);
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, width, height, 0, GL_RED, GL_FLOAT, data);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_R16UI, width, height, 0, GL_RED_INTEGER, GL_UNSIGNED_SHORT, data);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-		return textureId;
-	}
-
-	unsigned int GLTexture::generateShadowmapTexture(glm::u16vec2 size, unsigned short* data) {
-
-		unsigned int textureId;
-		glGenTextures(1, &textureId);
-		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_R16UI, size.x, size.y, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, data);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		return textureId;
-	}
-
-	unsigned int GLTexture::generatePhysicalPagesTexture(UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data) {
-
-		GLenum internalFormats[4] = { GL_R8, GL_RG8, GL_RGB8, GL_RGBA8 };
-		GLenum formats[4] = { GL_RED, GL_RG, GL_RGB, GL_RGBA };
-
-		GLenum internalFormat = internalFormats[channels - 1];
-		GLenum format = formats[channels - 1];
-
-		unsigned int textureId;
-		glGenTextures(1, &textureId);
-		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		return textureId;
-	}
-
-	unsigned int GLTexture::createPhysicalPagesFrameBufferTexture(glm::u16vec2 size) {
-
-		//unsigned char* data = new unsigned char[size.x * size.y * 3];
-		//for (int i = 0; i < size.x * size.y * 3; i++) {
-		//	data[i] = 255;
-		//}
-
-		unsigned int textureId;
-		glGenTextures(1, &textureId);
-		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, size.x, size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		float maxAniso = 0.0f;
-		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0); // Minimum mipmap level
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 2);  // Maximum mipmap level
-
-		//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -0.5f);
 
 		return textureId;
 	}
@@ -402,40 +286,11 @@ namespace Engine {
 		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		//glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BASE_LEVEL, 0);
-		//glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 4);
-
-		//glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_LOD_BIAS, -0.5f);
-
 		float maxAniso = 0.0f;
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
 		glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
 
 		return textureArray;
-		//unsigned char* data = new unsigned char[size.x * size.y * 3];
-		//for (int i = 0; i < size.x * size.y * 3; i++) {
-		//	data[i] = 255;
-		//}
-
-		//unsigned int textureId;
-		//glGenTextures(1, &textureId);
-		//glBindTexture(GL_TEXTURE_2D, textureId);
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, size.x, size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		//float maxAniso = 0.0f;
-		//glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
-		//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
-
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0); // Minimum mipmap level
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 2);  // Maximum mipmap level
-
-		////glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -0.5f);
-
-		//return textureId;
 	}
 
 	unsigned int GLTexture::createPageTableFrameBufferTexture(glm::u16vec2 size) {
@@ -458,23 +313,6 @@ namespace Engine {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		return textureId;
-	}
-
-	void GLTexture::updateTexture2D(unsigned int textureId, UINT8 channels, unsigned short width, unsigned short height, const unsigned char* data, glm::ivec2 pos) {
-
-		GLenum formats[4] = { GL_RED, GL_RG, GL_RGB, GL_RGBA };
-		GLenum format = formats[channels-1];
-
-		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexSubImage2D(GL_TEXTURE_2D, 0, pos.x, pos.y, width, height, format, GL_UNSIGNED_BYTE, data);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-
-	void GLTexture::updateHeightmapPhysicalTexture(unsigned int textureId, unsigned short width, unsigned short height, const unsigned int* data, glm::ivec2 pos) {
-
-		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexSubImage2D(GL_TEXTURE_2D, 0, pos.x, pos.y, width, height, GL_RED_INTEGER, GL_UNSIGNED_INT, data);
-		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void GLTexture::useTexture(unsigned int index, unsigned int textureId) {
@@ -503,12 +341,6 @@ namespace Engine {
 		glGetTexImage(GL_TEXTURE_2D, 0, format, GL_UNSIGNED_BYTE, data);
 	}
 
-	//void GLTexture::getTextureContent(UINT8 channels, unsigned int* data, unsigned int textureId) {
-
-	//	glBindTexture(GL_TEXTURE_2D, textureId);
-	//	glGetTexImage(GL_TEXTURE_2D, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, data);
-	//}
-
 	void GLTexture::getHeightmapContent(unsigned int* data, unsigned int textureId) {
 
 		glBindTexture(GL_TEXTURE_2D, textureId);
@@ -526,5 +358,9 @@ namespace Engine {
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 
-}
+	void GLTexture::generateMipmapArrayTexture2D(unsigned int textureId) {
 
+		glBindTexture(GL_TEXTURE_2D_ARRAY, textureId);
+		glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
+	}
+}

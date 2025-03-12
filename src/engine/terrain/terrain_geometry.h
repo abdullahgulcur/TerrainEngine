@@ -2,7 +2,6 @@
 
 #include "glm.hpp"
 #include "rendering.h"
-#include "terrain_config.h"
 
 namespace Engine {
 

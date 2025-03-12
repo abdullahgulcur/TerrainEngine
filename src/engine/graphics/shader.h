@@ -11,6 +11,7 @@ namespace Engine {
         TERRAIN_GEOMETRY = 5,
         TERRAIN_RVT_COARSE = 6,
         WATER = 7,
+        SHADOW_MAPPING = 8,
     };
 
     class Shader {
@@ -32,5 +33,6 @@ namespace Engine {
         void loadTerrainPageTable();
         void loadWater();
         void loadFrameDefaultShader();
+        void loadShadowmap();
     };
 }

@@ -40,7 +40,7 @@ float bilinearInterpolation(float val0, float val1, float val2, float val3, vec2
 }
 
 float getHeight(ivec2 uv){
-    return texelFetch(heightmap, uv, 0).r * 0.03;
+    return texelFetch(heightmap, uv, 0).r * 0.01;
 }
 
 vec4 bilinearSample(sampler2D texture, vec2 uv) {
@@ -196,7 +196,7 @@ void main() {
     a1 = textureLod(palette, vec3(uvBase, 1), texLevel).rgb;
     n1 = textureLod(palette, vec3(uvBase, 4), texLevel).rgb;
 
-    alpha = bilinearSample(tex2, uvBase * 0.03).r;
+    alpha = bilinearSample(tex2, uvBase * 0.01).r;
 
     a0 = mix(a0, a1, alpha);
     n0 = mix(n0, n1, alpha);

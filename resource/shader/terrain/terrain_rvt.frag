@@ -11,7 +11,7 @@ uniform sampler2DArray palette;
 uniform sampler2D tex1;
 uniform sampler2D tex2;
 uniform usampler2D heightmap;
-uniform usampler2D shadowmap;
+//uniform usampler2D shadowmap;
 uniform uvec2 blockPosition;
 uniform uint level;
 
@@ -86,7 +86,7 @@ float bilinearInterpolation(float val0, float val1, float val2, float val3, vec2
 }
 
 float getHeight(ivec2 uv){
-    return texelFetch(heightmap, uv, 0).r * 0.03;
+    return texelFetch(heightmap, uv, 0).r * 0.01;
 }
 
 
@@ -238,14 +238,14 @@ void main() {
     vec3 radiance = vec3(lightPow);
     float NdotL = max(dot(N, L), 0.0);        
     vec3 Lo = (albedo / 3.14) * radiance * NdotL;// * (1-shadow);
-    vec3 color = albedo * 0.2 + Lo;
+    vec3 color = albedo * 0.1 + Lo;
 
     // ----------- OUTPUT -----------
 
 #ifndef SHOW_PAGE_BORDERS
     outAlbedo = vec4(vec3(color), 1.0);
 #else
-    float paddingAmount = 0.05;
+    float paddingAmount = 0.01;
     float isBorder = step(paddingAmount, min(texCoord.x, texCoord.y)) * step(max(texCoord.x, texCoord.y), 1 - paddingAmount);
     outAlbedo = vec4(color * isBorder, 1.0);
 #endif

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "terrain_config.h"
 #include "terrain_texturing.h"
 #include "terrain_geometry.h"
 #include "terrain_geometry_manager.h"

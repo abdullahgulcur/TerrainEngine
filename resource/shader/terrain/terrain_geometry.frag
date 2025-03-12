@@ -112,6 +112,7 @@ void main(){
     float circleAlpha = clamp(((dist - 10) / 10), 0, 1);
     float borders = mix(pageBorderFiner, pageBorderCoarse, aaaaa) * circleAlpha;
 
+//    vec3 color = albedoFinerAutoMipmap;
     vec3 color = mix(albedoFinerAutoMipmap, albedoCoarseAutoMipmap, aaaaa);
     color = mix(color, albedoBadMipmap, borders);
 
